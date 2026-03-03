@@ -240,10 +240,10 @@
   /* ── PRINTER WINDOW ── */
   .printer-win {
     display: none; position: fixed;
-    top: 10px; left: 50%;
-    transform: translateX(-50%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
     width: 92vw; max-width: 380px;
-    max-height: calc(100vh - 20px);
+    max-height: calc(100vh - 40px);
     overflow-y: auto;
     z-index: 700;
   }
@@ -471,6 +471,7 @@
 
   /* ── DESKTOP BREAKPOINT ── */
   @media (min-width: 768px) {
+    body { min-height: 100vh; justify-content: center; }
     .top-bar { max-width: 500px; }
     .desktop-icons { max-width: 500px; gap: 24px; }
     .win-window { max-width: 500px; }
@@ -478,6 +479,7 @@
     .printer-win { max-width: 460px; }
     .cert-toast { max-width: 400px; }
     .desk-win { max-width: 400px; }
+    .share-btn { display: none !important; }
     @keyframes marquee { from{transform:translateX(500px)} to{transform:translateX(-100%)} }
   }
 </style>
