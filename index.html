@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#2563a8">
+<title>Opal Screen Time Calculator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html {
+    background-color: #2563a8;
+    background-image:
+      radial-gradient(ellipse 120px 40px at 25% 38%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 100%),
+      radial-gradient(ellipse 80px 30px at 30% 40%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 100%),
+      radial-gradient(ellipse 150px 45px at 70% 45%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 100%),
+      radial-gradient(ellipse 90px 35px at 75% 42%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%),
+      radial-gradient(ellipse 60px 25px at 50% 50%, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 100%),
+      radial-gradient(ellipse 100px 35px at 15% 55%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 100%),
+      radial-gradient(ellipse 70px 28px at 85% 52%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%),
+      linear-gradient(180deg, #2563a8 0%, #3a7bd5 15%, #5a9fe6 35%, #87ceeb 50%, #5a9fe6 65%, #3a7bd5 85%, #2563a8 100%);
+    min-height: 100%;
+  }
+
+  body {
+    background-color: transparent;
+    font-family: 'VT323', monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    overflow-x: hidden;
+  }
+
+  /* ── TOP BAR ── */
+  .top-bar {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0 12px;
+  }
+  .top-logos { display: flex; align-items: center; gap: 8px; }
+  .top-logos img { height: 20px; image-rendering: pixelated; opacity: 0.9; }
+  .top-logos span { font-size: 14px; color: #fff; font-weight: bold; }
+  .cd-btn {
+    width: 44px; height: 44px;
+    background: #c0c0c0;
+    border-top: 2px solid #fff; border-left: 2px solid #fff;
+    border-right: 2px solid #404040; border-bottom: 2px solid #404040;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 20px; gap: 1px;
+    position: relative;
+  }
+  .cd-label { font-size: 9px; color: #000; font-family: 'VT323', monospace; letter-spacing: 0.5px; line-height: 1; }
+  .cd-btn.playing { border-top-color: #404040; border-left-color: #404040; border-right-color: #fff; border-bottom-color: #fff; }
+  .cd-badge { position: absolute; top: -4px; right: -4px; background: #ff0000; color: #fff; font-size: 9px; padding: 1px 3px; display: none; }
+  .cd-btn.playing .cd-badge { display: block; }
+
+  /* ── DESKTOP ICONS ── */
+  .desktop-icons { display: flex; justify-content: center; gap: 16px; padding: 0 0 14px; width: 100%; max-width: 420px; flex-wrap: wrap; }
+  .icon { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; width: 70px; user-select: none; -webkit-user-select: none; transition: transform 0.1s ease; }
+  .icon:hover { transform: translateY(-2px); }
+  .icon:active { transform: scale(0.93); }
+  .icon-img { width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; position: relative; }
+  .icon-img img { width: 52px; height: 52px; image-rendering: pixelated; object-fit: contain; }
+  .icon-badge { position: absolute; top: -4px; right: -4px; background: #ff3b30; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 11px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 9px; display: flex; align-items: center; justify-content: center; padding: 0 4px; line-height: 1; z-index: 1; box-shadow: 0 1px 3px rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.3s ease; }
+  .icon-badge.visible { opacity: 1; }
+  .icon-label { font-size: 14px; color: #fff; text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000; text-align: center; line-height: 1.2; }
+
+  /* ── WIN95 BASE ── */
+  .w95 { background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; }
+  .w95-inset { background: #fff; border-top: 2px solid #404040; border-left: 2px solid #404040; border-right: 2px solid #fff; border-bottom: 2px solid #fff; }
+  .titlebar { background: linear-gradient(90deg, #000080, #1084d0); padding: 4px 6px; display: flex; align-items: center; gap: 5px; }
+  .titlebar-title { font-size: 17px; color: #fff; flex: 1; letter-spacing: 0.5px; }
+  .win-close { width: 20px; height: 18px; background: #c0c0c0; border-top: 1.5px solid #fff; border-left: 1.5px solid #fff; border-right: 1.5px solid #404040; border-bottom: 1.5px solid #404040; font-size: 14px; line-height: 1; display: flex; align-items: center; justify-content: center; color: #000; cursor: pointer; padding-bottom: 2px; }
+  .menubar { background: #c0c0c0; border-bottom: 1px solid #808080; padding: 3px 8px; display: flex; gap: 2px; }
+  .menu-item { font-size: 17px; color: #000; padding: 2px 8px; cursor: pointer; }
+  .menu-item:active { background: #000080; color: #fff; }
+
+  /* ── POPUP WINDOWS (icons) ── */
+  .desk-win { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 88vw; max-width: 340px; z-index: 300; }
+  .dw-body { padding: 12px; }
+  .apps-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+  .app-item { display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative; cursor: default; }
+  .app-icon-wrap { width: 44px; height: 44px; background: #c0c0c0; border-top: 2px solid #404040; border-left: 2px solid #404040; border-right: 2px solid #c0c0c0; border-bottom: 2px solid #c0c0c0; display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 26px; position: relative; }
+  .app-icon-wrap::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 43%, #cc0000 43%, #cc0000 57%, transparent 57%); opacity: 0.8; pointer-events: none; }
+  .app-label { font-size: 12px; color: #000; text-align: center; line-height: 1.2; }
+  .blocked-badge { position: absolute; top: 0; right: 0; background: #cc0000; color: #fff; font-size: 9px; padding: 1px 3px; font-weight: bold; }
+  .opal-banner { margin-top: 10px; background: #000080; color: #ffff00; font-size: 15px; padding: 6px 10px; text-align: center; }
+  .file-list { border-top: 2px solid #404040; border-left: 2px solid #404040; border-right: 2px solid #fff; border-bottom: 2px solid #fff; background: #fff; max-height: 240px; overflow-y: auto; }
+  .file-item { display: flex; align-items: center; padding: 5px 10px; gap: 6px; font-size: 15px; color: #000; cursor: default; }
+  .file-item:active { background: #000080; color: #fff; }
+  .file-item .f-size { margin-left: auto; font-size: 13px; color: #808080; padding-left: 8px; }
+  .phone-screen { background: #0a0a0a; border-top: 2px solid #404040; border-left: 2px solid #404040; border-right: 2px solid #fff; border-bottom: 2px solid #fff; padding: 8px; min-height: 180px; max-height: 220px; display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
+  .notif { background: #1e1e1e; border: 1px solid #333; border-left: 3px solid #cc0000; padding: 5px 8px; animation: slideIn 0.25s ease; }
+  .notif .n-app { font-size: 12px; color: #ff6666; letter-spacing: 1px; }
+  .notif .n-msg { font-size: 14px; color: #ddd; line-height: 1.3; }
+  @keyframes slideIn { from{transform:translateX(100%);opacity:0} to{transform:translateX(0);opacity:1} }
+  .phone-footer { font-size: 14px; color: #808080; padding: 5px 2px; text-align: center; }
+  .years-scroll { border-top: 2px solid #404040; border-left: 2px solid #404040; border-right: 2px solid #fff; border-bottom: 2px solid #fff; background: #fff; max-height: 220px; overflow-y: auto; }
+  .year-row { display: flex; align-items: center; padding: 4px 10px; font-size: 15px; color: #000; gap: 8px; }
+  .year-row:active { background: #000080; color: #fff; }
+  .year-row .y-yr { color: #000080; min-width: 42px; font-size: 16px; }
+  .year-row .y-status { margin-left: auto; font-size: 12px; color: #800000; white-space: nowrap; }
+  .win-btn-sm { background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; padding: 6px 18px; font-family: 'VT323', monospace; font-size: 18px; cursor: pointer; color: #000; }
+  .win-btn-sm:active { border-top-color: #404040; border-left-color: #404040; border-right-color: #fff; border-bottom-color: #fff; }
+
+  /* ── MAIN WINDOW ── */
+  .win-window { width: 100%; max-width: 420px; margin-bottom: 8px; }
+  .win-body { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+
+  .marquee-wrap { background: #000080; border-top: 2px solid #404040; border-left: 2px solid #404040; border-right: 2px solid #fff; border-bottom: 2px solid #fff; overflow: hidden; height: 30px; }
+  .marquee-inner { display: inline-block; white-space: nowrap; animation: marquee 20s linear infinite; font-size: 19px; color: #ffff00; letter-spacing: 1px; line-height: 30px; }
+  @keyframes marquee { from{transform:translateX(420px)} to{transform:translateX(-100%)} }
+
+  .crt-screen { background: #001200; border-top: 3px solid #404040; border-left: 3px solid #404040; border-right: 3px solid #c0c0c0; border-bottom: 3px solid #c0c0c0; padding: 12px; position: relative; overflow: hidden; }
+  .crt-screen::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.12) 0px, rgba(0,0,0,0.12) 1px, transparent 1px, transparent 3px); pointer-events: none; }
+  .crt-line { font-size: 16px; color: #00ff41; letter-spacing: 1px; line-height: 1.8; text-shadow: 0 0 6px #00ff41; }
+  .cursor-blink { display: inline-block; width: 10px; height: 16px; background: #00ff41; margin-left: 2px; vertical-align: middle; animation: blink 0.8s step-end infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .err-popup { background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; }
+  .err-titlebar { background: linear-gradient(90deg, #808080, #b0b0b0); padding: 3px 6px; display: flex; align-items: center; gap: 4px; }
+  .err-titlebar span { font-size: 15px; color: #fff; flex: 1; }
+  .err-body { padding: 12px 14px; display: flex; gap: 12px; align-items: flex-start; }
+  .err-icon { font-size: 26px; line-height: 1; }
+  .err-text { font-size: 17px; color: #000; line-height: 1.5; flex: 1; }
+  .err-btns { display: flex; justify-content: center; padding: 0 14px 12px; gap: 10px; }
+
+  .sec-header { background: #000080; color: #fff; font-size: 19px; padding: 4px 10px; letter-spacing: 0.5px; }
+  .field { margin-bottom: 6px; }
+  .field-label { font-size: 19px; color: #000; margin-bottom: 5px; display: block; }
+  .field-label .hint { font-size: 15px; color: #404040; }
+  .field-row { display: flex; align-items: center; gap: 10px; background: #fff; border-top: 2px solid #404040; border-left: 2px solid #404040; border-right: 2px solid #fff; border-bottom: 2px solid #fff; padding: 8px 12px; }
+  .field-row input[type=range] { -webkit-appearance: none; flex: 1; height: 6px; outline: none; cursor: pointer; background: repeating-linear-gradient(90deg, #000080 0px, #000080 2px, #c0c0c0 2px, #c0c0c0 4px); }
+  .field-row input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 30px; background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; cursor: pointer; }
+  .field-val { font-size: 28px; color: #000080; min-width: 62px; text-align: right; white-space: nowrap; }
+  .field-val .unit { font-size: 15px; color: #404040; }
+
+  .win-btn { width: 100%; background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; padding: 10px; font-family: 'VT323', monospace; font-size: 22px; letter-spacing: 1px; cursor: pointer; color: #000; text-align: center; }
+  .win-btn:active { border-top-color: #404040; border-left-color: #404040; border-right-color: #fff; border-bottom-color: #fff; }
+  .win-btn.primary { background: #000080; color: #fff; border-top-color: #4040c0; border-left-color: #4040c0; border-right-color: #000020; border-bottom-color: #000020; font-size: 24px; }
+
+  .loading { display: none; flex-direction: column; gap: 8px; }
+  .loading.visible { display: flex; }
+  .progress-outer { background: #fff; border-top: 2px solid #404040; border-left: 2px solid #404040; border-right: 2px solid #fff; border-bottom: 2px solid #fff; padding: 2px; height: 26px; }
+  .progress-inner { height: 100%; width: 0%; background: repeating-linear-gradient(90deg, #000080 0px, #000080 14px, #c0c0c0 14px, #c0c0c0 16px); transition: width 0.04s linear; }
+  .loading-msg { font-size: 18px; color: #000; }
+  .loading-sub { font-size: 14px; color: #808080; }
+
+  .result { display: none; flex-direction: column; gap: 10px; }
+  .result.visible { display: flex; }
+  .result-main { background: #fff; border-top: 2px solid #404040; border-left: 2px solid #404040; border-right: 2px solid #fff; border-bottom: 2px solid #fff; padding: 16px 14px; text-align: center; }
+  .result-main .r-intro { font-size: 16px; color: #404040; letter-spacing: 1px; }
+  .result-main .r-years { font-size: 100px; color: #000080; line-height: 1; display: block; text-shadow: 3px 3px 0 #808080; }
+  .result-main .r-unit { font-size: 24px; color: #000080; letter-spacing: 3px; }
+  .result-main .r-copy { font-size: 18px; color: #000; line-height: 1.5; margin-top: 10px; }
+  .result-main .r-copy b { color: #800000; }
+  .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: #404040; border: 2px solid #404040; }
+  .stat-cell { background: #c0c0c0; padding: 10px 4px; text-align: center; border-top: 1px solid #fff; border-left: 1px solid #fff; }
+  .stat-cell .s-num { font-size: 22px; color: #000080; display: block; line-height: 1; }
+  .stat-cell .s-lbl { font-size: 12px; color: #404040; display: block; }
+  .fun-fact { background: #ffffc0; border-top: 2px solid #c0c000; border-left: 2px solid #c0c000; border-right: 2px solid #808000; border-bottom: 2px solid #808000; padding: 10px 12px; font-size: 16px; color: #404000; line-height: 1.5; }
+  .cta-panel { background: #000080; border-top: 2px solid #4040c0; border-left: 2px solid #4040c0; border-right: 2px solid #000020; border-bottom: 2px solid #000020; padding: 14px; text-align: center; display: flex; flex-direction: column; gap: 10px; }
+  .cta-panel .cta-title { font-size: 22px; color: #ffff00; }
+  .cta-panel .cta-sub { font-size: 15px; color: #a0a0ff; }
+  .cta-btn { background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; padding: 10px; font-family: 'VT323', monospace; font-size: 22px; letter-spacing: 1px; cursor: pointer; color: #000; }
+  .retry-btn { background: transparent; border: none; font-family: 'VT323', monospace; font-size: 16px; color: #000080; cursor: pointer; text-decoration: underline; text-align: center; width: 100%; padding: 6px; }
+
+  .status-bar { display: flex; gap: 2px; padding: 3px 5px; border-top: 1px solid #808080; }
+  .status-cell { font-size: 14px; color: #000; border-top: 1px solid #404040; border-left: 1px solid #404040; border-right: 1px solid #fff; border-bottom: 1px solid #fff; padding: 2px 8px; flex: 1; }
+  .form-section { display: flex; flex-direction: column; gap: 10px; }
+  .form-section.hidden { display: none; }
+
+  /* ── CERT TOAST ── */
+  .cert-toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(140px);
+    width: 88vw; max-width: 320px;
+    z-index: 500;
+    transition: transform 0.4s ease;
+    display: none;
+    cursor: pointer;
+  }
+  .cert-toast.visible { transform: translateX(-50%) translateY(0); display: block; }
+  .cert-toast-titlebar { background: linear-gradient(90deg, #000080, #1084d0); padding: 4px 6px; display: flex; align-items: center; }
+  .cert-toast-title { font-size: 15px; color: #fff; flex: 1; }
+  .cert-toast-body { padding: 8px 10px; font-size: 16px; color: #000; line-height: 1.6; background: #c0c0c0; border-top: none; }
+  .cert-blink { display: inline-block; animation: tblink 1s step-end infinite; }
+  @keyframes tblink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  /* ── LETTER WINDOW ── */
+  .letter-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 599; }
+  .letter-backdrop.open { display: block; }
+  .letter-win {
+    display: none; position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 92vw; max-width: 380px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    z-index: 600;
+  }
+  .letter-win.open { display: block; }
+
+  .letter-paper {
+    margin: 10px;
+    background: #fffff4;
+    border-top: 2px solid #404040; border-left: 2px solid #404040;
+    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+    padding: 16px;
+  }
+  .lp-to { font-size: 15px; color: #606060; margin-bottom: 10px; border-bottom: 1px solid #d0d0b0; padding-bottom: 8px; }
+  .lp-body { font-size: 18px; color: #111; line-height: 1.8; }
+  .lp-stat { color: #800000; font-size: 20px; }
+  .lp-sign-label { font-size: 15px; color: #404040; margin-top: 16px; margin-bottom: 6px; }
+  .sig-wrap {
+    background: #fff;
+    border-top: 2px solid #404040; border-left: 2px solid #404040;
+    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+    position: relative;
+  }
+  #sigCanvas { display: block; width: 100%; height: 50px; cursor: crosshair; touch-action: none; }
+  .sig-placeholder { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 14px; color: #b0b0b0; pointer-events: none; white-space: nowrap; }
+
+  .letter-btns { display: flex; justify-content: space-between; padding: 8px 10px 10px; gap: 10px; }
+  .btn-primary { background: #000080; color: #fff; border-top: 2px solid #4040c0; border-left: 2px solid #4040c0; border-right: 2px solid #000020; border-bottom: 2px solid #000020; padding: 8px 20px; font-family: 'VT323', monospace; font-size: 19px; cursor: pointer; }
+
+  /* ── PRINTER WINDOW ── */
+  .printer-win {
+    display: none; position: fixed;
+    top: 10px; left: 50%;
+    transform: translateX(-50%);
+    width: 92vw; max-width: 380px;
+    max-height: calc(100vh - 20px);
+    overflow-y: auto;
+    z-index: 700;
+  }
+  .printer-win.open { display: block; }
+
+  .printer-body { padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+
+  .printer-machine {
+    width: 180px;
+    background: #d4d0c8;
+    border-top: 3px solid #fff; border-left: 3px solid #fff;
+    border-right: 3px solid #505050; border-bottom: 3px solid #505050;
+    padding: 8px 14px 6px;
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+  }
+  .printer-top-slot { width: 90%; height: 7px; background: #404040; border: 1px solid #202020; border-radius: 1px; }
+  .printer-lights { display: flex; gap: 6px; align-items: center; }
+  .printer-light { width: 9px; height: 9px; border-radius: 50%; background: #00cc00; box-shadow: 0 0 4px #00cc00; }
+  .printer-light.orange { background: #ff8800; box-shadow: 0 0 4px #ff8800; animation: plight 0.6s step-end infinite; }
+  @keyframes plight { 0%,100%{opacity:1} 50%{opacity:0.2} }
+  .printer-name { font-size: 13px; color: #333; letter-spacing: 1px; }
+  .printer-bottom-slot { width: 70%; height: 6px; background: #808080; border: 1px solid #505050; }
+
+  .paper-feed { width: 100%; overflow: hidden; }
+  .paper-strip {
+    background: #fff;
+    border-left: 1px solid #ddd; border-right: 1px solid #ddd;
+    width: 100%;
+    transform: translateY(-110%);
+    transition: none;
+  }
+  .paper-strip.printing { transition: transform 2.2s ease-out; transform: translateY(0); }
+
+  /* ── CERTIFICATE ── */
+  .certificate {
+    padding: 18px 20px;
+    font-family: 'VT323', monospace;
+    border-top: 4px double #404040;
+    border-bottom: 4px double #404040;
+  }
+  .cert-top-rule { height: 1px; background: #404040; margin-bottom: 12px; }
+  .cert-heading {
+    text-align: center; font-size: 18px; color: #000;
+    letter-spacing: 3px; margin-bottom: 4px; line-height: 1.3;
+  }
+  .cert-dept { text-align: center; font-size: 13px; color: #505050; letter-spacing: 1px; margin-bottom: 14px; }
+  .cert-body { font-size: 16px; color: #111; line-height: 1.9; }
+  .cert-stat { color: #800000; font-size: 18px; }
+  .cert-divider { height: 1px; background: #c0c0c0; margin: 12px 0; }
+  .cert-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; gap: 12px; }
+  .cert-sig-col { display: flex; flex-direction: column; gap: 3px; }
+  .cert-sig-img { min-height: 30px; }
+  .cert-sig-img img { height: 28px; max-width: 110px; }
+  .cert-sig-line { width: 110px; height: 1px; background: #000; }
+  .cert-sig-label { font-size: 12px; color: #606060; }
+  .cert-date-col { font-size: 13px; color: #505050; text-align: right; line-height: 1.6; }
+  .cert-badge {
+    text-align: center; font-size: 13px; color: #000080;
+    border: 2px solid #000080; padding: 4px 8px; line-height: 1.4;
+    animation: badgeblink 2.5s step-end infinite;
+  }
+  @keyframes badgeblink { 0%,66%{opacity:1} 80%{opacity:0.3} 100%{opacity:1} }
+
+  .printer-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 699; }
+  .printer-status-row { width: 100%; }
+  .printer-status { font-size: 16px; color: #000; text-align: center; margin-bottom: 6px; }
+  .printer-btns { display: flex; justify-content: center; gap: 10px; padding: 0 10px 10px; }
+
+  /* ── SHARE CARD (hidden, rendered by html2canvas) ── */
+  .share-card {
+    position: fixed; left: -9999px; top: -9999px;
+    width: 360px; height: 640px;
+    background-color: #2563a8;
+    background-image:
+      radial-gradient(ellipse 120px 40px at 25% 28%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 100%),
+      radial-gradient(ellipse 80px 30px at 30% 30%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 100%),
+      radial-gradient(ellipse 150px 45px at 70% 35%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 100%),
+      radial-gradient(ellipse 90px 35px at 75% 32%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%),
+      radial-gradient(ellipse 60px 25px at 50% 40%, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 100%),
+      radial-gradient(ellipse 100px 35px at 15% 45%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 100%),
+      radial-gradient(ellipse 70px 28px at 85% 42%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%),
+      linear-gradient(180deg, #2563a8 0%, #3a7bd5 15%, #5a9fe6 35%, #87ceeb 50%, #5a9fe6 65%, #3a7bd5 85%, #2563a8 100%);
+    font-family: 'VT323', monospace;
+    display: flex; flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    overflow: hidden;
+  }
+
+  /* Desktop icons on share card */
+  .sc-icons { display: flex; justify-content: center; gap: 14px; width: 100%; margin-bottom: 8px; }
+  .sc-icon { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 56px; }
+  .sc-icon-wrap { width: 38px; height: 38px; position: relative; display: flex; align-items: center; justify-content: center; }
+  .sc-icon-wrap img { width: 38px; height: 38px; image-rendering: pixelated; object-fit: contain; }
+  .sc-icon-label { font-size: 10px; color: #fff; text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000; text-align: center; line-height: 1.1; }
+  .sc-icon-badge { background: #ff3b30; color: #fff; font-family: -apple-system, sans-serif; font-size: 8px; font-weight: 700; min-width: 14px; height: 14px; border-radius: 7px; display: flex; align-items: center; justify-content: center; padding: 0 3px; position: absolute; top: -3px; right: -3px; }
+
+  /* Marquee banner */
+  .sc-marquee { width: 100%; background: #000080; border-top: 2px solid #404040; border-left: 2px solid #404040; border-right: 2px solid #fff; border-bottom: 2px solid #fff; overflow: hidden; height: 22px; margin-bottom: 8px; }
+  .sc-marquee-inner { display: inline-block; white-space: nowrap; font-size: 15px; color: #ffff00; letter-spacing: 1px; line-height: 22px; }
+
+  /* Main window */
+  .sc-window {
+    width: 100%;
+    background: #c0c0c0;
+    border-top: 2px solid #fff; border-left: 2px solid #fff;
+    border-right: 2px solid #404040; border-bottom: 2px solid #404040;
+    display: flex; flex-direction: column;
+  }
+  .sc-titlebar { background: linear-gradient(90deg, #000080, #1084d0); padding: 3px 6px; display: flex; align-items: center; gap: 5px; }
+  .sc-titlebar-title { font-size: 14px; color: #fff; flex: 1; }
+  .sc-titlebar-btns { display: flex; gap: 2px; }
+  .sc-titlebar-btn { width: 14px; height: 13px; background: #c0c0c0; border-top: 1px solid #fff; border-left: 1px solid #fff; border-right: 1px solid #404040; border-bottom: 1px solid #404040; font-size: 9px; display: flex; align-items: center; justify-content: center; color: #000; }
+  .sc-body {
+    padding: 8px 12px 6px; display: flex; flex-direction: column; align-items: center;
+    background: #fff;
+    border-top: 2px solid #404040; border-left: 2px solid #404040;
+    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+    margin: 4px 6px;
+  }
+  .sc-label { font-size: 13px; color: #808080; letter-spacing: 2px; text-align: center; }
+  .sc-years { font-size: 100px; color: #000080; line-height: 0.85; text-align: center; text-shadow: 3px 3px 0 #b0b0b0; display: block; }
+  .sc-years-unit { font-size: 28px; color: #000080; letter-spacing: 8px; text-align: center; display: block; margin-bottom: 6px; }
+  .sc-stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1px; background: #404040; border: 2px solid #404040; width: 100%; }
+  .sc-stat { background: #c0c0c0; padding: 6px 2px; text-align: center; border-top: 1px solid #fff; border-left: 1px solid #fff; }
+  .sc-stat-num { font-size: 18px; color: #000080; display: block; line-height: 1.1; }
+  .sc-stat-lbl { font-size: 9px; color: #404040; display: block; }
+
+  /* Error dialog roast — separate floating window */
+  .sc-roast {
+    width: 100%;
+    background: #c0c0c0;
+    border-top: 2px solid #fff; border-left: 2px solid #fff;
+    border-right: 2px solid #404040; border-bottom: 2px solid #404040;
+    margin-top: 8px;
+  }
+  .sc-roast-titlebar { background: linear-gradient(90deg, #800000, #cc0000); padding: 2px 6px; display: flex; align-items: center; }
+  .sc-roast-titlebar span { font-size: 12px; color: #fff; }
+  .sc-roast-body { padding: 6px 10px; display: flex; gap: 8px; align-items: center; }
+  .sc-roast-icon { font-size: 24px; }
+  .sc-roast-text { font-size: 14px; color: #000; line-height: 1.4; }
+  .sc-statusbar { display: flex; gap: 2px; padding: 2px 4px; border-top: 1px solid #808080; }
+  .sc-status-cell { font-size: 10px; color: #000; border-top: 1px solid #404040; border-left: 1px solid #404040; border-right: 1px solid #fff; border-bottom: 1px solid #fff; padding: 1px 6px; flex: 1; }
+
+  /* Bottom bar */
+  .sc-bottom {
+    width: 100%;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 0 0;
+  }
+  .sc-logos { display: flex; align-items: center; gap: 6px; }
+  .sc-logos img { height: 18px; opacity: 0.95; }
+  .sc-logos span { font-size: 14px; color: #fff; opacity: 0.95; }
+  .sc-url { font-size: 16px; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); letter-spacing: 0.5px; }
+
+  /* ── SHARE BUTTON ── */
+  .share-btn {
+    width: 100%; padding: 12px;
+    background: #000080; color: #ffff00;
+    border-top: 2px solid #4040c0; border-left: 2px solid #4040c0;
+    border-right: 2px solid #000020; border-bottom: 2px solid #000020;
+    font-family: 'VT323', monospace; font-size: 24px; letter-spacing: 2px;
+    cursor: pointer; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .share-btn::after {
+    content: '';
+    position: absolute; top: 0; left: -100%;
+    width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    animation: shimmer 2.5s ease-in-out infinite;
+  }
+  @keyframes shimmer { 0%{left:-100%} 100%{left:200%} }
+  .share-btn:active { border-top-color: #000020; border-left-color: #000020; border-right-color: #4040c0; border-bottom-color: #4040c0; }
+  .share-btn:disabled { opacity: 0.7; cursor: default; }
+  .share-btn:disabled::after { animation: none; }
+
+  /* ── MOBILE COMPACT ── */
+  @media (max-width: 767px) {
+    body { padding: 8px 8px 16px; }
+    .top-bar { padding: 0 0 4px; }
+    .cd-btn { width: 44px; height: 44px; font-size: 16px; }
+    .cd-label { font-size: 7px; }
+    .desktop-icons { gap: 10px; padding: 0 0 6px; }
+    .icon { width: 58px; }
+    .icon-img, .icon-img img { width: 38px; height: 38px; }
+    .icon-badge { font-size: 10px; min-width: 16px; height: 16px; border-radius: 8px; top: -3px; right: -3px; }
+    .icon-label { font-size: 12px; }
+    .win-body { padding: 8px; gap: 6px; }
+    .marquee-wrap { height: 22px; }
+    .marquee-inner { font-size: 15px; line-height: 22px; }
+    .crt-screen { padding: 6px 8px; }
+    .crt-line { font-size: 13px; line-height: 1.5; }
+    .sec-header { font-size: 16px; padding: 3px 8px; }
+    .field { margin-bottom: 2px; }
+    .field-label { font-size: 16px; margin-bottom: 2px; }
+    .field-row { padding: 5px 8px; gap: 8px; }
+    .field-val { font-size: 22px; min-width: 50px; }
+    .win-btn { padding: 7px; font-size: 19px; }
+    .win-btn.primary { font-size: 20px; }
+    .result { gap: 6px; }
+    .result-main { padding: 10px 10px; }
+    .result-main .r-intro { font-size: 13px; }
+    .result-main .r-years { font-size: 64px; }
+    .result-main .r-unit { font-size: 18px; }
+    .result-main .r-copy { font-size: 14px; margin-top: 6px; }
+    .stats-row { grid-template-columns: repeat(4,1fr); }
+    .stat-cell { padding: 6px 2px; }
+    .stat-cell .s-num { font-size: 18px; }
+    .stat-cell .s-lbl { font-size: 10px; }
+    .fun-fact { padding: 6px 8px; font-size: 13px; }
+    .cta-panel { padding: 8px; gap: 6px; }
+    .cta-panel .cta-title { font-size: 18px; }
+    .cta-panel .cta-sub { font-size: 13px; }
+    .cta-btn { padding: 7px; font-size: 18px; }
+    .retry-btn { font-size: 14px; padding: 4px; }
+    .share-btn { font-size: 20px; padding: 10px; }
+    .status-bar { padding: 2px 4px; }
+    .status-cell { font-size: 12px; padding: 1px 6px; }
+    .err-body { padding: 6px 8px; gap: 8px; }
+    .err-text { font-size: 14px; }
+    .win-window { margin-bottom: 4px; }
+  }
+
+  /* ── DESKTOP BREAKPOINT ── */
+  @media (min-width: 768px) {
+    .top-bar { max-width: 500px; }
+    .desktop-icons { max-width: 500px; gap: 24px; }
+    .win-window { max-width: 500px; }
+    .letter-win { max-width: 460px; }
+    .printer-win { max-width: 460px; }
+    .cert-toast { max-width: 400px; }
+    .desk-win { max-width: 400px; }
+    @keyframes marquee { from{transform:translateX(500px)} to{transform:translateX(-100%)} }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── CERT TOAST ── -->
+<div class="cert-toast w95" id="certToast" onclick="openLetterWin()">
+  <div class="cert-toast-titlebar">
+    <div class="cert-toast-title">📄 separation_notice.doc</div>
+    <div class="win-close" onclick="event.stopPropagation();closeCertToast()">x</div>
+  </div>
+  <div class="cert-toast-body">
+    New document ready to sign.<br>
+    <span class="cert-blink">[ Click to open ]</span>
+  </div>
+</div>
+
+<!-- ── LETTER WINDOW ── -->
+<div class="letter-backdrop" id="letterBackdrop" onclick="closeLetterWin()"></div>
+<div class="letter-win w95" id="letterWin">
+  <div class="titlebar">
+    <div class="titlebar-title">separation_notice.doc — Notepad</div>
+    <div class="win-close" onclick="closeLetterWin()">x</div>
+  </div>
+  <div class="menubar">
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">Format</span>
+  </div>
+  <div class="letter-paper" style="padding:10px">
+    <div class="lp-to" style="font-size:12px;line-height:1.5;margin-bottom:6px;padding-bottom:5px">
+      RE: Termination &nbsp; TO: The Device &nbsp; CC: My Attention Span <span style="color:#999">(missing)</span>
+    </div>
+    <div class="lp-body" style="font-size:15px;line-height:1.6">
+      After <span class="lp-stat" id="lYears">—</span> years and <span class="lp-stat" id="lHours">—</span> hours (<span class="lp-stat" id="lPct">—</span>% of my waking life) — you're fired.<br>
+      <span id="letterDate" style="display:none">—</span><span id="lYears2" style="display:none">—</span><span id="lYears3" style="display:none">—</span>
+      <em>Not subject to appeal. Stop sending notifications.</em>
+    </div>
+    <div class="lp-sign-label" style="margin-top:8px;margin-bottom:4px">↓ Sign</div>
+    <div class="sig-wrap">
+      <canvas id="sigCanvas"></canvas>
+      <div class="sig-placeholder" id="sigPlaceholder">sign here</div>
+    </div>
+  </div>
+  <div class="letter-btns">
+    <button class="win-btn-sm" onclick="clearSig()">Clear</button>
+    <button class="btn-primary" onclick="signAndPrint()">Sign & Print →</button>
+  </div>
+</div>
+
+<!-- ── PRINTER WINDOW ── -->
+<div class="printer-win w95" id="printerWin">
+  <div class="titlebar">
+    <div class="titlebar-title">🖨 HP DeskJet 610C — Printing</div>
+    <div class="win-close" onclick="closePrinterWin()">x</div>
+  </div>
+  <div class="printer-body">
+    <div class="printer-machine">
+      <div class="printer-top-slot"></div>
+      <div class="printer-lights">
+        <div class="printer-light orange" id="printerLight"></div>
+        <div class="printer-name">HP DeskJet 610C</div>
+      </div>
+      <div class="printer-bottom-slot"></div>
+    </div>
+
+    <div class="paper-feed">
+      <div class="paper-strip" id="paperStrip">
+        <div class="certificate">
+          <div class="cert-heading">CERTIFICATE OF<br>DIGITAL SEPARATION</div>
+          <div class="cert-dept">DEPARTMENT OF RECLAIMED TIME<br>IN PARTNERSHIP WITH OPAL</div>
+          <div class="cert-top-rule"></div>
+          <div class="cert-body">
+            This hereby certifies that the undersigned<br>
+            has officially broken up with their phone<br>
+            after <span class="cert-stat" id="cYears">—</span> years
+            and <span class="cert-stat" id="cHours">—</span> hours<br>
+            of their one wild and precious life.
+          </div>
+          <div class="cert-divider"></div>
+          <div class="cert-footer">
+            <div class="cert-sig-col">
+              <div class="cert-sig-img" id="certSigImg"></div>
+              <div class="cert-sig-line"></div>
+              <div class="cert-sig-label">Signature</div>
+            </div>
+            <div class="cert-date-col">
+              Effective:<br><span id="cDate">—</span>
+            </div>
+            <div class="cert-badge">★ CERTIFIED ★<br>RECLAIMED<br>★ TIME ★</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="printer-status-row">
+      <div class="printer-status" id="printerStatus">Spooling document...</div>
+      <div class="progress-outer"><div class="progress-inner" id="printerProgress"></div></div>
+    </div>
+  </div>
+  <div class="printer-btns" id="printerBtns" style="display:none;flex-direction:column;gap:6px;padding:6px 10px 10px">
+    <button class="share-btn" id="shareBtn" onclick="shareStory()" style="font-size:20px;padding:8px">[ SHARE TO STORIES ]</button>
+    <div style="display:flex;gap:8px">
+      <button class="win-btn-sm" style="flex:1" onclick="closePrinterWin()">Close</button>
+      <a class="btn-primary" id="opalLink1" href="https://apps.apple.com/us/app/opal-screen-time-control/id1497465230" style="text-decoration:none;text-align:center;flex:1">Opal →</a>
+    </div>
+  </div>
+</div>
+<div class="printer-backdrop" id="printerBackdrop" onclick="closePrinterWin()" style="display:none"></div>
+
+<!-- ── ICON POPUPS ── -->
+<div class="desk-win w95" id="win-computer">
+  <div class="titlebar"><div class="titlebar-title">My Computer</div><div class="win-close" onclick="closeWin('computer')">x</div></div>
+  <div class="dw-body">
+    <div style="font-size:15px;color:#404040;margin-bottom:10px">C:\APPS\SOCIAL_MEDIA\ — blocked by Opal</div>
+    <div class="apps-grid">
+      <div class="app-item"><div class="app-icon-wrap">📘</div><div class="app-label">TheFacebook v1.0</div><div class="blocked-badge">BLOCKED</div></div>
+      <div class="app-item"><div class="app-icon-wrap">📸</div><div class="app-label">Instagram v1.0</div><div class="blocked-badge">BLOCKED</div></div>
+      <div class="app-item"><div class="app-icon-wrap">🐦</div><div class="app-label">Twitter.exe</div><div class="blocked-badge">BLOCKED</div></div>
+      <div class="app-item"><div class="app-icon-wrap">▶️</div><div class="app-label">YouTube v1.0</div><div class="blocked-badge">BLOCKED</div></div>
+      <div class="app-item"><div class="app-icon-wrap">🎵</div><div class="app-label">TikTok v1.0</div><div class="blocked-badge">BLOCKED</div></div>
+      <div class="app-item"><div class="app-icon-wrap">👽</div><div class="app-label">Reddit v1.0</div><div class="blocked-badge">BLOCKED</div></div>
+    </div>
+    <div class="opal-banner">[ OPAL ACTIVE ] ALL DISTRACTIONS BLOCKED</div>
+    <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="win-btn-sm" onclick="closeWin('computer')">Close</button></div>
+  </div>
+</div>
+
+<div class="desk-win w95" id="win-trash">
+  <div class="titlebar"><div class="titlebar-title">Recycle Bin</div><div class="win-close" onclick="closeWin('trash')">x</div></div>
+  <div class="dw-body">
+    <div style="font-size:14px;color:#800000;margin-bottom:8px">Items deleted by your phone. Cannot be recovered.</div>
+    <div class="file-list">
+      <div class="file-item">[doc] my_precious_time.exe <span class="f-size">gone</span></div>
+      <div class="file-item">[img] skill_i_never_learned.jpg <span class="f-size">2,190 hrs</span></div>
+      <div class="file-item">[doc] that_book_im_always_reading.txt <span class="f-size">abandoned</span></div>
+      <div class="file-item">[img] being_present_at_dinner.bmp <span class="f-size">0 KB</span></div>
+      <div class="file-item">[exe] deep_work.exe <span class="f-size">DELETED</span></div>
+      <div class="file-item">[img] memories_not_on_camera.jpg <span class="f-size">priceless</span></div>
+      <div class="file-item">[doc] that_hobby_i_had.doc <span class="f-size">2008–2012</span></div>
+      <div class="file-item">[exe] attention_span_full.exe <span class="f-size">corrupted</span></div>
+      <div class="file-item">[img] eye_contact_at_parties.png <span class="f-size">deleted</span></div>
+      <div class="file-item">[doc] phone_numbers_i_knew.csv <span class="f-size">1 left (mom)</span></div>
+      <div class="file-item">[exe] boredom_that_sparked_ideas.bat <span class="f-size">extinct</span></div>
+      <div class="file-item">[doc] directions_memorized.txt <span class="f-size">2007</span></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:10px;align-items:center">
+      <div style="font-size:13px;color:#808080">12 items. All irreplaceable.</div>
+      <button class="win-btn-sm" onclick="closeWin('trash')">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="desk-win w95" id="win-phone">
+  <div class="titlebar"><div class="titlebar-title">My Phone — Incoming</div><div class="win-close" onclick="closeWin('phone')">x</div></div>
+  <div class="dw-body">
+    <div class="phone-screen" id="notifContainer"></div>
+    <div class="phone-footer" id="notifCount">connecting...</div>
+    <div style="display:flex;gap:8px;margin-top:10px;justify-content:space-between">
+      <button class="win-btn-sm" onclick="clearNotifs()">Mark all read</button>
+      <button class="win-btn-sm" onclick="closeWin('phone')">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="desk-win w95" id="win-years">
+  <div class="titlebar"><div class="titlebar-title">Lost_Years.exe</div><div class="win-close" onclick="closeWin('years')">x</div></div>
+  <div class="dw-body">
+    <div style="font-size:14px;color:#800000;margin-bottom:8px">WARNING: The following years were consumed by your phone.</div>
+    <div class="years-scroll" id="yearsList"></div>
+    <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="win-btn-sm" onclick="closeWin('years')">Close</button></div>
+  </div>
+</div>
+
+<!-- ── TOP BAR ── -->
+<div class="top-bar">
+  <div class="top-logos">
+    <img src="assets/Opal-logo-white.png" onerror="this.style.display='none'">
+    <span>x</span>
+    <img src="assets/yap-logo-white.png" onerror="this.style.display='none'">
+  </div>
+  <div class="cd-btn w95" id="cdBtn" onclick="toggleMusic()" title="Music on/off">
+    💿
+    <div class="cd-label" id="cdLabel">MUSIC OFF</div>
+    <div class="cd-badge">ON</div>
+  </div>
+</div>
+
+<!-- ── DESKTOP ICONS ── -->
+<div class="desktop-icons">
+  <div class="icon" onclick="openWin('computer')">
+    <div class="icon-img"><img src="assets/mycomputer.png" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('afterbegin','🖥️')"></div>
+    <div class="icon-label">My Computer</div>
+  </div>
+  <div class="icon" onclick="openWin('trash')">
+    <div class="icon-img"><span class="icon-badge">12</span><img src="assets/recyclebin_file.png" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('afterbegin','🗑️')"></div>
+    <div class="icon-label">Recycle Bin</div>
+  </div>
+  <div class="icon" onclick="openWin('phone')">
+    <div class="icon-img"><span class="icon-badge">47</span><img src="assets/phone.png" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('afterbegin','📞')"></div>
+    <div class="icon-label">My Phone</div>
+  </div>
+  <div class="icon" onclick="openWin('years')">
+    <div class="icon-img"><span class="icon-badge">!</span><img src="assets/file.png" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('afterbegin','📁')"></div>
+    <div class="icon-label">Lost_Years.exe</div>
+  </div>
+</div>
+
+<!-- ── MAIN WINDOW ── -->
+<div class="win-window w95">
+  <div class="titlebar">
+    <div class="titlebar-title">Chronically_Online_Calculator.exe</div>
+    <div style="display:flex;gap:2px">
+      <div class="win-close">_</div>
+      <div class="win-close">o</div>
+      <div class="win-close">x</div>
+    </div>
+  </div>
+  <div class="menubar">
+    <span class="menu-item">File</span>
+    <span class="menu-item">Edit</span>
+    <span class="menu-item">View</span>
+    <span class="menu-item">Existential Crisis</span>
+    <span class="menu-item">Help</span>
+  </div>
+  <div class="win-body">
+
+    <div class="marquee-wrap">
+      <div class="marquee-inner">WARNING: RESULTS MAY CAUSE EXISTENTIAL CRISIS &nbsp;★&nbsp; OPAL x YOUR ATTENTION PLEASE &nbsp;★&nbsp; HOW MANY YEARS HAVE YOU LOST TO YOUR PHONE? &nbsp;★&nbsp;</div>
+    </div>
+
+    <div class="err-popup" id="warningPopup" style="display:none">
+      <div class="err-titlebar"><span>! attention.exe</span></div>
+      <div class="err-body" style="padding:8px 12px">
+        <div class="err-icon">[!]</div>
+        <div class="err-text" style="font-size:16px">WARNING: side effects may include existential dread.</div>
+      </div>
+    </div>
+
+    <div class="crt-screen" id="crtScreen">
+      <div class="crt-line">&gt; CHRONICALLY_ONLINE_SINCE.EXE</div>
+      <div class="crt-line">&gt; INITIALIZING GUILT MODULE...</div>
+      <div class="crt-line">&gt; ENTER YOUR DATA TO BEGIN<span class="cursor-blink"></span></div>
+    </div>
+
+    <div class="form-section" id="formSection">
+      <div class="sec-header">[ INPUT YOUR DATA ]</div>
+      <div class="field">
+        <span class="field-label">YOUR AGE <span class="hint">(be honest)</span></span>
+        <div class="field-row">
+          <input type="range" id="age" min="13" max="80" value="28" oninput="updateVal('age','ageVal','yrs')">
+          <div class="field-val" id="ageVal">28<span class="unit">yrs</span></div>
+        </div>
+      </div>
+      <div class="field">
+        <span class="field-label">DAILY SCREEN TIME <span class="hint">(be more honest)</span></span>
+        <div class="field-row">
+          <input type="range" id="screen" min="1" max="16" value="6" step="0.5" oninput="updateVal('screen','screenVal','hrs')">
+          <div class="field-val" id="screenVal">6<span class="unit">hrs</span></div>
+        </div>
+      </div>
+      <button class="win-btn primary" onclick="calculate()">[ CALCULATE MY LIFE ]</button>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="err-popup">
+        <div class="err-titlebar"><span>(...) Processing...</span></div>
+        <div style="padding:10px 14px;display:flex;flex-direction:column;gap:8px">
+          <div class="loading-msg" id="loadingMsg">Counting your lost hours...</div>
+          <div class="progress-outer"><div class="progress-inner" id="progressFill"></div></div>
+          <div class="loading-sub" id="loadingSub">Please do not turn off your computer or face reality.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="result" id="result">
+      <div class="sec-header">[ RESULTS — brace yourself ]</div>
+      <div class="result-main">
+        <div class="r-intro">&gt; YEARS OF CONSCIOUS LIFE SPENT ON PHONE:</div>
+        <span class="r-years" id="resultYears">-</span>
+        <div class="r-unit">YEARS</div>
+        <div class="r-copy" id="resultCopy">-</div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-cell"><span class="s-num" id="statPct">-</span><span class="s-lbl">waking life</span></div>
+        <div class="stat-cell"><span class="s-num" id="statDays">-</span><span class="s-lbl">days</span></div>
+        <div class="stat-cell"><span class="s-num" id="statMonths">-</span><span class="s-lbl">months</span></div>
+        <div class="stat-cell"><span class="s-num" id="statHours">-</span><span class="s-lbl">hours</span></div>
+      </div>
+      <div class="fun-fact" id="funFact">-</div>
+      <div class="cta-panel">
+        <div class="cta-title">* READY TO GET SOME BACK? *</div>
+        <div class="cta-sub">Opal blocks distracting apps so you can actually live your life.</div>
+        <a class="cta-btn" id="opalLink2" href="https://apps.apple.com/us/app/opal-screen-time-control/id1497465230" style="text-decoration:none;display:block;text-align:center">[ DOWNLOAD OPAL — FREE ]</a>
+      </div>
+      <button class="retry-btn" onclick="reset()">→ Run calculation again (if you dare)</button>
+    </div>
+
+  </div>
+  <div class="status-bar">
+    <div class="status-cell" id="statusLeft">Ready</div>
+    <div class="status-cell" style="text-align:center;font-size:13px;color:#404040">Opal x Your Attention Please</div>
+  </div>
+</div>
+
+<!-- ── SHARE CARD (hidden, rendered at 3x by html2canvas) ── -->
+<div class="share-card" id="shareCard">
+  <!-- Icons row -->
+  <div class="sc-icons">
+    <div class="sc-icon">
+      <div class="sc-icon-wrap"><img src="assets/mycomputer.png"></div>
+      <div class="sc-icon-label">My Computer</div>
+    </div>
+    <div class="sc-icon">
+      <div class="sc-icon-wrap"><img src="assets/recyclebin_file.png"><span class="sc-icon-badge">12</span></div>
+      <div class="sc-icon-label">Recycle Bin</div>
+    </div>
+    <div class="sc-icon">
+      <div class="sc-icon-wrap"><img src="assets/phone.png"><span class="sc-icon-badge">47</span></div>
+      <div class="sc-icon-label">My Phone</div>
+    </div>
+    <div class="sc-icon">
+      <div class="sc-icon-wrap"><img src="assets/file.png"><span class="sc-icon-badge">!</span></div>
+      <div class="sc-icon-label">Lost_Years</div>
+    </div>
+  </div>
+  <!-- Marquee -->
+  <div class="sc-marquee">
+    <div class="sc-marquee-inner">★ HOW CHRONICALLY ONLINE ARE YOU? ★ OPAL x YOUR ATTENTION PLEASE ★ RESULTS MAY CAUSE EXISTENTIAL DREAD ★</div>
+  </div>
+  <!-- Main window -->
+  <div class="sc-window">
+    <div class="sc-titlebar">
+      <div class="sc-titlebar-title">Chronically_Online_Calculator.exe</div>
+      <div class="sc-titlebar-btns"><div class="sc-titlebar-btn">_</div><div class="sc-titlebar-btn">o</div><div class="sc-titlebar-btn">x</div></div>
+    </div>
+    <div class="sc-body">
+      <div class="sc-label">YEARS ON A SCREEN:</div>
+      <span class="sc-years" id="scYears">—</span>
+      <div class="sc-years-unit">YEARS</div>
+      <div class="sc-stats">
+        <div class="sc-stat"><span class="sc-stat-num" id="scPct">—</span><span class="sc-stat-lbl">waking life</span></div>
+        <div class="sc-stat"><span class="sc-stat-num" id="scDays">—</span><span class="sc-stat-lbl">days</span></div>
+        <div class="sc-stat"><span class="sc-stat-num" id="scMonths">—</span><span class="sc-stat-lbl">months</span></div>
+        <div class="sc-stat"><span class="sc-stat-num" id="scHours">—</span><span class="sc-stat-lbl">hours</span></div>
+      </div>
+    </div>
+    <div class="sc-statusbar">
+      <div class="sc-status-cell">Done — your life has been calculated</div>
+    </div>
+  </div>
+  <!-- Error roast — separate popup -->
+  <div class="sc-roast">
+    <div class="sc-roast-titlebar"><span>⚠ reality_check.exe — Error</span></div>
+    <div class="sc-roast-body">
+      <div class="sc-roast-icon">⚠</div>
+      <div class="sc-roast-text" id="scRoast">Your phone has filed a restraining order against your free time.</div>
+    </div>
+  </div>
+  <!-- Bottom: logos left, URL right -->
+  <div class="sc-bottom">
+    <div class="sc-logos">
+      <img src="assets/Opal-logo-white.png" alt="Opal">
+      <span>x</span>
+      <img src="assets/yap-logo-white.png" alt="YAP">
+    </div>
+    <div class="sc-url">screentimecalculator.opal.so</div>
+  </div>
+</div>
+
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script>
+  // ── OPAL DOWNLOAD ──
+  (function() {
+    var ua = navigator.userAgent || '';
+    var link = 'https://www.opal.so/#download-opal';
+    if (/iPhone|iPad|iPod/.test(ua)) link = 'https://apps.apple.com/us/app/opal-screen-time-control/id1497465230';
+    else if (/Android/.test(ua)) link = 'https://play.google.com/store/apps/details?id=com.withopal.opal';
+    else if (/Macintosh/.test(ua)) link = 'https://www.opal.so/mac';
+    var el1 = document.getElementById('opalLink1');
+    var el2 = document.getElementById('opalLink2');
+    if (el1) el1.href = link;
+    if (el2) el2.href = link;
+  })();
+
+  // ── YEARS LIST ──
+  var currentYear = new Date().getFullYear();
+  var statuses = ['doom scrolling','scrolled away','gone forever','lost to reels','tiktokd','lost to timeline','missed IRL','wasted','never coming back'];
+  var yearNotes = {
+    2007:'iPhone launched. The beginning of the end.',
+    2008:'App Store opened. Pandora\'s box, basically.',
+    2009:'WhatsApp launched. Sleep schedule deleted.',
+    2010:'Instagram founded. Brunch was never the same.',
+    2011:'Snapchat arrived. Nothing is permanent except screen time.',
+    2012:'1 billion on Facebook. Humanity peaked and scrolled.',
+    2013:'Vine launched. 6 seconds of joy, 6 hours of scrolling.',
+    2014:'ALS Ice Bucket Challenge. Last time the internet did something useful.',
+    2015:'Apple Watch. Your wrist now buzzes too.',
+    2016:'TikTok launched. Attention span: decimated.',
+    2017:'iPhone X. Face ID so you unlock faster to scroll more.',
+    2018:'Screen Time feature added. Nobody listened.',
+    2019:'OK Boomer. Last normal year.',
+    2020:'Pandemic. You and your phone became inseparable.',
+    2021:'Doomscrolling became a real word in the dictionary.',
+    2022:'BeReal launched. You were not real. You were on TikTok.',
+    2023:'ChatGPT took your job. TikTok took your time.',
+    2024:'Brain rot is word of the year. Literally.',
+    2025:'Labubu. Dubai chocolate. You know what you did.',
+    2026:'Your Attention Please premieres at SXSW.'
+  };
+  var yl = document.getElementById('yearsList');
+  for (var y = 2007; y <= currentYear; y++) {
+    var row = document.createElement('div'); row.className = 'year-row';
+    var note = yearNotes[y];
+    if (!note) continue;
+    var status = statuses[Math.floor(Math.random() * statuses.length)];
+    row.innerHTML = '<span class="y-yr">'+y+'</span><span style="font-size:14px;flex:1">'+note+'</span><span class="y-status">['+status+']</span>';
+    yl.appendChild(row);
+  }
+
+  // ── NOTIFICATIONS ──
+  var notifs = [
+    {app:'FACE-BOOK.NET',msg:'47 notifications. None of them matter.'},
+    {app:'INSTA-GRAM',msg:'Someone you barely know posted a photo.'},
+    {app:'TWIT-TER XP',msg:'BREAKING: someone is wrong on the internet.'},
+    {app:'THE ALGORITHM',msg:"You haven't opened me in 2 hours. Miss me?"},
+    {app:'YOUR EX',msg:'Just posted 3 new photos. Thought you should know.'},
+    {app:'YOUTUBE TV',msg:"47 videos added to Watch Later. (You won't.)"},
+    {app:'FACE-BOOK.NET',msg:'On this day 8 years ago you were outside.'},
+    {app:'TIK-TOK NET',msg:'FLASH SALE: 3 more hours of your life. FREE.'},
+    {app:'SYSTEM ALERT',msg:'Update available: More Addiction v3.0'},
+    {app:'THE ALGORITHM',msg:'Still there? Good. Keep scrolling. We need you.'},
+  ];
+  var notifIv = null, notifIdx = 0, notifCnt = 0;
+
+  function startNotifs() {
+    notifIdx = 0; notifCnt = 0;
+    document.getElementById('notifContainer').innerHTML = '';
+    document.getElementById('notifCount').textContent = 'connecting...';
+    notifIv = setInterval(function() {
+      if (notifIdx >= notifs.length) { clearInterval(notifIv); return; }
+      var n = notifs[notifIdx++]; notifCnt++;
+      var el = document.createElement('div'); el.className = 'notif';
+      el.innerHTML = '<div class="n-app">'+n.app+'</div><div class="n-msg">'+n.msg+'</div>';
+      var c = document.getElementById('notifContainer');
+      c.appendChild(el); c.scrollTop = c.scrollHeight;
+      document.getElementById('notifCount').textContent = notifCnt + ' notifications. Your phone misses you.';
+    }, 500);
+  }
+
+  function clearNotifs() {
+    clearInterval(notifIv);
+    document.getElementById('notifContainer').innerHTML = '';
+    document.getElementById('notifCount').textContent = "All cleared. They'll be back in 5 minutes.";
+  }
+
+  // ── WINDOW MANAGEMENT ──
+  function openWin(id) {
+    ['computer','trash','phone','years'].forEach(function(wid) {
+      var w = document.getElementById('win-'+wid);
+      if (w) w.style.display = 'none';
+    });
+    if (notifIv) clearInterval(notifIv);
+    // Remove badge from the clicked icon
+    var iconMap = {computer:0, trash:1, phone:2, years:3};
+    var icons = document.querySelectorAll('.desktop-icons .icon');
+    var idx = iconMap[id];
+    if (idx !== undefined && icons[idx]) {
+      var badge = icons[idx].querySelector('.icon-badge');
+      if (badge) badge.remove();
+    }
+    var w = document.getElementById('win-'+id);
+    if (w) w.style.display = 'block';
+    if (id === 'phone') setTimeout(startNotifs, 100);
+  }
+
+  function closeWin(id) {
+    var w = document.getElementById('win-'+id);
+    if (w) w.style.display = 'none';
+    if (id === 'phone' && notifIv) clearInterval(notifIv);
+  }
+
+  // ── SIGNATURE CANVAS ──
+  var canvas = document.getElementById('sigCanvas');
+  var ctx;
+  var drawing = false, hasSig = false;
+
+  function initCanvas() {
+    var r = canvas.parentElement.getBoundingClientRect();
+    canvas.width = r.width || 300;
+    canvas.height = 50;
+    ctx = canvas.getContext('2d');
+    ctx.strokeStyle = '#00008B';
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+  }
+
+  function getPos(e) {
+    var r = canvas.getBoundingClientRect();
+    var scaleX = canvas.width / r.width;
+    var scaleY = canvas.height / r.height;
+    var src = e.touches ? e.touches[0] : e;
+    return { x: (src.clientX - r.left) * scaleX, y: (src.clientY - r.top) * scaleY };
+  }
+
+  canvas.addEventListener('mousedown', function(e) { drawing = true; var p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
+  canvas.addEventListener('mousemove', function(e) { if (!drawing) return; var p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); hasSig = true; document.getElementById('sigPlaceholder').style.display = 'none'; });
+  canvas.addEventListener('mouseup', function() { drawing = false; });
+  canvas.addEventListener('mouseleave', function() { drawing = false; });
+  canvas.addEventListener('touchstart', function(e) { e.preventDefault(); drawing = true; var p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }, {passive:false});
+  canvas.addEventListener('touchmove', function(e) { e.preventDefault(); if (!drawing) return; var p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); hasSig = true; document.getElementById('sigPlaceholder').style.display = 'none'; }, {passive:false});
+  canvas.addEventListener('touchend', function() { drawing = false; });
+
+  function clearSig() {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    hasSig = false;
+    document.getElementById('sigPlaceholder').style.display = 'block';
+  }
+
+  // ── CERTIFICATE FLOW ──
+  var certData = { years: '—', pct: '—', hours: '—' };
+
+  function showCertToast(years, pct, hours) {
+    certData = { years: years, pct: pct, hours: hours };
+    var now = new Date();
+    var dateStr = now.toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+    document.getElementById('lYears').textContent = years;
+    document.getElementById('lPct').textContent = pct;
+    document.getElementById('lHours').textContent = hours;
+    document.getElementById('lYears2').textContent = Math.round(parseFloat(years) * 365);
+    document.getElementById('lYears3').textContent = years;
+    document.getElementById('letterDate').textContent = dateStr;
+    document.getElementById('cYears').textContent = years;
+    document.getElementById('cHours').textContent = Number(String(hours).replace(/,/g,'')).toLocaleString();
+    document.getElementById('cDate').textContent = dateStr;
+    var toast = document.getElementById('certToast');
+    toast.style.display = 'block';
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() { toast.classList.add('visible'); });
+    });
+  }
+
+  function closeCertToast() {
+    var t = document.getElementById('certToast');
+    t.classList.remove('visible');
+    setTimeout(function() { t.style.display = 'none'; }, 400);
+  }
+
+  function openLetterWin() {
+    closeCertToast();
+    document.getElementById('letterBackdrop').classList.add('open');
+    document.getElementById('letterWin').classList.add('open');
+    setTimeout(initCanvas, 50);
+  }
+
+  function closeLetterWin() {
+    document.getElementById('letterWin').classList.remove('open');
+    document.getElementById('letterBackdrop').classList.remove('open');
+  }
+
+  function signAndPrint() {
+    if (!hasSig) {
+      document.getElementById('sigPlaceholder').textContent = '← sign first!';
+      document.getElementById('sigPlaceholder').style.display = 'block';
+      document.getElementById('sigPlaceholder').style.color = '#cc0000';
+      return;
+    }
+    var sigData = canvas.toDataURL();
+    document.getElementById('certSigImg').innerHTML = '<img src="'+sigData+'" style="height:30px;max-width:120px">';
+    closeLetterWin();
+    openPrinter();
+  }
+
+  function openPrinter() {
+    var pw = document.getElementById('printerWin');
+    pw.classList.add('open');
+    document.getElementById('printerBackdrop').style.display = 'block';
+    document.getElementById('printerBtns').style.display = 'none';
+    document.getElementById('printerProgress').style.width = '0%';
+    document.getElementById('printerStatus').textContent = 'Spooling document...';
+    var light = document.getElementById('printerLight');
+    light.className = 'printer-light orange';
+
+    var strip = document.getElementById('paperStrip');
+    strip.style.transition = 'none';
+    strip.style.transform = 'translateY(-110%)';
+
+    setTimeout(function() {
+      document.getElementById('printerStatus').textContent = 'Printing...';
+      var prog = 0;
+      var iv = setInterval(function() {
+        prog += 1.5;
+        document.getElementById('printerProgress').style.width = Math.min(prog,100) + '%';
+        if (prog >= 100) clearInterval(iv);
+      }, 33);
+      setTimeout(function() {
+        strip.style.transition = 'transform 2.4s ease-out';
+        strip.style.transform = 'translateY(0)';
+      }, 200);
+      setTimeout(function() {
+        document.getElementById('printerStatus').textContent = '✓ Done! Screenshot to share.';
+        document.getElementById('printerBtns').style.display = 'flex';
+        light.className = 'printer-light';
+      }, 2800);
+    }, 500);
+  }
+
+  function closePrinterWin() {
+    document.getElementById('printerWin').classList.remove('open');
+    document.getElementById('printerBackdrop').style.display = 'none';
+  }
+
+  // ── MUSIC ──
+  var audioCtx = null, musicPlaying = false, musicTimeout = null;
+  var notes = [[523,0],[523,0.2],[659,0.4],[784,0.6],[880,0.8],[784,1.0],[659,1.2],[523,1.4],[0,1.6],[392,1.8],[523,2.0],[659,2.2],[784,2.4],[659,2.6],[523,2.8],[392,3.0],[392,3.2],[0,3.4],[523,3.6],[659,3.8],[784,4.0],[1047,4.2],[880,4.4],[784,4.6],[659,4.8],[523,5.0],[0,5.2],[392,5.4],[523,5.6],[659,5.8],[523,6.0],[392,6.2],[523,6.4]];
+  var loopDur = 7.0;
+
+  function playNote(freq, st, dur) {
+    if (!freq || !audioCtx) return;
+    var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    o.type = 'triangle'; o.frequency.value = freq;
+    g.gain.setValueAtTime(0, st);
+    g.gain.linearRampToValueAtTime(0.1, st + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, st + dur - 0.02);
+    o.start(st); o.stop(st + dur);
+  }
+
+  function scheduleMelody() {
+    if (!musicPlaying || !audioCtx) return;
+    var base = audioCtx.currentTime + 0.05;
+    notes.forEach(function(n, i) {
+      var nextT = i < notes.length - 1 ? notes[i+1][1] : loopDur;
+      playNote(n[0], base + n[1], (nextT - n[1]) * 0.85);
+    });
+    musicTimeout = setTimeout(scheduleMelody, (loopDur - 0.1) * 1000);
+  }
+
+  function toggleMusic() {
+    var btn = document.getElementById('cdBtn');
+    var lbl = document.getElementById('cdLabel');
+    if (!musicPlaying) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      musicPlaying = true;
+      btn.classList.add('playing');
+      lbl.textContent = 'MUSIC ON';
+      scheduleMelody();
+    } else {
+      musicPlaying = false;
+      clearTimeout(musicTimeout);
+      if (audioCtx) { audioCtx.close(); audioCtx = null; }
+      btn.classList.remove('playing');
+      lbl.textContent = 'MUSIC OFF';
+    }
+  }
+
+  // ── CALCULATOR ──
+  // show warning until user dismisses it
+  (function() {
+    var w = document.getElementById('warningPopup');
+    w.style.display = 'block';
+    w.style.cursor = 'pointer';
+    w.addEventListener('click', dismissWarning);
+  })();
+
+  function dismissWarning() {
+    var w = document.getElementById('warningPopup');
+    if (w) w.style.display = 'none';
+  }
+
+  function updateVal(inputId, displayId, unit) {
+    var v = document.getElementById(inputId).value;
+    var display = parseFloat(v) % 1 === 0 ? parseInt(v) : parseFloat(v);
+    document.getElementById(displayId).innerHTML = display + '<span class="unit"> '+unit+'</span>';
+  }
+
+  function calculate() {
+    dismissWarning();
+    var age = parseInt(document.getElementById('age').value);
+    var screen = parseFloat(document.getElementById('screen').value);
+    document.getElementById('formSection').classList.add('hidden');
+    document.getElementById('crtScreen').style.display = 'none';
+    document.getElementById('loading').classList.add('visible');
+    document.getElementById('statusLeft').textContent = 'Calculating...';
+    var msgs = [
+      ['Counting your lost hours...','Please do not turn off your computer or face reality.'],
+      ['Converting hours to existential dread...','This is fine. Everything is fine.'],
+      ['Preparing your results...','You might want to sit down for this.']
+    ];
+    var p = 0, mi = 0;
+    var iv = setInterval(function() {
+      p++;
+      document.getElementById('progressFill').style.width = p + '%';
+      if (p % 33 === 0 && mi < msgs.length - 1) { mi++; document.getElementById('loadingMsg').textContent = msgs[mi][0]; document.getElementById('loadingSub').textContent = msgs[mi][1]; }
+      if (p >= 100) { clearInterval(iv); showResult(age, screen); }
+    }, 28);
+  }
+
+  function getFunFact(years) {
+    var y = parseFloat(years);
+    var facts = [
+      {max:1,  text:y+' year. That\'s 365 sunrises, weekends, and actual conversations. On a screen.'},
+      {max:2,  text:y+' years. You could have learned a language, become fluent, and moved abroad. Instead: scrolling.'},
+      {max:3,  text:y+' years. A full bachelor\'s degree takes 3. You were this close to graduating in doom-scrolling.'},
+      {max:5,  text:y+' years. Enough time to write 2 novels, learn an instrument, and run a marathon. You chose the feed.'},
+      {max:7,  text:y+' years. That\'s a master\'s + PhD + gap year. Your phone ate your entire academic career.'},
+      {max:10, text:y+' years. 10,000 hours makes you world-class. Congratulations — you\'re elite at scrolling.'},
+      {max:999,text:y+' years. That\'s not a number, that\'s a life sentence. Your phone is the warden.'}
+    ];
+    return (facts.find(function(f){ return y < f.max; }) || facts[facts.length-1]).text;
+  }
+
+  function getShareRoast(years) {
+    var y = parseFloat(years);
+    var roasts = [
+      'Your phone has seen you more than your family has.',
+      'You could\'ve learned 3 languages. You learned TikTok dances instead.',
+      'Your screen time has a longer resume than you do.',
+      'Your posture left the chat ' + Math.round(y) + ' years ago.',
+      'Congratulations, you\'re elite at scrolling.',
+      'Your attention span just filed for bankruptcy.',
+      'Your phone knows your face better than your mirror.',
+      'Even your screen is tired of looking at you.',
+    ];
+    return roasts[Math.floor(Math.random() * roasts.length)];
+  }
+
+  function showResult(age, screen) {
+    // Opal formula constants
+    var awakeHours = 16;
+    var hoursInDay = 24;
+    var daysInYear = 365;
+    var averageLifespan = 72;
+    var screentimeSaving = 0.3;
+
+    // Core Opal projections
+    var dailyAwakeScreentime = (screen / awakeHours) * hoursInDay;
+    var yearlyHours = dailyAwakeScreentime * daysInYear;
+    var lifetimeHours = yearlyHours * averageLifespan;
+
+    // Display values
+    var pct = ((screen / awakeHours) * 100).toFixed(0);
+    var years = (lifetimeHours / 8760).toFixed(1);
+    var days = Math.round(lifetimeHours / 24);
+    var months = Math.round(days / 30);
+    var hours = Math.round(lifetimeHours).toLocaleString();
+    var savedDaily = (screen * screentimeSaving).toFixed(1);
+
+    document.getElementById('resultYears').textContent = years;
+    document.getElementById('resultCopy').innerHTML = 'That\'s <b>'+pct+'%</b> of every waking hour. Over a lifetime, <b>'+years+' years</b> — gone to scrolling, tapping, swiping.';
+    document.getElementById('statPct').textContent = pct+'%';
+    document.getElementById('statDays').textContent = days.toLocaleString();
+    document.getElementById('statMonths').textContent = months;
+    document.getElementById('statHours').textContent = hours;
+    document.getElementById('funFact').textContent = getFunFact(years);
+    // Populate share card
+    document.getElementById('scYears').textContent = years;
+    document.getElementById('scPct').textContent = pct+'%';
+    document.getElementById('scDays').textContent = days.toLocaleString();
+    document.getElementById('scMonths').textContent = months;
+    document.getElementById('scHours').textContent = hours;
+    document.getElementById('scRoast').textContent = getShareRoast(years);
+    document.getElementById('loading').classList.remove('visible');
+    document.getElementById('result').classList.add('visible');
+    document.getElementById('statusLeft').textContent = 'Done — '+years+' years found';
+    showCertToast(years, pct, hours);
+  }
+
+  function shareStory() {
+    var btn = document.getElementById('shareBtn');
+    btn.textContent = '[ GENERATING... ]';
+    btn.disabled = true;
+    var card = document.getElementById('shareCard');
+    // Temporarily make visible for html2canvas
+    card.style.left = '-9999px';
+    card.style.top = '0';
+    card.style.position = 'fixed';
+    html2canvas(card, { scale: 3, useCORS: true, backgroundColor: null, width: 360, height: 640 }).then(function(canvas) {
+      card.style.left = '-9999px';
+      card.style.top = '-9999px';
+      canvas.toBlob(function(blob) {
+        if (!blob) { btn.textContent = '[ SHARE TO STORIES ]'; btn.disabled = false; return; }
+        var file = new File([blob], 'my-screen-time.png', { type: 'image/png' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          navigator.share({ files: [file], title: 'My Screen Time', text: 'How much of my life I spent on a phone' }).then(function() {
+            btn.textContent = '[ SHARED! ]';
+            setTimeout(function() { btn.textContent = '[ SHARE TO STORIES ]'; btn.disabled = false; }, 2000);
+          }).catch(function() {
+            btn.textContent = '[ SHARE TO STORIES ]'; btn.disabled = false;
+          });
+        } else {
+          // Desktop fallback: download
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement('a');
+          a.href = url; a.download = 'my-screen-time.png';
+          document.body.appendChild(a); a.click(); document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          btn.textContent = '[ DOWNLOADED! ]';
+          setTimeout(function() { btn.textContent = '[ SHARE TO STORIES ]'; btn.disabled = false; }, 2000);
+        }
+      }, 'image/png');
+    }).catch(function() {
+      btn.textContent = '[ SHARE TO STORIES ]'; btn.disabled = false;
+    });
+  }
+
+  function reset() {
+    document.getElementById('result').classList.remove('visible');
+    document.getElementById('formSection').classList.remove('hidden');
+    document.getElementById('crtScreen').style.display = 'block';
+    document.getElementById('progressFill').style.width = '0%';
+    document.getElementById('loadingMsg').textContent = 'Counting your lost hours...';
+    document.getElementById('loadingSub').textContent = 'Please do not turn off your computer or face reality.';
+    document.getElementById('statusLeft').textContent = 'Ready';
+    document.getElementById('warningPopup').style.display = 'block';
+    var t = document.getElementById('certToast');
+    t.classList.remove('visible'); t.style.display = 'none';
+    document.getElementById('letterWin').classList.remove('open');
+    document.getElementById('letterBackdrop').classList.remove('open');
+    document.getElementById('printerWin').classList.remove('open');
+    document.getElementById('printerBackdrop').style.display = 'none';
+    var sb = document.getElementById('shareBtn');
+    sb.textContent = '[ SHARE TO STORIES ]'; sb.disabled = false;
+    clearSig();
+  }
+
+  // Show badges only after icon images have loaded
+  (function() {
+    var imgs = document.querySelectorAll('.icon-img img');
+    var loaded = 0;
+    function showBadges() {
+      document.querySelectorAll('.icon-badge').forEach(function(b) { b.classList.add('visible'); });
+    }
+    imgs.forEach(function(img) {
+      if (img.complete) { loaded++; }
+      else {
+        img.addEventListener('load', function() { loaded++; if (loaded >= imgs.length) showBadges(); });
+        img.addEventListener('error', function() { loaded++; if (loaded >= imgs.length) showBadges(); });
+      }
+    });
+    if (loaded >= imgs.length) showBadges();
+  })();
+</script>
+</body>
+</html>
