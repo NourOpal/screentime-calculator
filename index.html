@@ -876,20 +876,20 @@
     var allCardEls = track.querySelectorAll('.carousel-card');
     for (var m = 0; m < allCardEls.length; m++) {
       allCardEls[m].style.opacity = '0';
-      allCardEls[m].style.transform = 'translateY(30px)';
+      allCardEls[m].style.transform = 'translateY(20px)';
     }
 
     document.getElementById('cardsBackdrop').classList.add('open');
 
-    // Stagger animate each card
+    // Stagger animate each card (only visible ones, faster)
     for (var n = 0; n < allCardEls.length; n++) {
       (function(card, delay) {
         setTimeout(function() {
-          card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+          card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
           card.style.opacity = '1';
           card.style.transform = 'translateY(0)';
         }, delay);
-      })(allCardEls[n], n * 60);
+      })(allCardEls[n], Math.min(n, allCards.length) * 30);
     }
   }
 
