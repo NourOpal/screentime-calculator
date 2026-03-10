@@ -48,11 +48,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 0 12px;
+    padding: 0 0 18px;
   }
   .top-logos { display: flex; align-items: center; gap: 8px; }
-  .top-logos img { height: 20px; image-rendering: pixelated; opacity: 0.9; }
-  .top-logos span { font-size: 14px; color: #fff; font-weight: bold; }
+  .top-logos img { height: 18px; opacity: 0.9; }
+  .top-logos a { display: flex; align-items: center; }
+  .top-logos a img { height: 36px; }
+  .top-logos .logo-divider { width: 1.5px; height: 28px; background: rgba(255,255,255,0.5); }
   .cd-btn {
     width: 44px; height: 44px;
     background: #c0c0c0;
@@ -68,7 +70,7 @@
   .cd-btn.playing .cd-badge { display: block; }
 
   /* ── DESKTOP ICONS ── */
-  .desktop-icons { display: flex; justify-content: center; gap: 16px; padding: 0 0 14px; width: 100%; max-width: 420px; flex-wrap: wrap; }
+  .desktop-icons { display: flex; justify-content: center; gap: 16px; padding: 0 0 20px; width: 100%; max-width: 420px; flex-wrap: wrap; }
   .icon { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; width: 70px; user-select: none; -webkit-user-select: none; transition: transform 0.1s ease; }
   .icon:hover { transform: translateY(-2px); }
   .icon:active { transform: scale(0.93); }
@@ -84,7 +86,7 @@
   .titlebar { background: linear-gradient(90deg, #000080, #1084d0); padding: 4px 6px; display: flex; align-items: center; gap: 5px; }
   .titlebar-title { font-size: 17px; color: #fff; flex: 1; letter-spacing: 0.5px; }
   .win-close { width: 20px; height: 18px; background: #c0c0c0; border-top: 1.5px solid #fff; border-left: 1.5px solid #fff; border-right: 1.5px solid #404040; border-bottom: 1.5px solid #404040; font-size: 14px; line-height: 1; display: flex; align-items: center; justify-content: center; color: #000; cursor: pointer; padding-bottom: 2px; }
-  .menubar { background: #c0c0c0; border-bottom: 1px solid #808080; padding: 3px 8px; display: flex; gap: 2px; }
+  .menubar { background: #c0c0c0; border-bottom: 1px solid #808080; padding: 3px 8px; display: flex; gap: 2px; flex-wrap: nowrap; overflow: hidden; }
   .menu-item { font-size: 17px; color: #000; padding: 2px 8px; cursor: pointer; }
   .menu-item:active { background: #000080; color: #fff; }
 
@@ -150,7 +152,24 @@
 
   .win-btn { width: 100%; background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; padding: 10px; font-family: 'VT323', monospace; font-size: 22px; letter-spacing: 1px; cursor: pointer; color: #000; text-align: center; }
   .win-btn:active { border-top-color: #404040; border-left-color: #404040; border-right-color: #fff; border-bottom-color: #fff; }
-  .win-btn.primary { background: #000080; color: #fff; border-top-color: #4040c0; border-left-color: #4040c0; border-right-color: #000020; border-bottom-color: #000020; font-size: 24px; }
+  .win-btn.primary {
+    background: #000080;
+    color: #fff;
+    border-top-color: #4040c0; border-left-color: #4040c0;
+    border-right-color: #000020; border-bottom-color: #000020;
+    font-size: 28px; padding: 18px 16px; letter-spacing: 3px;
+    animation: btnBounce 2s ease-in-out infinite;
+    position: relative; overflow: hidden;
+    outline: 2px dotted #ffff00; outline-offset: 3px;
+  }
+  .win-btn.primary::before { content: '\25B6 '; animation: btnBlink 1s step-end infinite; }
+  .win-btn.primary::after { content: ''; position: absolute; top: 0; left: -100%; width: 80%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent); animation: btnShimmer 1.8s ease-in-out infinite; }
+  @keyframes btnBounce {
+    0%,100%{transform:scale(1);box-shadow:0 2px 8px rgba(0,0,128,0.3)}
+    50%{transform:scale(1.03);box-shadow:0 4px 20px rgba(0,0,128,0.5), 0 0 30px rgba(255,255,0,0.15)}
+  }
+  @keyframes btnBlink { 0%,100%{opacity:1} 50%{opacity:0} }
+  @keyframes btnShimmer { 0%{left:-100%} 100%{left:200%} }
 
   .loading { display: none; flex-direction: column; gap: 8px; }
   .loading.visible { display: flex; }
@@ -183,222 +202,94 @@
   .form-section { display: flex; flex-direction: column; gap: 10px; }
   .form-section.hidden { display: none; }
 
-  /* ── CERT TOAST ── */
-  .cert-toast {
-    position: fixed; bottom: 24px; left: 50%;
-    transform: translateX(-50%) translateY(140px);
-    width: 88vw; max-width: 320px;
-    z-index: 500;
-    transition: transform 0.4s ease;
-    display: none;
-    cursor: pointer;
+  /* ── CLIPPY ── */
+  .clippy-container {
+    position: fixed; bottom: 20px; right: 20px; z-index: 9999;
+    display: none; align-items: flex-end; gap: 0; flex-direction: row;
   }
-  .cert-toast.visible { transform: translateX(-50%) translateY(0); display: block; }
-  .cert-toast-titlebar { background: linear-gradient(90deg, #000080, #1084d0); padding: 4px 6px; display: flex; align-items: center; }
-  .cert-toast-title { font-size: 15px; color: #fff; flex: 1; }
-  .cert-toast-body { padding: 8px 10px; font-size: 16px; color: #000; line-height: 1.6; background: #c0c0c0; border-top: none; }
-  .cert-blink { display: inline-block; animation: tblink 1s step-end infinite; }
+  .clippy-container.visible { display: flex; animation: clippySlideIn 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+  .clippy-container.dismissed { animation: clippySlideOut 0.3s ease-in forwards; }
+  @keyframes clippySlideIn { 0%{transform:translateY(200px) scale(0.5);opacity:0} 60%{transform:translateY(-15px) scale(1.05);opacity:1} 80%{transform:translateY(5px) scale(0.98)} 100%{transform:translateY(0) scale(1);opacity:1} }
+  @keyframes clippySlideOut { 0%{transform:translateY(0);opacity:1} 100%{transform:translateY(200px);opacity:0} }
+  .clippy-character { cursor:pointer; animation:clippyBob 2.5s ease-in-out infinite; filter:drop-shadow(2px 4px 6px rgba(0,0,0,0.3)); user-select:none; flex-shrink:0; line-height:0; }
+  .clippy-character img { display:block; }
+  @keyframes clippyBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+  .clippy-bubble { position:relative; background:#ffffc8; border:2px solid #000; padding:12px 14px; font-family:'VT323',monospace; font-size:16px; color:#000; line-height:1.5; max-width:260px; box-shadow:2px 2px 0 #808080; margin-bottom:20px; margin-right:-10px; }
+  .clippy-bubble::after { content:''; position:absolute; bottom:-12px; right:24px; border-left:10px solid transparent; border-right:10px solid transparent; border-top:12px solid #ffffc8; z-index:2; }
+  .clippy-bubble::before { content:''; position:absolute; bottom:-15px; right:22px; border-left:12px solid transparent; border-right:12px solid transparent; border-top:15px solid #000; z-index:1; }
+  .clippy-bubble-text { margin-bottom:10px; }
+  .clippy-bubble-text b { color:#800000; }
+  .clippy-btns { display:flex; gap:8px; flex-wrap:wrap; }
+  .clippy-btn { background:#c0c0c0; border-top:2px solid #fff; border-left:2px solid #fff; border-right:2px solid #404040; border-bottom:2px solid #404040; padding:4px 12px; font-family:'VT323',monospace; font-size:15px; cursor:pointer; color:#000; white-space:nowrap; }
+  .clippy-btn:active { border-top-color:#404040; border-left-color:#404040; border-right-color:#fff; border-bottom-color:#fff; }
+  .clippy-btn.primary { background:#000080; color:#fff; border-top-color:#4040c0; border-left-color:#4040c0; border-right-color:#000020; border-bottom-color:#000020; }
+  @media (max-width:600px) {
+    .clippy-container { right:10px; left:10px; bottom:10px; flex-direction:column-reverse; align-items:center; }
+    .clippy-bubble { max-width:100%; margin-right:0; margin-bottom:0; font-size:14px; }
+    .clippy-bubble::after { bottom:-12px; right:50%; transform:translateX(50%); }
+    .clippy-bubble::before { bottom:-15px; right:50%; transform:translateX(50%); }
+    .clippy-character { margin-top:-6px; }
+    .clippy-character img { width:60px !important; }
+  }
+
+  /* ── CARDS OVERLAY ── */
+  .cards-backdrop {
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:8000;
+    flex-direction:column; align-items:center; justify-content:center;
+    padding:24px 0; overflow-y:auto;
+  }
+  .cards-backdrop.open { display:flex; animation: backdropFadeIn 0.3s ease; }
+  @keyframes backdropFadeIn { from{opacity:0} to{opacity:1} }
+  .cards-close-top { position:fixed; top:16px; right:16px; z-index:8001; width:28px; height:26px; background:#c0c0c0; border-top:2px solid #fff; border-left:2px solid #fff; border-right:2px solid #404040; border-bottom:2px solid #404040; display:flex; align-items:center; justify-content:center; cursor:pointer; font-family:'VT323',monospace; font-size:18px; color:#000; line-height:1; padding-bottom:2px; }
+  .cards-title { color:#fff; font-family:'VT323',monospace; font-size:18px; letter-spacing:1px; margin:40px 20px 16px; text-align:center; flex-shrink:0; line-height:1.4; }
+  .carousel-wrap { width:100%; overflow-x:auto; overflow-y:visible; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; display:flex; gap:14px; padding:20px calc(50vw - 155px); scrollbar-width:none; flex-shrink:0; }
+  .carousel-wrap::-webkit-scrollbar { display:none; }
+  .carousel-card { scroll-snap-align:center; flex:0 0 310px; cursor:pointer; transition:box-shadow 0.3s ease, filter 0.3s ease; border-radius:10px; overflow:visible; }
+  .carousel-card img { width:100%; height:auto; display:block; border-radius:10px; }
+  .carousel-card:hover { transform:translateY(-2px); }
+  .carousel-card.selected { box-shadow:0 0 0 3px #fff, 0 0 30px rgba(255,255,255,0.5), 0 0 60px rgba(100,180,255,0.3); transform:scale(1.1) translateY(-6px); z-index:2; }
+  .carousel-wrap.has-selection .carousel-card:not(.selected) { filter:brightness(0.6); }
+  .carousel-dots { display:flex; gap:8px; margin-top:14px; justify-content:center; flex-shrink:0; }
+  .carousel-dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.3); transition:background 0.2s; }
+  .carousel-dot.active { background:#fff; }
+  .carousel-selection { display:none; flex-direction:column; align-items:center; gap:10px; margin-top:14px; width:100%; max-width:360px; flex-shrink:0; padding:0 20px; }
+  .carousel-selection.visible { display:flex; }
+  .carousel-selection-text { color:#fff; font-family:'VT323',monospace; font-size:20px; text-align:center; }
+  .cards-share-btn { max-width:360px; }
+  .cards-share-btn.done { background:#198754; color:#fff; border-color:#198754; }
+  .cards-share-btn.done::after { animation:none; }
+  @media (max-width:600px) {
+    .carousel-card { flex:0 0 72vw; }
+    .carousel-wrap { padding:20px 14vw; gap:12px; }
+    .cards-title { font-size:18px; margin-top:48px; }
+  }
+
   @keyframes tblink { 0%,100%{opacity:1} 50%{opacity:0} }
 
-  /* ── LETTER WINDOW ── */
-  .letter-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 599; }
-  .letter-backdrop.open { display: block; }
-  .letter-win {
-    display: none; position: fixed;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 92vw; max-width: 380px;
-    max-height: calc(100vh - 40px);
-    overflow-y: auto;
-    z-index: 600;
-  }
-  .letter-win.open { display: block; }
-
-  .letter-paper {
-    margin: 10px;
-    background: #fffff4;
-    border-top: 2px solid #404040; border-left: 2px solid #404040;
-    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
-    padding: 16px;
-  }
-  .lp-to { font-size: 15px; color: #606060; margin-bottom: 10px; border-bottom: 1px solid #d0d0b0; padding-bottom: 8px; }
-  .lp-body { font-size: 18px; color: #111; line-height: 1.8; }
-  .lp-stat { color: #800000; font-size: 20px; }
-  .lp-sign-label { font-size: 15px; color: #404040; margin-top: 16px; margin-bottom: 6px; }
-  .sig-wrap {
-    background: #fff;
-    border-top: 2px solid #404040; border-left: 2px solid #404040;
-    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
-    position: relative;
-  }
-  #sigCanvas { display: block; width: 100%; height: 50px; cursor: crosshair; touch-action: none; }
-  .sig-placeholder { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 14px; color: #b0b0b0; pointer-events: none; white-space: nowrap; }
-
-  .letter-btns { display: flex; justify-content: space-between; padding: 8px 10px 10px; gap: 10px; }
-  .btn-primary { background: #000080; color: #fff; border-top: 2px solid #4040c0; border-left: 2px solid #4040c0; border-right: 2px solid #000020; border-bottom: 2px solid #000020; padding: 8px 20px; font-family: 'VT323', monospace; font-size: 19px; cursor: pointer; }
-
-  /* ── PRINTER WINDOW ── */
-  .printer-win {
-    display: none; position: fixed;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 92vw; max-width: 380px;
-    max-height: calc(100vh - 40px);
-    overflow-y: auto;
-    z-index: 700;
-  }
-  .printer-win.open { display: block; }
-
-  .printer-body { padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-
-  .printer-machine {
-    width: 180px;
-    background: #d4d0c8;
-    border-top: 3px solid #fff; border-left: 3px solid #fff;
-    border-right: 3px solid #505050; border-bottom: 3px solid #505050;
-    padding: 8px 14px 6px;
-    display: flex; flex-direction: column; align-items: center; gap: 5px;
-  }
-  .printer-top-slot { width: 90%; height: 7px; background: #404040; border: 1px solid #202020; border-radius: 1px; }
-  .printer-lights { display: flex; gap: 6px; align-items: center; }
-  .printer-light { width: 9px; height: 9px; border-radius: 50%; background: #00cc00; box-shadow: 0 0 4px #00cc00; }
-  .printer-light.orange { background: #ff8800; box-shadow: 0 0 4px #ff8800; animation: plight 0.6s step-end infinite; }
-  @keyframes plight { 0%,100%{opacity:1} 50%{opacity:0.2} }
-  .printer-name { font-size: 13px; color: #333; letter-spacing: 1px; }
-  .printer-bottom-slot { width: 70%; height: 6px; background: #808080; border: 1px solid #505050; }
-
-  .paper-feed { width: 100%; overflow: hidden; }
-  .paper-strip {
-    background: #fff;
-    border-left: 1px solid #ddd; border-right: 1px solid #ddd;
-    width: 100%;
-    transform: translateY(-110%);
-    transition: none;
-  }
-  .paper-strip.printing { transition: transform 2.2s ease-out; transform: translateY(0); }
-
-  /* ── CERTIFICATE ── */
-  .certificate {
-    padding: 18px 20px;
-    font-family: 'VT323', monospace;
-    border-top: 4px double #404040;
-    border-bottom: 4px double #404040;
-  }
-  .cert-top-rule { height: 1px; background: #404040; margin-bottom: 12px; }
-  .cert-heading {
-    text-align: center; font-size: 18px; color: #000;
-    letter-spacing: 3px; margin-bottom: 4px; line-height: 1.3;
-  }
-  .cert-dept { text-align: center; font-size: 13px; color: #505050; letter-spacing: 1px; margin-bottom: 14px; }
-  .cert-body { font-size: 16px; color: #111; line-height: 1.9; }
-  .cert-stat { color: #800000; font-size: 18px; }
-  .cert-divider { height: 1px; background: #c0c0c0; margin: 12px 0; }
-  .cert-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; gap: 12px; }
-  .cert-sig-col { display: flex; flex-direction: column; gap: 3px; }
-  .cert-sig-img { min-height: 30px; }
-  .cert-sig-img img { height: 28px; max-width: 110px; }
-  .cert-sig-line { width: 110px; height: 1px; background: #000; }
-  .cert-sig-label { font-size: 12px; color: #606060; }
-  .cert-date-col { font-size: 13px; color: #505050; text-align: right; line-height: 1.6; }
-  .cert-badge {
-    text-align: center; font-size: 13px; color: #000080;
-    border: 2px solid #000080; padding: 4px 8px; line-height: 1.4;
-    animation: badgeblink 2.5s step-end infinite;
-  }
-  @keyframes badgeblink { 0%,66%{opacity:1} 80%{opacity:0.3} 100%{opacity:1} }
-
-  .printer-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 699; }
-  .printer-status-row { width: 100%; }
-  .printer-status { font-size: 16px; color: #000; text-align: center; margin-bottom: 6px; }
-  .printer-btns { display: flex; justify-content: center; gap: 10px; padding: 0 10px 10px; }
-
-  /* ── SHARE CARD (hidden, rendered by html2canvas) ── */
+  /* ── SHARE CARD ── */
   .share-card {
     position: fixed; left: -9999px; top: -9999px;
     width: 360px; height: 640px;
-    background-color: #2563a8;
-    background-image:
-      radial-gradient(ellipse 120px 40px at 25% 28%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 100%),
-      radial-gradient(ellipse 80px 30px at 30% 30%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 100%),
-      radial-gradient(ellipse 150px 45px at 70% 35%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 100%),
-      radial-gradient(ellipse 90px 35px at 75% 32%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%),
-      radial-gradient(ellipse 60px 25px at 50% 40%, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 100%),
-      radial-gradient(ellipse 100px 35px at 15% 45%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 100%),
-      radial-gradient(ellipse 70px 28px at 85% 42%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%),
-      linear-gradient(180deg, #2563a8 0%, #3a7bd5 15%, #5a9fe6 35%, #87ceeb 50%, #5a9fe6 65%, #3a7bd5 85%, #2563a8 100%);
     font-family: 'VT323', monospace;
     display: flex; flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 16px;
+    padding: 0;
     overflow: hidden;
   }
-
-  /* Desktop icons on share card */
-  .sc-icons { display: flex; justify-content: center; gap: 14px; width: 100%; margin-bottom: 8px; }
-  .sc-icon { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 56px; }
-  .sc-icon-wrap { width: 38px; height: 38px; position: relative; display: flex; align-items: center; justify-content: center; }
-  .sc-icon-wrap img { width: 38px; height: 38px; image-rendering: pixelated; object-fit: contain; }
-  .sc-icon-label { font-size: 10px; color: #fff; text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000; text-align: center; line-height: 1.1; }
-  .sc-icon-badge { background: #ff3b30; color: #fff; font-family: -apple-system, sans-serif; font-size: 8px; font-weight: 700; min-width: 14px; height: 14px; border-radius: 7px; display: flex; align-items: center; justify-content: center; padding: 0 3px; position: absolute; top: -3px; right: -3px; }
-
-  /* Marquee banner */
-  .sc-marquee { width: 100%; background: #000080; border-top: 2px solid #404040; border-left: 2px solid #404040; border-right: 2px solid #fff; border-bottom: 2px solid #fff; overflow: hidden; height: 22px; margin-bottom: 8px; }
-  .sc-marquee-inner { display: inline-block; white-space: nowrap; font-size: 15px; color: #ffff00; letter-spacing: 1px; line-height: 22px; }
-
-  /* Main window */
-  .sc-window {
-    width: 100%;
-    background: #c0c0c0;
-    border-top: 2px solid #fff; border-left: 2px solid #fff;
-    border-right: 2px solid #404040; border-bottom: 2px solid #404040;
-    display: flex; flex-direction: column;
-  }
-  .sc-titlebar { background: linear-gradient(90deg, #000080, #1084d0); padding: 3px 6px; display: flex; align-items: center; gap: 5px; }
-  .sc-titlebar-title { font-size: 14px; color: #fff; flex: 1; }
-  .sc-titlebar-btns { display: flex; gap: 2px; }
-  .sc-titlebar-btn { width: 14px; height: 13px; background: #c0c0c0; border-top: 1px solid #fff; border-left: 1px solid #fff; border-right: 1px solid #404040; border-bottom: 1px solid #404040; font-size: 9px; display: flex; align-items: center; justify-content: center; color: #000; }
-  .sc-body {
-    padding: 8px 12px 6px; display: flex; flex-direction: column; align-items: center;
-    background: #fff;
-    border-top: 2px solid #404040; border-left: 2px solid #404040;
-    border-right: 2px solid #fff; border-bottom: 2px solid #fff;
-    margin: 4px 6px;
-  }
-  .sc-label { font-size: 13px; color: #808080; letter-spacing: 2px; text-align: center; }
-  .sc-years { font-size: 100px; color: #000080; line-height: 0.85; text-align: center; text-shadow: 3px 3px 0 #b0b0b0; display: block; }
-  .sc-years-unit { font-size: 28px; color: #000080; letter-spacing: 8px; text-align: center; display: block; margin-bottom: 6px; }
-  .sc-stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1px; background: #404040; border: 2px solid #404040; width: 100%; }
-  .sc-stat { background: #c0c0c0; padding: 6px 2px; text-align: center; border-top: 1px solid #fff; border-left: 1px solid #fff; }
-  .sc-stat-num { font-size: 18px; color: #000080; display: block; line-height: 1.1; }
-  .sc-stat-lbl { font-size: 9px; color: #404040; display: block; }
-
-  /* Error dialog roast — separate floating window */
-  .sc-roast {
-    width: 100%;
-    background: #c0c0c0;
-    border-top: 2px solid #fff; border-left: 2px solid #fff;
-    border-right: 2px solid #404040; border-bottom: 2px solid #404040;
-    margin-top: 8px;
-  }
-  .sc-roast-titlebar { background: linear-gradient(90deg, #800000, #cc0000); padding: 2px 6px; display: flex; align-items: center; }
-  .sc-roast-titlebar span { font-size: 12px; color: #fff; }
-  .sc-roast-body { padding: 6px 10px; display: flex; gap: 8px; align-items: center; }
-  .sc-roast-icon { font-size: 24px; }
-  .sc-roast-text { font-size: 14px; color: #000; line-height: 1.4; }
-  .sc-statusbar { display: flex; gap: 2px; padding: 2px 4px; border-top: 1px solid #808080; }
-  .sc-status-cell { font-size: 10px; color: #000; border-top: 1px solid #404040; border-left: 1px solid #404040; border-right: 1px solid #fff; border-bottom: 1px solid #fff; padding: 1px 6px; flex: 1; }
-
-  /* Bottom bar */
-  .sc-bottom {
-    width: 100%;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 8px 0 0;
-  }
-  .sc-logos { display: flex; align-items: center; gap: 6px; }
-  .sc-logos img { height: 18px; opacity: 0.95; }
-  .sc-logos span { font-size: 14px; color: #fff; opacity: 0.95; }
-  .sc-url { font-size: 16px; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.5); letter-spacing: 0.5px; }
+  .sc-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+  .sc-copy { text-align: center; padding: 0 20px; margin-bottom: 6px; position: relative; z-index: 1; }
+  .sc-copy-years { font-size: 96px; color: #fff; line-height: 1; text-shadow: 3px 3px 0 rgba(0,0,0,0.5); display: block; }
+  .sc-copy-years-label { font-size: 20px; color: rgba(255,255,255,0.9); letter-spacing: 6px; display: block; margin-top: 6px; }
+  .sc-copy-line1 { font-size: 34px; color: #00ffff; text-shadow: 2px 2px 0 rgba(0,0,0,0.5); line-height: 1.2; margin-top: 10px; display: block; }
+  .sc-copy-line2 { font-size: 34px; color: #00ffff; text-shadow: 2px 2px 0 rgba(0,0,0,0.5); line-height: 1.2; display: block; }
+  .sc-card-img { width: 280px; height: auto; position: relative; z-index: 1; margin: 8px auto 0; }
+  .sc-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; width: 280px; box-sizing: border-box; position: relative; z-index: 1; }
+  .sc-bottom-logos { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .sc-logo-yap { height: 22px; width: auto; }
+  .sc-logo-divider { width: 1.5px; height: 22px; background: rgba(255,255,255,0.5); }
+  .sc-logo-opal { height: 16px; width: auto; }
+  .sc-url { font-size: 14px; color: rgba(255,255,255,0.85); letter-spacing: 1px; white-space: nowrap; }
 
   /* ── SHARE BUTTON ── */
   .share-btn {
@@ -425,10 +316,10 @@
   /* ── MOBILE COMPACT ── */
   @media (max-width: 767px) {
     body { padding: 8px 8px 16px; }
-    .top-bar { padding: 0 0 4px; }
+    .top-bar { padding: 0 0 14px; }
     .cd-btn { width: 44px; height: 44px; font-size: 16px; }
     .cd-label { font-size: 7px; }
-    .desktop-icons { gap: 10px; padding: 0 0 6px; }
+    .desktop-icons { gap: 10px; padding: 0 0 16px; }
     .icon { width: 58px; }
     .icon-img, .icon-img img { width: 38px; height: 38px; }
     .icon-badge { font-size: 10px; min-width: 16px; height: 16px; border-radius: 8px; top: -3px; right: -3px; }
@@ -444,7 +335,7 @@
     .field-row { padding: 5px 8px; gap: 8px; }
     .field-val { font-size: 22px; min-width: 50px; }
     .win-btn { padding: 7px; font-size: 19px; }
-    .win-btn.primary { font-size: 20px; }
+    .win-btn.primary { font-size: 22px; padding: 14px 12px; }
     .result { gap: 6px; }
     .result-main { padding: 10px 10px; }
     .result-main .r-intro { font-size: 13px; }
@@ -466,130 +357,65 @@
     .status-cell { font-size: 12px; padding: 1px 6px; }
     .err-body { padding: 6px 8px; gap: 8px; }
     .err-text { font-size: 14px; }
-    .win-window { margin-bottom: 4px; }
+    .win-window { margin-bottom: 8px; }
   }
 
   /* ── DESKTOP BREAKPOINT ── */
   @media (min-width: 768px) {
     body { min-height: 100vh; justify-content: center; }
     .top-bar { max-width: 500px; }
+    .top-logos img { height: 28px; }
+    .top-logos a img { height: 56px; }
+    .top-logos .logo-divider { width: 2px; height: 44px; }
     .desktop-icons { max-width: 500px; gap: 24px; }
     .win-window { max-width: 500px; }
-    .letter-win { max-width: 460px; }
-    .printer-win { max-width: 460px; }
-    .cert-toast { max-width: 400px; }
     .desk-win { max-width: 400px; }
-    .share-btn { display: none !important; }
     @keyframes marquee { from{transform:translateX(500px)} to{transform:translateX(-100%)} }
   }
 </style>
 </head>
 <body>
 
-<!-- ── CERT TOAST ── -->
-<div class="cert-toast w95" id="certToast" onclick="openLetterWin()">
-  <div class="cert-toast-titlebar">
-    <div class="cert-toast-title">📄 separation_notice.doc</div>
-    <div class="win-close" onclick="event.stopPropagation();closeCertToast()">x</div>
+<!-- ── CLIPPY ── -->
+<div class="clippy-container" id="clippyContainer">
+  <div class="clippy-bubble" id="clippyBubble">
+    <div class="clippy-bubble-text" id="clippyText"></div>
+    <div class="clippy-btns" id="clippyBtns"></div>
   </div>
-  <div class="cert-toast-body">
-    New document ready to sign.<br>
-    <span class="cert-blink">[ Click to open ]</span>
+  <div class="clippy-character" id="clippyChar"><img src="assets/Clippy.png" alt="Clippy" style="width:100px;height:auto"></div>
+</div>
+
+<!-- ── TRADING CARDS OVERLAY ── -->
+<div class="cards-backdrop" id="cardsBackdrop">
+  <div class="cards-close-top" onclick="closeCards()">x</div>
+  <div class="cards-title">With Opal, you can start reclaiming your time.<br>What will you do with it?</div>
+  <div class="carousel-wrap" id="carouselTrack"></div>
+  <div class="carousel-dots" id="carouselDots"></div>
+  <div class="carousel-selection" id="carouselSelection">
+    <div class="carousel-selection-text" id="carouselSelectionText"></div>
+    <button class="share-btn cards-share-btn" id="cardsShareBtn" onclick="shareStory()">[ SHARE TO STORIES ]</button>
   </div>
 </div>
 
-<!-- ── LETTER WINDOW ── -->
-<div class="letter-backdrop" id="letterBackdrop" onclick="closeLetterWin()"></div>
-<div class="letter-win w95" id="letterWin">
-  <div class="titlebar">
-    <div class="titlebar-title">separation_notice.doc — Notepad</div>
-    <div class="win-close" onclick="closeLetterWin()">x</div>
+<!-- ── SHARE CARD (hidden, rendered at 3x by html2canvas) ── -->
+<div class="share-card" id="shareCard">
+  <img class="sc-bg" id="scBg" src="" alt="">
+  <div class="sc-copy">
+    <span class="sc-copy-years" id="scYears">&mdash;</span>
+    <span class="sc-copy-years-label">YEARS ON A SCREEN</span>
+    <span class="sc-copy-line1">I'm reclaiming my time as</span>
+    <span class="sc-copy-line2" id="scLine2">a &mdash;</span>
   </div>
-  <div class="menubar">
-    <span class="menu-item">File</span>
-    <span class="menu-item">Edit</span>
-    <span class="menu-item">Format</span>
-  </div>
-  <div class="letter-paper" style="padding:10px">
-    <div class="lp-to" style="font-size:12px;line-height:1.5;margin-bottom:6px;padding-bottom:5px">
-      RE: Termination &nbsp; TO: The Device &nbsp; CC: My Attention Span <span style="color:#999">(missing)</span>
+  <img class="sc-card-img" id="scCardImg" src="" alt="Card">
+  <div class="sc-bottom">
+    <div class="sc-bottom-logos">
+      <img class="sc-logo-yap" src="data:image/png;base64,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" alt="YAP">
+      <div class="sc-logo-divider"></div>
+    <img class="sc-logo-opal" src="data:image/png;base64,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" alt="Opal">
     </div>
-    <div class="lp-body" style="font-size:15px;line-height:1.6">
-      After <span class="lp-stat" id="lYears">—</span> years and <span class="lp-stat" id="lHours">—</span> hours (<span class="lp-stat" id="lPct">—</span>% of my waking life) — you're fired.<br>
-      <span id="letterDate" style="display:none">—</span><span id="lYears2" style="display:none">—</span><span id="lYears3" style="display:none">—</span>
-      <em>Not subject to appeal. Stop sending notifications.</em>
-    </div>
-    <div class="lp-sign-label" style="margin-top:8px;margin-bottom:4px">↓ Sign</div>
-    <div class="sig-wrap">
-      <canvas id="sigCanvas"></canvas>
-      <div class="sig-placeholder" id="sigPlaceholder">sign here</div>
-    </div>
-  </div>
-  <div class="letter-btns">
-    <button class="win-btn-sm" onclick="clearSig()">Clear</button>
-    <button class="btn-primary" onclick="signAndPrint()">Sign & Print →</button>
+    <span class="sc-url">screentimecalculator.opal.so</span>
   </div>
 </div>
-
-<!-- ── PRINTER WINDOW ── -->
-<div class="printer-win w95" id="printerWin">
-  <div class="titlebar">
-    <div class="titlebar-title">🖨 HP DeskJet 610C — Printing</div>
-    <div class="win-close" onclick="closePrinterWin()">x</div>
-  </div>
-  <div class="printer-body">
-    <div class="printer-machine">
-      <div class="printer-top-slot"></div>
-      <div class="printer-lights">
-        <div class="printer-light orange" id="printerLight"></div>
-        <div class="printer-name">HP DeskJet 610C</div>
-      </div>
-      <div class="printer-bottom-slot"></div>
-    </div>
-
-    <div class="paper-feed">
-      <div class="paper-strip" id="paperStrip">
-        <div class="certificate">
-          <div class="cert-heading">CERTIFICATE OF<br>DIGITAL SEPARATION</div>
-          <div class="cert-dept">DEPARTMENT OF RECLAIMED TIME<br>IN PARTNERSHIP WITH OPAL</div>
-          <div class="cert-top-rule"></div>
-          <div class="cert-body">
-            This hereby certifies that the undersigned<br>
-            has officially broken up with their phone<br>
-            after <span class="cert-stat" id="cYears">—</span> years
-            and <span class="cert-stat" id="cHours">—</span> hours<br>
-            of their one wild and precious life.
-          </div>
-          <div class="cert-divider"></div>
-          <div class="cert-footer">
-            <div class="cert-sig-col">
-              <div class="cert-sig-img" id="certSigImg"></div>
-              <div class="cert-sig-line"></div>
-              <div class="cert-sig-label">Signature</div>
-            </div>
-            <div class="cert-date-col">
-              Effective:<br><span id="cDate">—</span>
-            </div>
-            <div class="cert-badge">★ CERTIFIED ★<br>RECLAIMED<br>★ TIME ★</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="printer-status-row">
-      <div class="printer-status" id="printerStatus">Spooling document...</div>
-      <div class="progress-outer"><div class="progress-inner" id="printerProgress"></div></div>
-    </div>
-  </div>
-  <div class="printer-btns" id="printerBtns" style="display:none;flex-direction:column;gap:6px;padding:6px 10px 10px">
-    <button class="share-btn" id="shareBtn" onclick="shareStory()" style="font-size:20px;padding:8px">[ SHARE TO STORIES ]</button>
-    <div style="display:flex;gap:8px">
-      <button class="win-btn-sm" style="flex:1" onclick="closePrinterWin()">Close</button>
-      <a class="btn-primary" id="opalLink1" href="https://apps.apple.com/us/app/opal-screen-time-control/id1497465230" style="text-decoration:none;text-align:center;flex:1">Opal →</a>
-    </div>
-  </div>
-</div>
-<div class="printer-backdrop" id="printerBackdrop" onclick="closePrinterWin()" style="display:none"></div>
 
 <!-- ── ICON POPUPS ── -->
 <div class="desk-win w95" id="win-computer">
@@ -658,9 +484,9 @@
 <!-- ── TOP BAR ── -->
 <div class="top-bar">
   <div class="top-logos">
+    <a href="https://www.yourattentionplz.com" target="_blank"><img src="assets/yap-logo-white.png" onerror="this.style.display='none'"></a>
+    <div class="logo-divider"></div>
     <img src="assets/Opal-logo-white.png" onerror="this.style.display='none'">
-    <span>x</span>
-    <img src="assets/yap-logo-white.png" onerror="this.style.display='none'">
   </div>
   <div class="cd-btn w95" id="cdBtn" onclick="toggleMusic()" title="Music on/off">
     💿
@@ -702,9 +528,8 @@
   <div class="menubar">
     <span class="menu-item">File</span>
     <span class="menu-item">Edit</span>
-    <span class="menu-item">View</span>
-    <span class="menu-item">Existential Crisis</span>
-    <span class="menu-item">Help</span>
+    <a href="https://www.yourattentionplz.com" target="_blank" class="menu-item" style="text-decoration:underline;color:inherit">Your Attention Please</a>
+    <a href="https://www.vagrants.com" target="_blank" class="menu-item" style="text-decoration:underline;color:inherit">Vagrants</a>
   </div>
   <div class="win-body">
 
@@ -759,7 +584,7 @@
     <div class="result" id="result">
       <div class="sec-header">[ RESULTS — brace yourself ]</div>
       <div class="result-main">
-        <div class="r-intro">&gt; YEARS OF CONSCIOUS LIFE SPENT ON PHONE:</div>
+        <div class="r-intro">&gt; YOU'RE ON TRACK TO SPEND</div>
         <span class="r-years" id="resultYears">-</span>
         <div class="r-unit">YEARS</div>
         <div class="r-copy" id="resultCopy">-</div>
@@ -770,11 +595,12 @@
         <div class="stat-cell"><span class="s-num" id="statMonths">-</span><span class="s-lbl">months</span></div>
         <div class="stat-cell"><span class="s-num" id="statHours">-</span><span class="s-lbl">hours</span></div>
       </div>
-      <div class="fun-fact" id="funFact">-</div>
+      <!-- fun fact removed -->
       <div class="cta-panel">
         <div class="cta-title">* READY TO GET SOME BACK? *</div>
         <div class="cta-sub">Opal blocks distracting apps so you can actually live your life.</div>
         <a class="cta-btn" id="opalLink2" href="https://apps.apple.com/us/app/opal-screen-time-control/id1497465230" style="text-decoration:none;display:block;text-align:center">[ DOWNLOAD OPAL — FREE ]</a>
+        <a href="https://www.yourattentionplz.com" target="_blank" style="font-size:13px;color:#a0a0ff;text-decoration:none;opacity:0.8">A collaboration with <span style="text-decoration:underline">Your Attention Please ↗</span></a>
       </div>
       <button class="retry-btn" onclick="reset()">→ Run calculation again (if you dare)</button>
     </div>
@@ -782,74 +608,11 @@
   </div>
   <div class="status-bar">
     <div class="status-cell" id="statusLeft">Ready</div>
-    <div class="status-cell" style="text-align:center;font-size:13px;color:#404040">Opal x Your Attention Please</div>
+    <div class="status-cell" style="text-align:center;font-size:13px;color:#404040"><a href="https://www.opal.so" target="_blank" style="color:#000080;text-decoration:underline;cursor:pointer">Opal</a> x <a href="https://www.yourattentionplz.com" target="_blank" style="color:#000080;text-decoration:underline;cursor:pointer">Your Attention Please</a></div>
   </div>
 </div>
 
 <!-- ── SHARE CARD (hidden, rendered at 3x by html2canvas) ── -->
-<div class="share-card" id="shareCard">
-  <!-- Icons row -->
-  <div class="sc-icons">
-    <div class="sc-icon">
-      <div class="sc-icon-wrap"><img src="assets/mycomputer.png"></div>
-      <div class="sc-icon-label">My Computer</div>
-    </div>
-    <div class="sc-icon">
-      <div class="sc-icon-wrap"><img src="assets/recyclebin_file.png"><span class="sc-icon-badge">12</span></div>
-      <div class="sc-icon-label">Recycle Bin</div>
-    </div>
-    <div class="sc-icon">
-      <div class="sc-icon-wrap"><img src="assets/phone.png"><span class="sc-icon-badge">47</span></div>
-      <div class="sc-icon-label">My Phone</div>
-    </div>
-    <div class="sc-icon">
-      <div class="sc-icon-wrap"><img src="assets/file.png"><span class="sc-icon-badge">!</span></div>
-      <div class="sc-icon-label">Lost_Years</div>
-    </div>
-  </div>
-  <!-- Marquee -->
-  <div class="sc-marquee">
-    <div class="sc-marquee-inner">★ HOW CHRONICALLY ONLINE ARE YOU? ★ OPAL x YOUR ATTENTION PLEASE ★ RESULTS MAY CAUSE EXISTENTIAL DREAD ★</div>
-  </div>
-  <!-- Main window -->
-  <div class="sc-window">
-    <div class="sc-titlebar">
-      <div class="sc-titlebar-title">Chronically_Online_Calculator.exe</div>
-      <div class="sc-titlebar-btns"><div class="sc-titlebar-btn">_</div><div class="sc-titlebar-btn">o</div><div class="sc-titlebar-btn">x</div></div>
-    </div>
-    <div class="sc-body">
-      <div class="sc-label">YEARS ON A SCREEN:</div>
-      <span class="sc-years" id="scYears">—</span>
-      <div class="sc-years-unit">YEARS</div>
-      <div class="sc-stats">
-        <div class="sc-stat"><span class="sc-stat-num" id="scPct">—</span><span class="sc-stat-lbl">waking life</span></div>
-        <div class="sc-stat"><span class="sc-stat-num" id="scDays">—</span><span class="sc-stat-lbl">days</span></div>
-        <div class="sc-stat"><span class="sc-stat-num" id="scMonths">—</span><span class="sc-stat-lbl">months</span></div>
-        <div class="sc-stat"><span class="sc-stat-num" id="scHours">—</span><span class="sc-stat-lbl">hours</span></div>
-      </div>
-    </div>
-    <div class="sc-statusbar">
-      <div class="sc-status-cell">Done — your life has been calculated</div>
-    </div>
-  </div>
-  <!-- Error roast — separate popup -->
-  <div class="sc-roast">
-    <div class="sc-roast-titlebar"><span>⚠ reality_check.exe — Error</span></div>
-    <div class="sc-roast-body">
-      <div class="sc-roast-icon">⚠</div>
-      <div class="sc-roast-text" id="scRoast">Your phone has filed a restraining order against your free time.</div>
-    </div>
-  </div>
-  <!-- Bottom: logos left, URL right -->
-  <div class="sc-bottom">
-    <div class="sc-logos">
-      <img src="assets/Opal-logo-white.png" alt="Opal">
-      <span>x</span>
-      <img src="assets/yap-logo-white.png" alt="YAP">
-    </div>
-    <div class="sc-url">screentimecalculator.opal.so</div>
-  </div>
-</div>
 
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <script>
@@ -964,135 +727,262 @@
   }
 
   // ── SIGNATURE CANVAS ──
-  var canvas = document.getElementById('sigCanvas');
-  var ctx;
-  var drawing = false, hasSig = false;
+  // ── TRADING CARDS DATA (8 image-based cards) ──
+  var allCards = [
+    { title: 'Chess Nerd', img: 'assets/chess.png' },
+    { title: 'Puzzle Fiend', img: 'assets/puzzle.png' },
+    { title: 'Bookstore Wanderer', img: 'assets/bookstore.png' },
+    { title: 'Plant Whisperer', img: 'assets/plantwhisperer.png' },
+    { title: 'Paint Stain Collector', img: 'assets/paint.png' },
+    { title: 'Thrift Store Archaeologist', img: 'assets/thrift.png' },
+    { title: 'Film Snob', img: 'assets/filmsnob.png' },
+    { title: 'Language Collector', img: 'assets/languagecollector.png' }
+  ];
 
-  function initCanvas() {
-    var r = canvas.parentElement.getBoundingClientRect();
-    canvas.width = r.width || 300;
-    canvas.height = 50;
-    ctx = canvas.getContext('2d');
-    ctx.strokeStyle = '#00008B';
-    ctx.lineWidth = 2.5;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-  }
+  var certData = { years: '\u2014', pct: '\u2014', hours: '\u2014' };
+  var clippyTimeout = null;
+  var chosenActivity = null;
+  var chosenCardData = null;
 
-  function getPos(e) {
-    var r = canvas.getBoundingClientRect();
-    var scaleX = canvas.width / r.width;
-    var scaleY = canvas.height / r.height;
-    var src = e.touches ? e.touches[0] : e;
-    return { x: (src.clientX - r.left) * scaleX, y: (src.clientY - r.top) * scaleY };
-  }
-
-  canvas.addEventListener('mousedown', function(e) { drawing = true; var p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
-  canvas.addEventListener('mousemove', function(e) { if (!drawing) return; var p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); hasSig = true; document.getElementById('sigPlaceholder').style.display = 'none'; });
-  canvas.addEventListener('mouseup', function() { drawing = false; });
-  canvas.addEventListener('mouseleave', function() { drawing = false; });
-  canvas.addEventListener('touchstart', function(e) { e.preventDefault(); drawing = true; var p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }, {passive:false});
-  canvas.addEventListener('touchmove', function(e) { e.preventDefault(); if (!drawing) return; var p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); hasSig = true; document.getElementById('sigPlaceholder').style.display = 'none'; }, {passive:false});
-  canvas.addEventListener('touchend', function() { drawing = false; });
-
-  function clearSig() {
-    if (!ctx) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    hasSig = false;
-    document.getElementById('sigPlaceholder').style.display = 'block';
-  }
-
-  // ── CERTIFICATE FLOW ──
-  var certData = { years: '—', pct: '—', hours: '—' };
-
+  // ── CLIPPY / CARD FLOW ──
   function showCertToast(years, pct, hours) {
     certData = { years: years, pct: pct, hours: hours };
-    var now = new Date();
-    var dateStr = now.toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
-    document.getElementById('lYears').textContent = years;
-    document.getElementById('lPct').textContent = pct;
-    document.getElementById('lHours').textContent = hours;
-    document.getElementById('lYears2').textContent = Math.round(parseFloat(years) * 365);
-    document.getElementById('lYears3').textContent = years;
-    document.getElementById('letterDate').textContent = dateStr;
-    document.getElementById('cYears').textContent = years;
-    document.getElementById('cHours').textContent = Number(String(hours).replace(/,/g,'')).toLocaleString();
-    document.getElementById('cDate').textContent = dateStr;
-    var toast = document.getElementById('certToast');
-    toast.style.display = 'block';
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() { toast.classList.add('visible'); });
-    });
+    setTimeout(function() {
+      showClippy(years, pct, hours);
+    }, 1500);
+  }
+
+  function showClippy(years, pct, hours) {
+    var container = document.getElementById('clippyContainer');
+    var textEl = document.getElementById('clippyText');
+    var btnsEl = document.getElementById('clippyBtns');
+
+    textEl.innerHTML = 'You\'re on track to spend <b>' + years + ' YEARS</b> of your life on your phone! Want to see what you could do with that time?';
+
+    btnsEl.innerHTML = '';
+    var yesBtn = document.createElement('button');
+    yesBtn.className = 'clippy-btn primary';
+    yesBtn.textContent = 'Show me!';
+    yesBtn.onclick = function() {
+      dismissClippy();
+      showCards();
+    };
+
+    var noBtn = document.createElement('button');
+    noBtn.className = 'clippy-btn';
+    noBtn.textContent = 'Nah I\'m good';
+    noBtn.onclick = function() {
+      dismissClippy();
+      clippyTimeout = setTimeout(function() {
+        showClippyReturn(years);
+      }, 2000);
+    };
+
+    btnsEl.appendChild(yesBtn);
+    btnsEl.appendChild(noBtn);
+
+    container.classList.remove('dismissed');
+    container.classList.add('visible');
+  }
+
+  function showClippyReturn(years) {
+    var container = document.getElementById('clippyContainer');
+    var textEl = document.getElementById('clippyText');
+    var btnsEl = document.getElementById('clippyBtns');
+
+    textEl.innerHTML = 'Are you sure? That\'s <b>' + years + ' years</b>... Come on!';
+
+    btnsEl.innerHTML = '';
+    var okBtn = document.createElement('button');
+    okBtn.className = 'clippy-btn primary';
+    okBtn.textContent = 'OK fine, show me';
+    okBtn.onclick = function() {
+      dismissClippy();
+      showCards();
+    };
+    btnsEl.appendChild(okBtn);
+
+    container.classList.remove('dismissed');
+    container.classList.add('visible');
+  }
+
+  function dismissClippy() {
+    var container = document.getElementById('clippyContainer');
+    container.classList.add('dismissed');
+    setTimeout(function() {
+      container.classList.remove('visible');
+      container.classList.remove('dismissed');
+    }, 300);
   }
 
   function closeCertToast() {
-    var t = document.getElementById('certToast');
-    t.classList.remove('visible');
-    setTimeout(function() { t.style.display = 'none'; }, 400);
+    if (clippyTimeout) { clearTimeout(clippyTimeout); clippyTimeout = null; }
+    dismissClippy();
   }
 
-  function openLetterWin() {
+  // ── CAROUSEL ──
+  var currentDotIndex = 0;
+
+  function showCards() {
     closeCertToast();
-    document.getElementById('letterBackdrop').classList.add('open');
-    document.getElementById('letterWin').classList.add('open');
-    setTimeout(initCanvas, 50);
-  }
+    chosenActivity = null;
+    chosenCardData = null;
 
-  function closeLetterWin() {
-    document.getElementById('letterWin').classList.remove('open');
-    document.getElementById('letterBackdrop').classList.remove('open');
-  }
+    var track = document.getElementById('carouselTrack');
+    var dots = document.getElementById('carouselDots');
+    var selection = document.getElementById('carouselSelection');
+    track.innerHTML = '';
+    track.scrollLeft = 0;
+    track.classList.remove('has-selection');
+    dots.innerHTML = '';
+    selection.classList.remove('visible');
 
-  function signAndPrint() {
-    if (!hasSig) {
-      document.getElementById('sigPlaceholder').textContent = '← sign first!';
-      document.getElementById('sigPlaceholder').style.display = 'block';
-      document.getElementById('sigPlaceholder').style.color = '#cc0000';
-      return;
+    for (var i = 0; i < allCards.length; i++) {
+      (function(cardData, idx) {
+        var card = document.createElement('div');
+        card.className = 'carousel-card';
+        var img = document.createElement('img');
+        img.src = cardData.img;
+        img.alt = cardData.title;
+        img.draggable = false;
+        card.appendChild(img);
+        card.onclick = function() { selectCard(cardData, card); };
+        track.appendChild(card);
+
+        var dot = document.createElement('div');
+        dot.className = 'carousel-dot' + (idx === 0 ? ' active' : '');
+        dots.appendChild(dot);
+      })(allCards[i], i);
     }
-    var sigData = canvas.toDataURL();
-    document.getElementById('certSigImg').innerHTML = '<img src="'+sigData+'" style="height:30px;max-width:120px">';
-    closeLetterWin();
-    openPrinter();
+
+    // Add looping: duplicate all cards at the end
+    for (var k = 0; k < allCards.length; k++) {
+      (function(cardData) {
+        var card = document.createElement('div');
+        card.className = 'carousel-card';
+        var img = document.createElement('img');
+        img.src = cardData.img;
+        img.alt = cardData.title;
+        img.draggable = false;
+        card.appendChild(img);
+        card.onclick = function() { selectCard(cardData, card); };
+        track.appendChild(card);
+      })(allCards[k]);
+    }
+
+    track.onscroll = function() { updateDots(track); };
+
+    // Hide cards initially, then animate in
+    var allCardEls = track.querySelectorAll('.carousel-card');
+    for (var m = 0; m < allCardEls.length; m++) {
+      allCardEls[m].style.opacity = '0';
+      allCardEls[m].style.transform = 'translateY(30px)';
+    }
+
+    document.getElementById('cardsBackdrop').classList.add('open');
+
+    // Stagger animate each card
+    for (var n = 0; n < allCardEls.length; n++) {
+      (function(card, delay) {
+        setTimeout(function() {
+          card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, delay);
+      })(allCardEls[n], n * 60);
+    }
   }
 
-  function openPrinter() {
-    var pw = document.getElementById('printerWin');
-    pw.classList.add('open');
-    document.getElementById('printerBackdrop').style.display = 'block';
-    document.getElementById('printerBtns').style.display = 'none';
-    document.getElementById('printerProgress').style.width = '0%';
-    document.getElementById('printerStatus').textContent = 'Spooling document...';
-    var light = document.getElementById('printerLight');
-    light.className = 'printer-light orange';
+  function updateDots(track) {
+    var cards = track.querySelectorAll('.carousel-card');
+    var dots = document.querySelectorAll('.carousel-dot');
+    if (!cards.length) return;
 
-    var strip = document.getElementById('paperStrip');
-    strip.style.transition = 'none';
-    strip.style.transform = 'translateY(-110%)';
+    var trackRect = track.getBoundingClientRect();
+    var center = trackRect.left + trackRect.width / 2;
+    var closest = 0;
+    var closestDist = Infinity;
 
-    setTimeout(function() {
-      document.getElementById('printerStatus').textContent = 'Printing...';
-      var prog = 0;
-      var iv = setInterval(function() {
-        prog += 1.5;
-        document.getElementById('printerProgress').style.width = Math.min(prog,100) + '%';
-        if (prog >= 100) clearInterval(iv);
-      }, 33);
-      setTimeout(function() {
-        strip.style.transition = 'transform 2.4s ease-out';
-        strip.style.transform = 'translateY(0)';
-      }, 200);
-      setTimeout(function() {
-        document.getElementById('printerStatus').textContent = '✓ Done! Screenshot to share.';
-        document.getElementById('printerBtns').style.display = 'flex';
-        light.className = 'printer-light';
-      }, 2800);
-    }, 500);
+    for (var i = 0; i < cards.length; i++) {
+      var cardRect = cards[i].getBoundingClientRect();
+      var cardCenter = cardRect.left + cardRect.width / 2;
+      var dist = Math.abs(cardCenter - center);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closest = i;
+      }
+    }
+
+    var dotIndex = closest % dots.length;
+    if (dotIndex !== currentDotIndex) {
+      for (var j = 0; j < dots.length; j++) {
+        dots[j].classList.toggle('active', j === dotIndex);
+      }
+      currentDotIndex = dotIndex;
+    }
   }
 
-  function closePrinterWin() {
-    document.getElementById('printerWin').classList.remove('open');
-    document.getElementById('printerBackdrop').style.display = 'none';
+  function selectCard(cardData, cardEl) {
+    chosenActivity = cardData.title;
+    chosenCardData = cardData;
+
+    var allCardEls = document.querySelectorAll('.carousel-card');
+    for (var i = 0; i < allCardEls.length; i++) {
+      allCardEls[i].classList.remove('selected');
+    }
+    cardEl.classList.add('selected');
+    document.getElementById('carouselTrack').classList.add('has-selection');
+
+    var selectionText = document.getElementById('carouselSelectionText');
+    selectionText.innerHTML = 'I\'m reclaiming my time as a <b>' + cardData.title + '</b>';
+
+    var shareBtn = document.getElementById('cardsShareBtn');
+    shareBtn.classList.remove('done');
+    shareBtn.disabled = false;
+    shareBtn.textContent = '[ SHARE TO STORIES ]';
+
+    document.getElementById('carouselSelection').classList.add('visible');
+    populateShareCard(cardData);
+  }
+
+  function populateShareCard(cardData) {
+    var backgrounds = {
+      'Chess Nerd':'assets/chessnerd-background.jpg',
+      'Puzzle Fiend':'assets/puzzlefiend-background.jpg.jpg',
+      'Bookstore Wanderer':'assets/bookstorewanderer-background.jpg.jpg',
+      'Plant Whisperer':'assets/plantwhisperer-background.jpg.jpg',
+      'Paint Stain Collector':'assets/paintstaincollector-background.jpg.jpg',
+      'Thrift Store Archaeologist':'assets/thriftstorearcheologist-background.jpg.jpg',
+      'Film Snob':'assets/filmsnob-background.jpg.jpg',
+      'Language Collector':'assets/languagecollector-background.jpg.jpg'
+    };
+    var textColors = {
+      'Chess Nerd':'#FFFF9F',
+      'Puzzle Fiend':'#FFFF00',
+      'Plant Whisperer':'#FFC2EE',
+      'Paint Stain Collector':'#FFFF00',
+      'Thrift Store Archaeologist':'#FFB0A2',
+      'Film Snob':'#6AFFF9',
+      'Language Collector':'#2FFF2F',
+      'Bookstore Wanderer':'#6AFFF9'
+    };
+    var sc = document.getElementById('shareCard');
+    sc.style.backgroundColor = '#1a1a2e';
+    document.getElementById('scBg').src = backgrounds[cardData.title] || '';
+    document.getElementById('scCardImg').src = cardData.img;
+    document.getElementById('scYears').textContent = certData.years;
+    var line1 = document.querySelector('.sc-copy-line1');
+    var line2 = document.getElementById('scLine2');
+    var txtColor = textColors[cardData.title] || '#FFFF00';
+    line1.style.color = txtColor;
+    line2.style.color = txtColor;
+    line2.textContent = 'a ' + cardData.title;
+  }
+
+  function closeCards() {
+    document.getElementById('cardsBackdrop').classList.remove('open');
+    var selection = document.getElementById('carouselSelection');
+    if (selection) selection.classList.remove('visible');
   }
 
   // ── MUSIC ──
@@ -1195,23 +1085,14 @@
     return (facts.find(function(f){ return y < f.max; }) || facts[facts.length-1]).text;
   }
 
-  function getShareRoast(years) {
-    var y = parseFloat(years);
-    var roasts = [
-      'Your phone has seen you more than your family has.',
-      'You could\'ve learned 3 languages. You learned TikTok dances instead.',
-      'Your screen time has a longer resume than you do.',
-      'Your posture left the chat ' + Math.round(y) + ' years ago.',
-      'Congratulations, you\'re elite at scrolling.',
-      'Your attention span just filed for bankruptcy.',
-      'Your phone knows your face better than your mirror.',
-      'Even your screen is tired of looking at you.',
-    ];
-    return roasts[Math.floor(Math.random() * roasts.length)];
-  }
-
   function showResult(age, screen) {
-    // Opal formula constants
+    // Reset cards/clippy from any previous calculation
+    closeCards();
+    dismissClippy();
+    if (clippyTimeout) { clearTimeout(clippyTimeout); clippyTimeout = null; }
+    chosenActivity = null;
+    chosenCardData = null;
+    // Opal formula (matches iOS app)
     var awakeHours = 16;
     var hoursInDay = 24;
     var daysInYear = 365;
@@ -1222,41 +1103,44 @@
     var dailyAwakeScreentime = (screen / awakeHours) * hoursInDay;
     var yearlyHours = dailyAwakeScreentime * daysInYear;
     var lifetimeHours = yearlyHours * averageLifespan;
-
-    // Display values
+    var yearlyDays = Math.round(yearlyHours / 24);
     var pct = ((screen / awakeHours) * 100).toFixed(0);
-    var years = (lifetimeHours / 8760).toFixed(1);
+    var years = Math.round(lifetimeHours / 8760);
     var days = Math.round(lifetimeHours / 24);
     var months = Math.round(days / 30);
     var hours = Math.round(lifetimeHours).toLocaleString();
-    var savedDaily = (screen * screentimeSaving).toFixed(1);
+    // savedDaily removed — unused
 
     document.getElementById('resultYears').textContent = years;
-    document.getElementById('resultCopy').innerHTML = 'That\'s <b>'+pct+'%</b> of every waking hour. Over a lifetime, <b>'+years+' years</b> — gone to scrolling, tapping, swiping.';
+    document.getElementById('resultCopy').innerHTML = 'of your life looking down at your phone. That\'s <b>'+yearlyDays+' days</b> every year — <b>'+pct+'%</b> of your waking hours.';
     document.getElementById('statPct').textContent = pct+'%';
     document.getElementById('statDays').textContent = days.toLocaleString();
     document.getElementById('statMonths').textContent = months;
     document.getElementById('statHours').textContent = hours;
-    document.getElementById('funFact').textContent = getFunFact(years);
-    // Populate share card
+    // fun fact removed
+    // Share card years set when user picks a card
     document.getElementById('scYears').textContent = years;
-    document.getElementById('scPct').textContent = pct+'%';
-    document.getElementById('scDays').textContent = days.toLocaleString();
-    document.getElementById('scMonths').textContent = months;
-    document.getElementById('scHours').textContent = hours;
-    document.getElementById('scRoast').textContent = getShareRoast(years);
     document.getElementById('loading').classList.remove('visible');
     document.getElementById('result').classList.add('visible');
     document.getElementById('statusLeft').textContent = 'Done — '+years+' years found';
+    // Hide icons on mobile and add spacing
+    if (window.innerWidth < 768) {
+      document.querySelector('.desktop-icons').style.display = 'none';
+      document.querySelector('.win-window').style.marginTop = '10px';
+    }
     showCertToast(years, pct, hours);
   }
 
   function shareStory() {
-    var btn = document.getElementById('shareBtn');
+    var btn = document.getElementById('cardsShareBtn');
+    // If Done, close everything
+    if (btn.classList.contains('done')) {
+      closeCards();
+      return;
+    }
     btn.textContent = '[ GENERATING... ]';
     btn.disabled = true;
     var card = document.getElementById('shareCard');
-    // Temporarily make visible for html2canvas
     card.style.left = '-9999px';
     card.style.top = '0';
     card.style.position = 'fixed';
@@ -1264,29 +1148,33 @@
       card.style.left = '-9999px';
       card.style.top = '-9999px';
       canvas.toBlob(function(blob) {
-        if (!blob) { btn.textContent = '[ SHARE TO STORIES ]'; btn.disabled = false; return; }
-        var file = new File([blob], 'my-screen-time.png', { type: 'image/png' });
+        if (!blob) { markShareDone(btn); return; }
+        var file = new File([blob], 'my-screen-time-card.png', { type: 'image/png' });
+        var shareText = certData.years + ' years of my life went to a screen. I\'m reclaiming my time as a ' + (chosenActivity || 'new person');
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          navigator.share({ files: [file], title: 'My Screen Time', text: 'How much of my life I spent on a phone' }).then(function() {
-            btn.textContent = '[ SHARED! ]';
-            setTimeout(function() { btn.textContent = '[ SHARE TO STORIES ]'; btn.disabled = false; }, 2000);
+          navigator.share({ files: [file], title: 'My Screen Time Card', text: shareText }).then(function() {
+            markShareDone(btn);
           }).catch(function() {
-            btn.textContent = '[ SHARE TO STORIES ]'; btn.disabled = false;
+            markShareDone(btn);
           });
         } else {
-          // Desktop fallback: download
           var url = URL.createObjectURL(blob);
           var a = document.createElement('a');
-          a.href = url; a.download = 'my-screen-time.png';
+          a.href = url; a.download = 'my-screen-time-card.png';
           document.body.appendChild(a); a.click(); document.body.removeChild(a);
           URL.revokeObjectURL(url);
-          btn.textContent = '[ DOWNLOADED! ]';
-          setTimeout(function() { btn.textContent = '[ SHARE TO STORIES ]'; btn.disabled = false; }, 2000);
+          markShareDone(btn);
         }
       }, 'image/png');
     }).catch(function() {
-      btn.textContent = '[ SHARE TO STORIES ]'; btn.disabled = false;
+      markShareDone(btn);
     });
+  }
+
+  function markShareDone(btn) {
+    btn.textContent = '\u2713 Done!';
+    btn.classList.add('done');
+    btn.disabled = false;
   }
 
   function reset() {
@@ -1298,16 +1186,27 @@
     document.getElementById('loadingSub').textContent = 'Please do not turn off your computer or face reality.';
     document.getElementById('statusLeft').textContent = 'Ready';
     document.getElementById('warningPopup').style.display = 'block';
-    var t = document.getElementById('certToast');
-    t.classList.remove('visible'); t.style.display = 'none';
-    document.getElementById('letterWin').classList.remove('open');
-    document.getElementById('letterBackdrop').classList.remove('open');
-    document.getElementById('printerWin').classList.remove('open');
-    document.getElementById('printerBackdrop').style.display = 'none';
-    var sb = document.getElementById('shareBtn');
-    sb.textContent = '[ SHARE TO STORIES ]'; sb.disabled = false;
-    clearSig();
+    // Restore icons on mobile
+    document.querySelector('.desktop-icons').style.display = '';
+    document.querySelector('.win-window').style.marginTop = '';
+    dismissClippy();
+    if (clippyTimeout) { clearTimeout(clippyTimeout); clippyTimeout = null; }
+    closeCards();
+    chosenActivity = null;
+    chosenCardData = null;
   }
+
+  // Reset state on page load (browser may cache scroll/state)
+  (function() {
+    document.getElementById('cardsBackdrop').classList.remove('open');
+    document.getElementById('clippyContainer').classList.remove('visible');
+    var track = document.getElementById('carouselTrack');
+    if (track) { track.innerHTML = ''; track.scrollLeft = 0; track.classList.remove('has-selection'); }
+    document.getElementById('carouselDots').innerHTML = '';
+    document.getElementById('carouselSelection').classList.remove('visible');
+    chosenActivity = null;
+    chosenCardData = null;
+  })();
 
   // Show badges only after icon images have loaded
   (function() {
