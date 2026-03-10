@@ -258,6 +258,17 @@
   .cards-share-btn { max-width:360px; }
   .cards-share-btn.done { background:#198754; color:#fff; border-color:#198754; }
   .cards-share-btn.done::after { animation:none; }
+  .carousel-arrow-row { display: flex; align-items: center; justify-content: center; width: 100%; position: relative; }
+  .carousel-arrow {
+    display: none; align-items: center; justify-content: center;
+    width: 48px; height: 48px; background: #c0c0c0;
+    border-top: 2px solid #fff; border-left: 2px solid #fff;
+    border-right: 2px solid #404040; border-bottom: 2px solid #404040;
+    cursor: pointer; font-family: 'VT323', monospace; font-size: 28px;
+    color: #000; z-index: 8002; flex-shrink: 0;
+    user-select: none; -webkit-user-select: none;
+  }
+  .carousel-arrow:active { border-top-color: #404040; border-left-color: #404040; border-right-color: #fff; border-bottom-color: #fff; }
   @media (max-width:600px) {
     .carousel-card { flex:0 0 72vw; }
     .carousel-wrap { padding:20px 14vw; gap:12px; }
@@ -460,11 +471,13 @@
       white-space: nowrap;
     }
 
-    /* Cards carousel for desktop */
-    .carousel-card { flex: 0 0 340px; }
-    .carousel-wrap { gap: 20px; padding: 20px calc(50vw - 170px); }
-    .cards-title { font-size: 22px; margin-top: 40px; }
+    /* Cards carousel for desktop — big cards */
+    .carousel-card { flex: 0 0 min(28vw, 420px); }
+    .carousel-wrap { gap: 24px; padding: 20px calc(50vw - min(14vw, 210px)); }
+    .cards-title { font-size: 24px; margin-top: 40px; }
     .carousel-selection-text { font-size: 24px; }
+    /* Arrow buttons visible on desktop */
+    .carousel-arrow { display: flex; }
     @keyframes marquee { from{transform:translateX(500px)} to{transform:translateX(-100%)} }
   }
 </style>
@@ -484,7 +497,11 @@
 <div class="cards-backdrop" id="cardsBackdrop">
   <div class="cards-close-top" onclick="closeCards()">x</div>
   <div class="cards-title">With Opal, you can take back your time.<br>Pick a hobby to start your new life.</div>
-  <div class="carousel-wrap" id="carouselTrack"></div>
+  <div class="carousel-arrow-row">
+    <div class="carousel-arrow" id="carouselPrev" onclick="scrollCarousel(-1)">&lt;</div>
+    <div class="carousel-wrap" id="carouselTrack"></div>
+    <div class="carousel-arrow" id="carouselNext" onclick="scrollCarousel(1)">></div>
+  </div>
   <div class="carousel-dots" id="carouselDots"></div>
   <div class="carousel-selection" id="carouselSelection">
     <div class="carousel-selection-text" id="carouselSelectionText"></div>
@@ -1119,6 +1136,14 @@
         }, delay);
       })(allCardEls[n], Math.min(n, allCards.length) * 30);
     }
+  }
+
+  function scrollCarousel(dir) {
+    var track = document.getElementById('carouselTrack');
+    var card = track.querySelector('.carousel-card');
+    if (!card) return;
+    var scrollAmount = card.offsetWidth + 24;
+    track.scrollBy({ left: dir * scrollAmount, behavior: 'smooth' });
   }
 
   function updateDots(track) {
