@@ -1264,8 +1264,15 @@
 
   function closeCards() {
     document.getElementById('cardsBackdrop').classList.remove('open');
+    var track = document.getElementById('carouselTrack');
+    if (track) { track.innerHTML = ''; track.scrollLeft = 0; track.classList.remove('has-selection'); }
+    document.getElementById('carouselDots').innerHTML = '';
     var selection = document.getElementById('carouselSelection');
     if (selection) selection.classList.remove('visible');
+    var shareBtn = document.getElementById('cardsShareBtn');
+    if (shareBtn) { shareBtn.classList.remove('done'); shareBtn.disabled = false; shareBtn.textContent = '[ SHARE TO STORIES ]'; }
+    chosenActivity = null;
+    chosenCardData = null;
   }
 
   // ── MUSIC ──
@@ -1493,6 +1500,14 @@
     chosenActivity = null;
     chosenCardData = null;
   })();
+
+  // Reset state when returning via back/forward cache
+  window.addEventListener('pageshow', function(e) {
+    if (e.persisted) {
+      closeCards();
+      reset();
+    }
+  });
 
   // ── TASKBAR CLOCK ──
   function updateTaskbarClock() {
