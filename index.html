@@ -498,9 +498,6 @@
     .cd-btn { display: none !important; }
     /* Move mini clippy above taskbar on desktop */
     .clippy-mini { bottom: 56px; }
-    /* Desktop share button text */
-    .cards-share-btn { font-size: 0; }
-    .cards-share-btn::after { content: '[ SHARE ]'; font-size: 20px; }
 
     /* Cards carousel for desktop — big full-width cards, first card centered */
     .carousel-card { flex: 0 0 min(30vw, 450px); }
@@ -558,7 +555,7 @@
   <div class="carousel-dots" id="carouselDots"></div>
   <div class="carousel-selection" id="carouselSelection">
     <div class="carousel-selection-text" id="carouselSelectionText"></div>
-    <button class="share-btn cards-share-btn" id="cardsShareBtn" onclick="shareStory()">[ SHARE TO STORIES ]</button>
+    <button class="share-btn cards-share-btn" id="cardsShareBtn" onclick="shareStory()">[ SHARE ]</button>
   </div>
 </div>
 
@@ -1258,7 +1255,7 @@
     var shareBtn = document.getElementById('cardsShareBtn');
     shareBtn.classList.remove('done');
     shareBtn.disabled = false;
-    shareBtn.textContent = '[ SHARE TO STORIES ]';
+    shareBtn.textContent = window.innerWidth >= 768 ? '[ SHARE ]' : '[ SHARE TO STORIES ]';
 
     document.getElementById('carouselSelection').classList.add('visible');
     populateShareCard(cardData);
@@ -1306,7 +1303,7 @@
     var selection = document.getElementById('carouselSelection');
     if (selection) selection.classList.remove('visible');
     var shareBtn = document.getElementById('cardsShareBtn');
-    if (shareBtn) { shareBtn.classList.remove('done'); shareBtn.disabled = false; shareBtn.textContent = '[ SHARE TO STORIES ]'; }
+    if (shareBtn) { shareBtn.classList.remove('done'); shareBtn.disabled = false; shareBtn.textContent = window.innerWidth >= 768 ? '[ SHARE ]' : '[ SHARE TO STORIES ]'; }
     chosenActivity = null;
     chosenCardData = null;
     // Show mini clippy after cards are closed (if results visible)
