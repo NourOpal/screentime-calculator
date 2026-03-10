@@ -29,16 +29,17 @@
       radial-gradient(ellipse 70px 28px at 85% 52%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%),
       linear-gradient(180deg, #2563a8 0%, #3a7bd5 15%, #5a9fe6 35%, #87ceeb 50%, #5a9fe6 65%, #3a7bd5 85%, #2563a8 100%);
     min-height: 100%;
+    background-attachment: fixed;
+    background-size: cover;
   }
 
   body {
-    background-color: #2563a8;
+    background-color: transparent;
     font-family: 'VT323', monospace;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 16px;
-    padding-bottom: 80px;
     overflow-x: hidden;
   }
 
@@ -1102,8 +1103,11 @@
     setTimeout(function() {
       container.classList.remove('visible');
       container.classList.remove('dismissed');
-      // Show mini clippy in corner
-      document.getElementById('clippyMini').classList.add('visible');
+      // Show mini clippy only if results are visible (calculation done)
+      var resultVisible = document.getElementById('result').classList.contains('visible');
+      if (resultVisible) {
+        document.getElementById('clippyMini').classList.add('visible');
+      }
     }, 300);
   }
 
