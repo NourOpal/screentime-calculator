@@ -1338,13 +1338,11 @@
   function toggleMusic() {
     var btn = document.getElementById('cdBtn');
     var lbl = document.getElementById('cdLabel');
-    var trayIcon = document.querySelector('.taskbar-music');
     if (!musicPlaying) {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       musicPlaying = true;
       btn.classList.add('playing');
       lbl.textContent = 'MUSIC ON';
-      if (trayIcon) trayIcon.textContent = '🔊';
       scheduleMelody();
     } else {
       musicPlaying = false;
@@ -1352,7 +1350,6 @@
       if (audioCtx) { audioCtx.close(); audioCtx = null; }
       btn.classList.remove('playing');
       lbl.textContent = 'MUSIC OFF';
-      if (trayIcon) trayIcon.textContent = '🔈';
     }
   }
 
@@ -1606,7 +1603,7 @@
   <a class="taskbar-start" href="https://www.opal.so" target="_blank">Opal Start</a>
   <div class="taskbar-tab">Chronically_Online_Calculator.exe</div>
   <div class="taskbar-tray">
-    <div class="taskbar-music" onclick="toggleMusic()" title="Music on/off">🔈</div>
+    <div class="taskbar-music" id="taskbarMusic" onclick="toggleMusic()" title="Music on/off"><img src="assets/CD.png" style="width:18px;height:18px;image-rendering:pixelated;"></div>
     <div class="taskbar-clock" id="taskbarClock">12:00 AM</div>
   </div>
 </div>
