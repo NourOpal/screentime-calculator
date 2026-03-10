@@ -10,8 +10,8 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://screentimecalculator.opal.so">
 <meta name="twitter:card" content="summary">
-<link rel="icon" type="image/png" href="assets/Opal-logo-white.png">
-<link rel="apple-touch-icon" href="assets/Opal-logo-white.png">
+<link rel="icon" type="image/png" href="assets/opal-app-icon.png">
+<link rel="apple-touch-icon" href="assets/opal-app-icon.png">
 <title>Opal Screen Time Calculator</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
@@ -389,9 +389,14 @@
       align-items: flex-start;
       padding: 24px 32px 60px;
     }
-    /* Icons pinned to the left in 2-column grid */
+    /* Top bar: logos top-center, music top-right */
+    .top-bar {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      max-width: 500px; z-index: 20;
+    }
+    /* Icons pinned to the left, below top bar */
     .desktop-icons {
-      position: fixed; top: 24px; left: 32px;
+      position: fixed; top: 80px; left: 32px;
       display: grid !important;
       grid-template-columns: 90px 90px;
       gap: 12px 8px;
@@ -402,13 +407,6 @@
     .icon { width: 80px; }
     .icon-img, .icon-img img { width: 56px; height: 56px; }
     .icon-label { font-size: 15px; }
-    /* Top bar: logos top-left, music top-right */
-    .top-bar {
-      position: fixed; top: 24px; left: 32px; right: 32px;
-      transform: none; max-width: none; z-index: 20;
-      pointer-events: none;
-    }
-    .top-bar > * { pointer-events: auto; }
     .top-logos img { height: 28px; }
     .top-logos a img { height: 56px; }
     .top-logos .logo-divider { width: 2px; height: 44px; }
