@@ -464,16 +464,26 @@
       white-space: nowrap; flex-shrink: 0;
     }
     .taskbar-spacer { flex: 1; }
-    .taskbar-clock {
+    .taskbar-tray {
+      display: flex; align-items: center; gap: 2px;
+      margin-left: auto;
       background: #c0c0c0;
       border-top: 2px solid #404040; border-left: 2px solid #404040;
       border-right: 2px solid #fff; border-bottom: 2px solid #fff;
-      padding: 3px 12px;
-      font-size: 16px; color: #000;
-      height: 32px; display: flex; align-items: center;
-      white-space: nowrap; flex-shrink: 0;
-      margin-left: auto;
+      padding: 2px 8px;
+      height: 32px; flex-shrink: 0;
     }
+    .taskbar-music {
+      cursor: pointer; font-size: 18px; padding: 0 4px;
+      display: flex; align-items: center;
+    }
+    .taskbar-clock {
+      font-size: 16px; color: #000;
+      display: flex; align-items: center;
+      white-space: nowrap; padding: 0 4px;
+    }
+    /* Hide top-bar music button on desktop — it's in the taskbar now */
+    .cd-btn { display: none !important; }
 
     /* Cards carousel for desktop — big full-width cards, first card centered */
     .carousel-card { flex: 0 0 min(30vw, 450px); }
@@ -1119,21 +1129,6 @@
       })(allCards[i], i);
     }
 
-    // Add looping: duplicate all cards at the end
-    for (var k = 0; k < allCards.length; k++) {
-      (function(cardData) {
-        var card = document.createElement('div');
-        card.className = 'carousel-card';
-        var img = document.createElement('img');
-        img.src = cardData.img;
-        img.alt = cardData.title;
-        img.draggable = false;
-        card.appendChild(img);
-        card.onclick = function() { selectCard(cardData, card); };
-        track.appendChild(card);
-      })(allCards[k]);
-    }
-
     track.onscroll = function() { updateDots(track); };
     // Desktop: scroll horizontally with mouse wheel
     track.addEventListener('wheel', function(e) {
@@ -1152,7 +1147,16 @@
 
     document.getElementById('cardsBackdrop').classList.add('open');
 
-    // Stagger animate each card (only visible ones, faster)
+    // Scroll to middle card so you see cards on both sides
+    var midIndex = Math.floor(allCards.length / 2);
+    var midCard = allCardEls[midIndex];
+    if (midCard) {
+      setTimeout(function() {
+        midCard.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'instant' });
+      }, 10);
+    }
+
+    // Stagger animate each card
     for (var n = 0; n < allCardEls.length; n++) {
       (function(card, delay) {
         setTimeout(function() {
@@ -1160,7 +1164,7 @@
           card.style.opacity = '1';
           card.style.transform = 'translateY(0)';
         }, delay);
-      })(allCardEls[n], Math.min(n, allCards.length) * 30);
+      })(allCardEls[n], n * 30);
     }
   }
 
@@ -1293,11 +1297,13 @@
   function toggleMusic() {
     var btn = document.getElementById('cdBtn');
     var lbl = document.getElementById('cdLabel');
+    var trayIcon = document.querySelector('.taskbar-music');
     if (!musicPlaying) {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       musicPlaying = true;
       btn.classList.add('playing');
       lbl.textContent = 'MUSIC ON';
+      if (trayIcon) trayIcon.textContent = '🔊';
       scheduleMelody();
     } else {
       musicPlaying = false;
@@ -1305,6 +1311,7 @@
       if (audioCtx) { audioCtx.close(); audioCtx = null; }
       btn.classList.remove('playing');
       lbl.textContent = 'MUSIC OFF';
+      if (trayIcon) trayIcon.textContent = '🔈';
     }
   }
 
@@ -1548,7 +1555,10 @@
 <div class="taskbar">
   <a class="taskbar-start" href="https://www.opal.so" target="_blank">Opal Start</a>
   <div class="taskbar-tab">Chronically_Online_Calculator.exe</div>
-  <div class="taskbar-clock" id="taskbarClock">12:00 AM</div>
+  <div class="taskbar-tray">
+    <div class="taskbar-music" onclick="toggleMusic()" title="Music on/off">🔈</div>
+    <div class="taskbar-clock" id="taskbarClock">12:00 AM</div>
+  </div>
 </div>
 
 </body>
