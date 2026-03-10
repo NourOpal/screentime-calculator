@@ -362,14 +362,38 @@
 
   /* ── DESKTOP BREAKPOINT ── */
   @media (min-width: 768px) {
-    body { min-height: 100vh; justify-content: center; }
-    .top-bar { max-width: 500px; }
+    body {
+      min-height: 100vh; justify-content: flex-start;
+      flex-direction: row; flex-wrap: wrap;
+      align-items: flex-start;
+      padding: 24px 32px;
+    }
+    /* Icons pinned to the left like a real desktop */
+    .desktop-icons {
+      position: fixed; top: 24px; left: 32px;
+      flex-direction: column; align-items: flex-start;
+      max-width: none; width: auto; gap: 20px;
+      padding: 0; z-index: 10;
+    }
+    .icon { width: 80px; }
+    .icon-img, .icon-img img { width: 56px; height: 56px; }
+    .icon-label { font-size: 15px; }
+    /* Top bar centered at top */
+    .top-bar { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); max-width: 500px; z-index: 10; }
     .top-logos img { height: 28px; }
     .top-logos a img { height: 56px; }
     .top-logos .logo-divider { width: 2px; height: 44px; }
-    .desktop-icons { max-width: 500px; gap: 24px; }
-    .win-window { max-width: 500px; }
+    /* Main window centered on screen */
+    .win-window {
+      max-width: 500px; margin: 80px auto 0;
+      position: relative; left: 0;
+    }
     .desk-win { max-width: 400px; }
+    /* Cards carousel for desktop */
+    .carousel-card { flex: 0 0 340px; }
+    .carousel-wrap { gap: 20px; padding: 20px calc(50vw - 170px); }
+    .cards-title { font-size: 22px; margin-top: 40px; }
+    .carousel-selection-text { font-size: 24px; }
     @keyframes marquee { from{transform:translateX(500px)} to{transform:translateX(-100%)} }
   }
 </style>
@@ -871,6 +895,13 @@
     }
 
     track.onscroll = function() { updateDots(track); };
+    // Desktop: scroll horizontally with mouse wheel
+    track.addEventListener('wheel', function(e) {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        track.scrollLeft += e.deltaY;
+      }
+    }, { passive: false });
 
     // Hide cards initially, then animate in
     var allCardEls = track.querySelectorAll('.carousel-card');
