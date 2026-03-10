@@ -32,12 +32,13 @@
   }
 
   body {
-    background-color: transparent;
+    background-color: #2563a8;
     font-family: 'VT323', monospace;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 16px;
+    padding-bottom: 80px;
     overflow-x: hidden;
   }
 
@@ -224,7 +225,7 @@
   .clippy-btn:active { border-top-color:#404040; border-left-color:#404040; border-right-color:#fff; border-bottom-color:#fff; }
   .clippy-btn.primary { background:#000080; color:#fff; border-top-color:#4040c0; border-left-color:#4040c0; border-right-color:#000020; border-bottom-color:#000020; }
   @media (max-width:600px) {
-    .clippy-container { right:10px; left:10px; bottom:10px; flex-direction:column-reverse; align-items:center; }
+    .clippy-container { right:10px; left:10px; bottom:60px; flex-direction:column-reverse; align-items:center; }
     .clippy-bubble { max-width:100%; margin-right:0; margin-bottom:0; font-size:14px; }
     .clippy-bubble::after { bottom:-12px; right:50%; transform:translateX(50%); }
     .clippy-bubble::before { bottom:-15px; right:50%; transform:translateX(50%); }
@@ -277,6 +278,16 @@
     .carousel-wrap { padding:20px 14vw; gap:12px; }
     .cards-title { font-size:18px; margin-top:48px; }
   }
+
+  .clippy-mini {
+    display: none; position: fixed; bottom: 16px; right: 16px;
+    cursor: pointer; z-index: 100; opacity: 0.7;
+    transition: opacity 0.2s, transform 0.2s;
+    filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.3));
+  }
+  .clippy-mini:hover { opacity: 1; transform: scale(1.1); }
+  .clippy-mini.visible { display: block; animation: clippyMiniFadeIn 0.4s ease; }
+  @keyframes clippyMiniFadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:0.7; transform:translateY(0); } }
 
   @keyframes tblink { 0%,100%{opacity:1} 50%{opacity:0} }
 
@@ -886,6 +897,11 @@
   </div>
 </div>
 
+<!-- ── MINI CLIPPY (appears after dismissal, tap to reopen) ── -->
+<div class="clippy-mini" id="clippyMini" onclick="reopenClippy()">
+  <img src="assets/Clippy.png" alt="Clippy" style="width:40px;height:auto">
+</div>
+
 <!-- ── SHARE CARD (hidden, rendered at 3x by html2canvas) ── -->
 
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
@@ -1086,7 +1102,16 @@
     setTimeout(function() {
       container.classList.remove('visible');
       container.classList.remove('dismissed');
+      // Show mini clippy in corner
+      document.getElementById('clippyMini').classList.add('visible');
     }, 300);
+  }
+
+  function reopenClippy() {
+    document.getElementById('clippyMini').classList.remove('visible');
+    if (certData && certData.years) {
+      showClippy(certData.years, certData.pct, certData.hours);
+    }
   }
 
   function closeCertToast() {
@@ -1147,13 +1172,18 @@
 
     document.getElementById('cardsBackdrop').classList.add('open');
 
-    // Scroll to middle card so you see cards on both sides
-    var midIndex = Math.floor(allCards.length / 2);
-    var midCard = allCardEls[midIndex];
-    if (midCard) {
-      setTimeout(function() {
-        midCard.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'instant' });
-      }, 10);
+    // Desktop: scroll to middle card so you see cards on both sides
+    // Mobile: start from first card
+    if (window.innerWidth >= 768) {
+      var midIndex = Math.floor(allCards.length / 2);
+      var midCard = allCardEls[midIndex];
+      if (midCard) {
+        setTimeout(function() {
+          midCard.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'instant' });
+        }, 10);
+      }
+    } else {
+      track.scrollLeft = 0;
     }
 
     // Stagger animate each card
@@ -1483,6 +1513,7 @@
     document.querySelector('.desktop-icons').style.display = '';
     document.querySelector('.win-window').style.marginTop = '';
     dismissClippy();
+    document.getElementById('clippyMini').classList.remove('visible');
     if (clippyTimeout) { clearTimeout(clippyTimeout); clippyTimeout = null; }
     closeCards();
     chosenActivity = null;
