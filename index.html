@@ -261,13 +261,16 @@
   .carousel-arrow-row { display: flex; align-items: center; justify-content: center; width: 100%; position: relative; }
   .carousel-arrow {
     display: none; align-items: center; justify-content: center;
-    width: 48px; height: 48px; background: #c0c0c0;
+    width: 52px; height: 52px; background: #c0c0c0;
     border-top: 2px solid #fff; border-left: 2px solid #fff;
     border-right: 2px solid #404040; border-bottom: 2px solid #404040;
-    cursor: pointer; font-family: 'VT323', monospace; font-size: 28px;
+    cursor: pointer; font-family: 'VT323', monospace; font-size: 32px;
     color: #000; z-index: 8002; flex-shrink: 0;
     user-select: none; -webkit-user-select: none;
+    position: fixed; top: 50%;
   }
+  .carousel-arrow#carouselPrev { left: 20px; }
+  .carousel-arrow#carouselNext { right: 20px; }
   .carousel-arrow:active { border-top-color: #404040; border-left-color: #404040; border-right-color: #fff; border-bottom-color: #fff; }
   @media (max-width:600px) {
     .carousel-card { flex:0 0 72vw; }
@@ -397,7 +400,7 @@
     .top-logos img { height: 24px; }
     .top-logos a img { height: 48px; }
     .top-logos .logo-divider { width: 2px; height: 36px; }
-    .cd-btn { margin-right: 8px; }
+    .cd-btn { margin-right: 8px; flex-shrink: 0; }
     /* Icons vertically centered on left */
     .desktop-icons {
       position: fixed; top: 50%; left: 24px;
@@ -412,9 +415,10 @@
     .icon { width: 80px; }
     .icon-img, .icon-img img { width: 52px; height: 52px; }
     .icon-label { font-size: 14px; }
-    /* Main window dead center */
+    /* Main window dead center, responsive width */
     .win-window {
-      max-width: 500px;
+      max-width: min(500px, 45vw);
+      width: 45vw;
       position: fixed; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
     }
@@ -471,14 +475,36 @@
       margin-left: auto;
     }
 
-    /* Cards carousel for desktop — big full-width cards */
+    /* Cards carousel for desktop — big full-width cards, first card centered */
     .carousel-card { flex: 0 0 min(30vw, 450px); }
-    .carousel-wrap { gap: 24px; padding: 20px calc(50vw - min(15vw, 225px)); }
+    .carousel-wrap { gap: 24px; padding: 20px calc(50% - min(15vw, 225px)); }
     .cards-title { font-size: 24px; margin-top: 40px; }
     .carousel-selection-text { font-size: 24px; }
     /* Arrow buttons visible on desktop */
     .carousel-arrow { display: flex; }
     @keyframes marquee { from{transform:translateX(500px)} to{transform:translateX(-100%)} }
+  }
+  /* Large desktops */
+  @media (min-width: 1200px) {
+    .win-window { max-width: 550px; width: 40vw; }
+    .desktop-icons { grid-template-columns: 95px 95px; gap: 16px 12px; }
+    .icon { width: 85px; }
+    .icon-img, .icon-img img { width: 56px; height: 56px; }
+    .icon-label { font-size: 15px; }
+  }
+  /* Smaller desktops / tablets */
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .win-window { max-width: 420px; width: 50vw; }
+    .desktop-icons {
+      grid-template-columns: 80px 80px;
+      gap: 10px 6px; left: 16px;
+    }
+    .icon { width: 72px; }
+    .icon-img, .icon-img img { width: 44px; height: 44px; }
+    .icon-label { font-size: 13px; }
+    .top-bar { left: 16px; right: 16px; }
+    .carousel-card { flex: 0 0 min(35vw, 350px); }
+    .carousel-wrap { padding: 20px calc(50vw - min(17.5vw, 175px)); }
   }
 </style>
 </head>
