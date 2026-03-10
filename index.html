@@ -496,6 +496,11 @@
     }
     /* Hide top-bar music button on desktop — it's in the taskbar now */
     .cd-btn { display: none !important; }
+    /* Move mini clippy above taskbar on desktop */
+    .clippy-mini { bottom: 56px; }
+    /* Desktop share button text */
+    .cards-share-btn { font-size: 0; }
+    .cards-share-btn::after { content: '[ SHARE ]'; font-size: 20px; }
 
     /* Cards carousel for desktop — big full-width cards, first card centered */
     .carousel-card { flex: 0 0 min(30vw, 450px); }
