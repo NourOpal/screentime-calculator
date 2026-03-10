@@ -1044,6 +1044,7 @@
   }
 
   function showClippy(years, pct, hours) {
+    document.getElementById('clippyMini').classList.remove('visible');
     var container = document.getElementById('clippyContainer');
     var textEl = document.getElementById('clippyText');
     var btnsEl = document.getElementById('clippyBtns');
@@ -1103,11 +1104,7 @@
     setTimeout(function() {
       container.classList.remove('visible');
       container.classList.remove('dismissed');
-      // Show mini clippy only if results are visible (calculation done)
-      var resultVisible = document.getElementById('result').classList.contains('visible');
-      if (resultVisible) {
-        document.getElementById('clippyMini').classList.add('visible');
-      }
+      // Don't show mini clippy here — it shows after closing cards
     }, 300);
   }
 
@@ -1307,6 +1304,11 @@
     if (shareBtn) { shareBtn.classList.remove('done'); shareBtn.disabled = false; shareBtn.textContent = '[ SHARE TO STORIES ]'; }
     chosenActivity = null;
     chosenCardData = null;
+    // Show mini clippy after cards are closed (if results visible)
+    var resultVisible = document.getElementById('result').classList.contains('visible');
+    if (resultVisible) {
+      document.getElementById('clippyMini').classList.add('visible');
+    }
   }
 
   // ── MUSIC ──
@@ -1413,6 +1415,7 @@
     // Reset cards/clippy from any previous calculation
     closeCards();
     dismissClippy();
+    document.getElementById('clippyMini').classList.remove('visible');
     if (clippyTimeout) { clearTimeout(clippyTimeout); clippyTimeout = null; }
     chosenActivity = null;
     chosenCardData = null;
