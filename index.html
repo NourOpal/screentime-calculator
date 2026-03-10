@@ -496,6 +496,8 @@
     }
     /* Hide top-bar music button on desktop — it's in the taskbar now */
     .cd-btn { display: none !important; }
+    /* No shimmer on desktop share button */
+    .share-btn::after { animation: none; }
     /* Move mini clippy above taskbar on desktop */
     .clippy-mini { bottom: 56px; }
 
