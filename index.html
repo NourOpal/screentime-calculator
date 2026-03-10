@@ -282,13 +282,13 @@
 
   .clippy-mini {
     display: none; position: fixed; bottom: 16px; right: 16px;
-    cursor: pointer; z-index: 100; opacity: 0.7;
+    cursor: pointer; z-index: 100; opacity: 1;
     transition: opacity 0.2s, transform 0.2s;
     filter: drop-shadow(1px 2px 3px rgba(0,0,0,0.3));
   }
   .clippy-mini:hover { opacity: 1; transform: scale(1.1); }
   .clippy-mini.visible { display: block; animation: clippyMiniFadeIn 0.4s ease; }
-  @keyframes clippyMiniFadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:0.7; transform:translateY(0); } }
+  @keyframes clippyMiniFadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
 
   @keyframes tblink { 0%,100%{opacity:1} 50%{opacity:0} }
 
