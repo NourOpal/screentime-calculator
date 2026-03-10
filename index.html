@@ -360,35 +360,106 @@
     .win-window { margin-bottom: 8px; }
   }
 
+  /* ── DESKTOP-ONLY ICONS (hidden by default) ── */
+  .icon.desktop-only { display: none; }
+
+  /* ── TASKBAR (hidden by default) ── */
+  .taskbar { display: none; }
+
+  /* ── DESKTOP MENU ITEMS (hidden by default) ── */
+  .menu-item.desktop-menu { display: none; }
+  .menu-item.mobile-menu { display: inline-block; }
+
   /* ── DESKTOP BREAKPOINT ── */
   @media (min-width: 768px) {
     body {
       min-height: 100vh; justify-content: flex-start;
       flex-direction: row; flex-wrap: wrap;
       align-items: flex-start;
-      padding: 24px 32px;
+      padding: 24px 32px 60px;
     }
-    /* Icons pinned to the left like a real desktop */
+    /* Icons pinned to the left in 2-column grid */
     .desktop-icons {
       position: fixed; top: 24px; left: 32px;
-      flex-direction: column; align-items: flex-start;
-      max-width: none; width: auto; gap: 20px;
+      display: grid !important;
+      grid-template-columns: 90px 90px;
+      gap: 12px 8px;
+      max-width: none; width: auto;
       padding: 0; z-index: 10;
     }
+    .icon.desktop-only { display: flex; }
     .icon { width: 80px; }
     .icon-img, .icon-img img { width: 56px; height: 56px; }
     .icon-label { font-size: 15px; }
-    /* Top bar centered at top */
-    .top-bar { position: fixed; top: 24px; left: 50%; transform: translateX(-50%); max-width: 500px; z-index: 10; }
+    /* Top bar: logos top-left, music top-right */
+    .top-bar {
+      position: fixed; top: 24px; left: 32px; right: 32px;
+      transform: none; max-width: none; z-index: 20;
+      pointer-events: none;
+    }
+    .top-bar > * { pointer-events: auto; }
     .top-logos img { height: 28px; }
     .top-logos a img { height: 56px; }
     .top-logos .logo-divider { width: 2px; height: 44px; }
-    /* Main window centered on screen */
+    /* Main window center-right */
     .win-window {
-      max-width: 500px; margin: 80px auto 0;
+      max-width: 500px; margin: 80px 80px 0 auto;
       position: relative; left: 0;
     }
     .desk-win { max-width: 400px; }
+
+    /* Desktop menu: show desktop items, hide mobile items */
+    .menu-item.desktop-menu { display: inline-block; }
+    .menu-item.mobile-menu { display: none; }
+
+    /* Taskbar */
+    .taskbar {
+      display: flex;
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: 40px; z-index: 9000;
+      background: #c0c0c0;
+      border-top: 2px solid #fff;
+      align-items: center;
+      padding: 2px 4px;
+      gap: 4px;
+      font-family: 'VT323', monospace;
+    }
+    .taskbar-start {
+      display: flex; align-items: center; gap: 4px;
+      background: #c0c0c0;
+      border-top: 2px solid #fff; border-left: 2px solid #fff;
+      border-right: 2px solid #404040; border-bottom: 2px solid #404040;
+      padding: 3px 10px; cursor: pointer;
+      font-size: 18px; font-weight: bold; color: #000;
+      text-decoration: none;
+      height: 32px;
+    }
+    .taskbar-start:active {
+      border-top-color: #404040; border-left-color: #404040;
+      border-right-color: #fff; border-bottom-color: #fff;
+    }
+    .taskbar-start img { width: 20px; height: 20px; image-rendering: pixelated; }
+    .taskbar-tab {
+      flex: 1;
+      background: #c0c0c0;
+      border-top: 2px solid #404040; border-left: 2px solid #404040;
+      border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+      padding: 3px 10px;
+      font-size: 16px; color: #000;
+      height: 32px; display: flex; align-items: center;
+      overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+      max-width: 300px;
+    }
+    .taskbar-clock {
+      background: #c0c0c0;
+      border-top: 2px solid #404040; border-left: 2px solid #404040;
+      border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+      padding: 3px 12px;
+      font-size: 16px; color: #000;
+      height: 32px; display: flex; align-items: center;
+      white-space: nowrap;
+    }
+
     /* Cards carousel for desktop */
     .carousel-card { flex: 0 0 340px; }
     .carousel-wrap { gap: 20px; padding: 20px calc(50vw - 170px); }
@@ -505,6 +576,104 @@
   </div>
 </div>
 
+<!-- ── DESKTOP-ONLY ICON POPUPS ── -->
+<div class="desk-win w95" id="win-ie">
+  <div class="titlebar"><div class="titlebar-title">Internet Explorer</div><div class="win-close" onclick="closeWin('ie')">x</div></div>
+  <div class="dw-body">
+    <div style="text-align:center;padding:10px 0">
+      <div style="font-size:48px;margin-bottom:8px">🚫</div>
+      <div style="font-size:18px;color:#800000;font-weight:bold;margin-bottom:8px">ACCESS DENIED</div>
+      <div style="font-size:15px;color:#000;margin-bottom:12px">Internet Explorer has been blocked by Opal.<br>Reason: You've already browsed enough for one lifetime.</div>
+      <div class="opal-banner">[ OPAL ACTIVE ] BROWSING BLOCKED — GO OUTSIDE</div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="win-btn-sm" onclick="closeWin('ie')">OK</button></div>
+  </div>
+</div>
+
+<div class="desk-win w95" id="win-outlook">
+  <div class="titlebar"><div class="titlebar-title">Outlook Express</div><div class="win-close" onclick="closeWin('outlook')">x</div></div>
+  <div class="dw-body">
+    <div style="font-size:15px;color:#404040;margin-bottom:10px">Inbox — 0 new messages</div>
+    <div class="file-list">
+      <div class="file-item">📧 You have <b>0</b> new emails.</div>
+      <div class="file-item" style="color:#808080;font-style:italic">You've been too busy scrolling to check.</div>
+      <div class="file-item">📧 [SPAM] "You won a free attention span!"</div>
+      <div class="file-item">📧 [SPAM] "Doctors hate this one weird trick to stop doomscrolling"</div>
+      <div class="file-item">📧 From: Mom — "Please call me. It's been 3 weeks."</div>
+      <div class="file-item">📧 From: Boss — "Are you even working right now?"</div>
+    </div>
+    <div style="font-size:13px;color:#808080;margin-top:8px">Last checked: never (you were on TikTok)</div>
+    <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="win-btn-sm" onclick="closeWin('outlook')">Close</button></div>
+  </div>
+</div>
+
+<div class="desk-win w95" id="win-notepad">
+  <div class="titlebar"><div class="titlebar-title">Notepad — untitled.txt</div><div class="win-close" onclick="closeWin('notepad')">x</div></div>
+  <div class="dw-body">
+    <div style="background:#fff;border-top:2px solid #404040;border-left:2px solid #404040;border-right:2px solid #fff;border-bottom:2px solid #fff;padding:12px;font-size:15px;color:#000;line-height:1.8;min-height:160px;font-family:'VT323',monospace">
+      Dear future me,<br><br>
+      If you're reading this, you finally closed TikTok.<br>
+      I'm proud of you.<br><br>
+      Things I planned to do today:<br>
+      - Learn guitar (opened YouTube, watched 47 cat videos instead)<br>
+      - Read a book (read 200 tweets instead)<br>
+      - Go for a walk (walked to the fridge while scrolling)<br>
+      - Be productive (typed "how to be productive" into Google, scrolled for 2 hours)<br><br>
+      Time remaining today: not enough.<br>
+      — You (written at 3:47 AM)
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="win-btn-sm" onclick="closeWin('notepad')">Close</button></div>
+  </div>
+</div>
+
+<div class="desk-win w95" id="win-control">
+  <div class="titlebar"><div class="titlebar-title">Control Panel</div><div class="win-close" onclick="closeWin('control')">x</div></div>
+  <div class="dw-body">
+    <div style="text-align:center;padding:10px 0">
+      <div style="font-size:48px;margin-bottom:8px">🔒</div>
+      <div style="font-size:18px;color:#800000;font-weight:bold;margin-bottom:8px">SETTINGS LOCKED</div>
+      <div style="font-size:15px;color:#000;margin-bottom:6px">All settings have been locked by Opal.</div>
+      <div style="font-size:14px;color:#404040;margin-bottom:12px">You can't change your screen time limits.<br>This is for your own good.<br><br>Options available:<br>• Accept your fate<br>• Go outside<br>• Download Opal</div>
+      <div class="opal-banner">[ ADMIN: OPAL ] YOUR SELF-CONTROL IS NOT TRUSTED</div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="win-btn-sm" onclick="closeWin('control')">OK</button></div>
+  </div>
+</div>
+
+<div class="desk-win w95" id="win-documents">
+  <div class="titlebar"><div class="titlebar-title">My Documents</div><div class="win-close" onclick="closeWin('documents')">x</div></div>
+  <div class="dw-body">
+    <div style="font-size:14px;color:#404040;margin-bottom:8px">C:\My Documents\ — 8 items</div>
+    <div class="file-list">
+      <div class="file-item">📄 new_years_resolution_2024.txt <span class="f-size">0 KB</span></div>
+      <div class="file-item">📄 budget_i_never_followed.xls <span class="f-size">empty</span></div>
+      <div class="file-item">📄 novel_chapter_1_FINAL_v2_REAL.doc <span class="f-size">3 words</span></div>
+      <div class="file-item">📄 workout_plan.pdf <span class="f-size">unopened</span></div>
+      <div class="file-item">📄 screenshots_of_memes/ <span class="f-size">47.2 GB</span></div>
+      <div class="file-item">📄 things_to_google_later.txt <span class="f-size">872 items</span></div>
+      <div class="file-item">📄 passwords_DONT_DELETE.txt <span class="f-size">yikes</span></div>
+      <div class="file-item">📄 my_screen_time_data.csv <span class="f-size">too big</span></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:10px;align-items:center">
+      <div style="font-size:13px;color:#808080">47.2 GB of memes. 0 GB of productivity.</div>
+      <button class="win-btn-sm" onclick="closeWin('documents')">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="desk-win w95" id="win-minesweeper">
+  <div class="titlebar"><div class="titlebar-title">Minesweeper</div><div class="win-close" onclick="closeWin('minesweeper')">x</div></div>
+  <div class="dw-body">
+    <div style="text-align:center;padding:10px 0">
+      <div style="font-size:48px;margin-bottom:8px">💣</div>
+      <div style="font-size:18px;color:#800000;font-weight:bold;margin-bottom:8px">GAME BLOCKED</div>
+      <div style="font-size:15px;color:#000;margin-bottom:12px">Minesweeper has been blocked by Opal.<br><br>You already spend enough time on screens.<br>Try going outside instead.<br><br>Suggested alternatives:<br>• Touch grass<br>• Look at a tree<br>• Remember what the sun looks like</div>
+      <div class="opal-banner">[ OPAL ACTIVE ] GAMES BLOCKED — NICE TRY</div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="win-btn-sm" onclick="closeWin('minesweeper')">OK</button></div>
+  </div>
+</div>
+
 <!-- ── TOP BAR ── -->
 <div class="top-bar">
   <div class="top-logos">
@@ -537,6 +706,30 @@
     <div class="icon-img"><span class="icon-badge">!</span><img src="assets/file.png" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('afterbegin','📁')"></div>
     <div class="icon-label">Lost_Years.exe</div>
   </div>
+  <div class="icon desktop-only" onclick="openWin('ie')">
+    <div class="icon-img"><img src="assets/internet-explorer.png" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('afterbegin','🌐')"></div>
+    <div class="icon-label">Internet Explorer</div>
+  </div>
+  <div class="icon desktop-only" onclick="openWin('outlook')">
+    <div class="icon-img"><img src="assets/outlook-express.png" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('afterbegin','📧')"></div>
+    <div class="icon-label">Outlook Express</div>
+  </div>
+  <div class="icon desktop-only" onclick="openWin('notepad')">
+    <div class="icon-img"><img src="assets/notepad.png" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('afterbegin','📝')"></div>
+    <div class="icon-label">Notepad</div>
+  </div>
+  <div class="icon desktop-only" onclick="openWin('control')">
+    <div class="icon-img"><img src="assets/control.png" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('afterbegin','🔧')"></div>
+    <div class="icon-label">Control Panel</div>
+  </div>
+  <div class="icon desktop-only" onclick="openWin('documents')">
+    <div class="icon-img"><img src="assets/documents.png" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('afterbegin','📂')"></div>
+    <div class="icon-label">My Documents</div>
+  </div>
+  <div class="icon desktop-only" onclick="openWin('minesweeper')">
+    <div class="icon-img"><img src="assets/minesweeper.png" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('afterbegin','💣')"></div>
+    <div class="icon-label">Minesweeper</div>
+  </div>
 </div>
 
 <!-- ── MAIN WINDOW ── -->
@@ -551,9 +744,13 @@
   </div>
   <div class="menubar">
     <span class="menu-item">File</span>
-    <a href="https://www.opal.so" target="_blank" class="menu-item" style="text-decoration:underline;color:inherit">Opal</a>
-    <a href="https://www.yourattentionplz.com" target="_blank" class="menu-item" style="text-decoration:underline;color:inherit">Your Attention Please</a>
-    <a href="https://www.vagrants.com" target="_blank" class="menu-item" style="text-decoration:underline;color:inherit">Vagrants</a>
+    <a href="https://www.opal.so" target="_blank" class="menu-item mobile-menu" style="text-decoration:underline;color:inherit">Opal</a>
+    <a href="https://www.yourattentionplz.com" target="_blank" class="menu-item mobile-menu" style="text-decoration:underline;color:inherit">Your Attention Please</a>
+    <a href="https://www.vagrants.com" target="_blank" class="menu-item mobile-menu" style="text-decoration:underline;color:inherit">Vagrants</a>
+    <span class="menu-item desktop-menu">Edit</span>
+    <span class="menu-item desktop-menu">View</span>
+    <span class="menu-item desktop-menu">Existential Crisis</span>
+    <span class="menu-item desktop-menu">About YAP</span>
   </div>
   <div class="win-body">
 
@@ -1239,6 +1436,45 @@
     chosenCardData = null;
   })();
 
+  // ── TASKBAR CLOCK ──
+  function updateTaskbarClock() {
+    var clockEl = document.getElementById('taskbarClock');
+    if (!clockEl) return;
+    var now = new Date();
+    var h = now.getHours();
+    var m = now.getMinutes();
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12; if (h === 0) h = 12;
+    var mm = m < 10 ? '0' + m : m;
+    clockEl.textContent = h + ':' + mm + ' ' + ampm;
+  }
+  updateTaskbarClock();
+  setInterval(updateTaskbarClock, 10000);
+
+  // ── WINDOW MANAGEMENT UPDATE (include new desktop windows) ──
+  var allWinIds = ['computer','trash','phone','years','ie','outlook','notepad','control','documents','minesweeper'];
+
+  // Override openWin to support new windows
+  var _origOpenWin = openWin;
+  openWin = function(id) {
+    allWinIds.forEach(function(wid) {
+      var w = document.getElementById('win-'+wid);
+      if (w) w.style.display = 'none';
+    });
+    if (notifIv) clearInterval(notifIv);
+    // Remove badge from the clicked icon (original 4 only)
+    var iconMap = {computer:0, trash:1, phone:2, years:3};
+    var icons = document.querySelectorAll('.desktop-icons .icon');
+    var idx = iconMap[id];
+    if (idx !== undefined && icons[idx]) {
+      var badge = icons[idx].querySelector('.icon-badge');
+      if (badge) badge.remove();
+    }
+    var w = document.getElementById('win-'+id);
+    if (w) w.style.display = 'block';
+    if (id === 'phone') setTimeout(startNotifs, 100);
+  };
+
   // Show badges only after icon images have loaded
   (function() {
     var imgs = document.querySelectorAll('.icon-img img');
@@ -1256,5 +1492,15 @@
     if (loaded >= imgs.length) showBadges();
   })();
 </script>
+
+<!-- ── TASKBAR (desktop only, shown via CSS) ── -->
+<div class="taskbar">
+  <a class="taskbar-start" href="https://www.opal.so" target="_blank">
+    <img src="assets/Opal-logo-white.png" onerror="this.style.display='none'" style="filter:brightness(0);"> Opal Start
+  </a>
+  <div class="taskbar-tab">Chronically_Online_C...</div>
+  <div class="taskbar-clock" id="taskbarClock">12:00 AM</div>
+</div>
+
 </body>
 </html>
