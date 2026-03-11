@@ -1369,14 +1369,14 @@
   // ── VAGRANT GAME ──
   var vagrantScore = 0;
   var vagrantInterval = null;
-  var vagrantSpeed = 600;
+  var vagrantSpeed = 500;
   var vagrantSize = 48;
   var vagrantMisses = 0;
   var vagrantCatching = false;
 
   function startVagrantGame() {
     vagrantScore = 0;
-    vagrantSpeed = 600;
+    vagrantSpeed = 500;
     vagrantSize = 48;
     vagrantMisses = 0;
     vagrantCatching = false;
@@ -1448,8 +1448,8 @@
         vagrantCatching = false;
       }, 200);
     } else {
-      vagrantSpeed = Math.max(280, vagrantSpeed - 100);
-      vagrantSize = Math.max(32, vagrantSize - 3);
+      vagrantSpeed = Math.max(220, vagrantSpeed - 80);
+      vagrantSize = Math.max(28, vagrantSize - 5);
       img.style.width = vagrantSize + 'px';
       img.style.height = vagrantSize + 'px';
       setTimeout(function() {
@@ -1464,7 +1464,7 @@
   function resetVagrantGame() {
     clearInterval(vagrantInterval);
     vagrantScore = 0;
-    vagrantSpeed = 600;
+    vagrantSpeed = 500;
     vagrantSize = 44;
   }
 
