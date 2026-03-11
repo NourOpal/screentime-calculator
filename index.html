@@ -644,10 +644,10 @@
       <div style="font-family:'VT323',monospace;font-size:16px;color:#000" id="vagrantScore">Score: 0 / 5</div>
       <div style="font-family:'VT323',monospace;font-size:14px;color:#808080" id="vagrantHint">Click the runner!</div>
     </div>
-    <div id="vagrantWin" style="display:none;padding:16px;text-align:center;background:#c0c0c0">
-      <div style="font-family:'VT323',monospace;font-size:24px;color:#000080;margin-bottom:4px">&#127942; YOU CAUGHT THE VAGRANT! &#127942;</div>
-      <div style="font-family:'VT323',monospace;font-size:15px;color:#000;margin-bottom:12px">Nice reflexes. Wanna see what else the crew's been up to?</div>
-      <a href="https://www.vagrants.com/originals" target="_blank" class="win-btn-sm" style="display:inline-block;text-decoration:none;padding:6px 16px;font-size:16px;background:#000080;color:#fff;border-top-color:#4040c0;border-left-color:#4040c0;border-right-color:#000020;border-bottom-color:#000020;font-family:'VT323',monospace">Visit Vagrants &#8594;</a>
+    <div id="vagrantWin" style="display:none;padding:20px 16px;text-align:center;background:#c0c0c0">
+      <div style="font-family:'VT323',monospace;font-size:26px;color:#000080;margin-bottom:6px">YOU CAUGHT THE VAGRANT!</div>
+      <div style="font-family:'VT323',monospace;font-size:16px;color:#000;margin-bottom:14px">Nice reflexes. Wanna see what else the crew's been up to?</div>
+      <a href="https://www.vagrants.com/originals" target="_blank" class="win-btn-sm" style="display:inline-block;text-decoration:none;padding:8px 20px;font-size:17px;background:#000080;color:#fff;border-top-color:#4040c0;border-left-color:#4040c0;border-right-color:#000020;border-bottom-color:#000020;font-family:'VT323',monospace">Visit Vagrants</a>
     </div>
   </div>
 </div>
@@ -1403,14 +1403,15 @@
     if (vagrantScore >= 5) {
       setTimeout(function() {
         runner.style.display = 'none';
+        document.getElementById('vagrantGame').style.display = 'none';
         document.getElementById('vagrantHint').textContent = '';
-        document.getElementById('vagrantGame').style.background = '#002200';
+        document.getElementById('vagrantScore').textContent = 'Score: 5 / 5';
         document.getElementById('vagrantWin').style.display = 'block';
         vagrantCatching = false;
       }, 200);
     } else {
-      vagrantSpeed = Math.max(350, vagrantSpeed - 80);
-      vagrantSize = Math.max(36, vagrantSize - 2);
+      vagrantSpeed = Math.max(280, vagrantSpeed - 100);
+      vagrantSize = Math.max(32, vagrantSize - 3);
       img.style.width = vagrantSize + 'px';
       img.style.height = vagrantSize + 'px';
       setTimeout(function() {
