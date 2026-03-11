@@ -1684,27 +1684,33 @@
     }).catch(function() { btn.textContent = '[ SHARE ]'; btn.disabled = false; });
   }
 
+  function _isSafariNative() {
+    var ua = navigator.userAgent || '';
+    // Must be Safari on iOS/Mac, NOT Chrome (CriOS), Firefox (FxiOS), or other wrappers
+    return /Safari/.test(ua) && /Apple/.test(navigator.vendor) && !/CriOS|FxiOS|OPiOS|EdgiOS/.test(ua);
+  }
+
   function _doShare(btn, dataUrl) {
     var shareText = certData.years + ' years of my life went to a screen. I\'m reclaiming my time as a ' + (chosenActivity || 'new person');
-    // Try native share (works best on mobile Safari, directly from user gesture)
-    try {
-      var parts = dataUrl.split(','); var mime = parts[0].match(/:(.*?);/)[1];
-      var raw = atob(parts[1]); var arr = new Uint8Array(raw.length);
-      for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
-      var blob = new Blob([arr], { type: mime });
-      var file = new File([blob], 'my-screen-time-card.png', { type: 'image/png' });
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        navigator.share({ files: [file], title: 'My Screen Time Card', text: shareText }).then(function() {
-          markShareDone(btn);
-        }).catch(function(err) {
-          // User cancelled = still mark done; real error = show overlay
-          if (err && err.name === 'AbortError') { markShareDone(btn); }
-          else { showShareImageOverlay(dataUrl); markShareDone(btn); }
-        });
-        return;
-      }
-    } catch(e) {}
-    // Fallback: show image for manual save
+    // Only try native file share on actual Safari (it's the only browser that does it reliably)
+    if (_isSafariNative()) {
+      try {
+        var parts = dataUrl.split(','); var mime = parts[0].match(/:(.*?);/)[1];
+        var raw = atob(parts[1]); var arr = new Uint8Array(raw.length);
+        for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+        var blob = new Blob([arr], { type: mime });
+        var file = new File([blob], 'my-screen-time-card.png', { type: 'image/png' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          navigator.share({ files: [file], title: 'My Screen Time Card', text: shareText }).then(function() {
+            markShareDone(btn);
+          }).catch(function() {
+            markShareDone(btn);
+          });
+          return;
+        }
+      } catch(e) {}
+    }
+    // Everyone else: show overlay with save options
     showShareImageOverlay(dataUrl);
     markShareDone(btn);
   }
@@ -1723,17 +1729,19 @@
     var btnStyle = 'display:block;width:200px;margin-top:10px;padding:8px 20px;font-family:VT323,monospace;font-size:18px;text-align:center;cursor:pointer;text-decoration:none;';
     var w95Btn = 'background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #404040;border-bottom:2px solid #404040;color:#000;';
 
-    // Save button — open image in new tab (works on all browsers including Chrome iOS)
-    var saveLink = document.createElement('button');
+    // Save button — convert to blob URL and open (works on Chrome iOS)
+    var saveLink = document.createElement('a');
     saveLink.textContent = '[ SAVE IMAGE ]';
     saveLink.style.cssText = btnStyle + w95Btn;
-    saveLink.onclick = function() {
-      var w = window.open('');
-      if (w) {
-        w.document.write('<html><head><title>Save Image</title><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh"><img src="' + dataUrl + '" style="max-width:100%;max-height:100vh"></body></html>');
-        w.document.close();
-      }
-    };
+    // Create blob URL (more compatible than data URL for downloads)
+    var parts = dataUrl.split(','); var mime = parts[0].match(/:(.*?);/)[1];
+    var raw = atob(parts[1]); var arr = new Uint8Array(raw.length);
+    for (var k = 0; k < raw.length; k++) arr[k] = raw.charCodeAt(k);
+    var imgBlob = new Blob([arr], { type: mime });
+    var blobUrl = URL.createObjectURL(imgBlob);
+    saveLink.href = blobUrl;
+    saveLink.target = '_blank';
+    saveLink.download = 'my-screen-time-card.png';
 
     // Share link button (text only, no file — works on all browsers)
     var shareBtn = document.createElement('button');
