@@ -1772,7 +1772,8 @@
     closeBtn.onclick = function() { overlay.remove(); };
 
     var title = document.createElement('div');
-    title.textContent = 'Your card is ready!';
+    var isChromeIOS = /CriOS/.test(navigator.userAgent);
+    title.innerHTML = isChromeIOS ? 'Screenshot this card to share!<br><span style="font-size:14px;opacity:0.7">For the full sharing experience, use Safari</span>' : 'Your card is ready!';
     title.style.cssText = 'color:#fff;font-family:VT323,monospace;font-size:20px;margin-bottom:12px;text-align:center;';
 
     overlay.appendChild(title);
