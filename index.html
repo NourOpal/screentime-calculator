@@ -15,7 +15,7 @@
 <title>Opal Screen Time Calculator</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; font-family: "MS Sans Serif", Tahoma, Geneva, sans-serif; }
 
   html {
     background-color: #2563a8;
@@ -35,7 +35,7 @@
 
   body {
     background-color: transparent;
-    font-family: 'VT323', monospace;
+    font-family: "MS Sans Serif", Tahoma, Geneva, sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -66,7 +66,7 @@
     cursor: pointer; font-size: 20px; gap: 1px;
     position: relative;
   }
-  .cd-label { font-size: 9px; color: #000; font-family: 'VT323', monospace; letter-spacing: 0.5px; line-height: 1; }
+  .cd-label { font-size: 9px; color: #000; letter-spacing: 0.5px; line-height: 1; }
   .cd-btn.playing { border-top-color: #404040; border-left-color: #404040; border-right-color: #fff; border-bottom-color: #fff; }
   .cd-badge { position: absolute; top: -4px; right: -4px; background: #ff0000; color: #fff; font-size: 9px; padding: 1px 3px; display: none; }
   .cd-btn.playing .cd-badge { display: block; }
@@ -86,7 +86,7 @@
   .w95 { background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; }
   .w95-inset { background: #fff; border-top: 2px solid #404040; border-left: 2px solid #404040; border-right: 2px solid #fff; border-bottom: 2px solid #fff; }
   .titlebar { background: linear-gradient(90deg, #000080, #1084d0); padding: 4px 6px; display: flex; align-items: center; gap: 5px; }
-  .titlebar-title { font-size: 17px; color: #fff; flex: 1; letter-spacing: 0.5px; }
+  .titlebar-title { font-size: 17px; color: #fff; flex: 1; letter-spacing: 0.5px; font-weight: bold; }
   .win-close { width: 20px; height: 18px; background: #c0c0c0; border-top: 1.5px solid #fff; border-left: 1.5px solid #fff; border-right: 1.5px solid #404040; border-bottom: 1.5px solid #404040; font-size: 14px; line-height: 1; display: flex; align-items: center; justify-content: center; color: #000; cursor: pointer; padding-bottom: 2px; }
   .menubar { background: #c0c0c0; border-bottom: 1px solid #808080; padding: 3px 8px; display: flex; gap: 2px; flex-wrap: nowrap; overflow: hidden; }
   .menu-item { font-size: 17px; color: #000; padding: 2px 8px; cursor: pointer; }
@@ -117,7 +117,7 @@
   .year-row:active { background: #000080; color: #fff; }
   .year-row .y-yr { color: #000080; min-width: 42px; font-size: 16px; }
   .year-row .y-status { margin-left: auto; font-size: 12px; color: #800000; white-space: nowrap; }
-  .win-btn-sm { background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; padding: 6px 18px; font-family: 'VT323', monospace; font-size: 18px; cursor: pointer; color: #000; }
+  .win-btn-sm { background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; padding: 6px 18px; font-size: 18px; cursor: pointer; color: #000; }
   .win-btn-sm:active { border-top-color: #404040; border-left-color: #404040; border-right-color: #fff; border-bottom-color: #fff; }
 
   /* ── MAIN WINDOW ── */
@@ -125,12 +125,12 @@
   .win-body { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
 
   .marquee-wrap { background: #000080; border-top: 2px solid #404040; border-left: 2px solid #404040; border-right: 2px solid #fff; border-bottom: 2px solid #fff; overflow: hidden; height: 30px; }
-  .marquee-inner { display: inline-block; white-space: nowrap; animation: marquee 20s linear infinite; font-size: 19px; color: #ffff00; letter-spacing: 1px; line-height: 30px; }
+  .marquee-inner { display: inline-block; white-space: nowrap; animation: marquee 20s linear infinite; font-size: 19px; color: #ffff00; letter-spacing: 1px; line-height: 30px; font-family: 'VT323', monospace; }
   @keyframes marquee { from{transform:translateX(420px)} to{transform:translateX(-100%)} }
 
   .crt-screen { background: #001200; border-top: 3px solid #404040; border-left: 3px solid #404040; border-right: 3px solid #c0c0c0; border-bottom: 3px solid #c0c0c0; padding: 12px; position: relative; overflow: hidden; }
   .crt-screen::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.12) 0px, rgba(0,0,0,0.12) 1px, transparent 1px, transparent 3px); pointer-events: none; }
-  .crt-line { font-size: 16px; color: #00ff41; letter-spacing: 1px; line-height: 1.8; text-shadow: 0 0 6px #00ff41; }
+  .crt-line { font-size: 16px; color: #00ff41; letter-spacing: 1px; line-height: 1.8; text-shadow: 0 0 6px #00ff41; font-family: 'VT323', monospace; }
   .cursor-blink { display: inline-block; width: 10px; height: 16px; background: #00ff41; margin-left: 2px; vertical-align: middle; animation: blink 0.8s step-end infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
@@ -142,9 +142,9 @@
   .err-text { font-size: 17px; color: #000; line-height: 1.5; flex: 1; }
   .err-btns { display: flex; justify-content: center; padding: 0 14px 12px; gap: 10px; }
 
-  .sec-header { background: #000080; color: #fff; font-size: 19px; padding: 4px 10px; letter-spacing: 0.5px; }
+  .sec-header { background: #000080; color: #fff; font-size: 19px; padding: 4px 10px; letter-spacing: 0.5px; font-weight: bold; }
   .field { margin-bottom: 6px; }
-  .field-label { font-size: 19px; color: #000; margin-bottom: 5px; display: block; }
+  .field-label { font-size: 19px; color: #000; margin-bottom: 5px; display: block; font-weight: bold; }
   .field-label .hint { font-size: 15px; color: #404040; }
   .field-row { display: flex; align-items: center; gap: 10px; background: #fff; border-top: 2px solid #404040; border-left: 2px solid #404040; border-right: 2px solid #fff; border-bottom: 2px solid #fff; padding: 8px 12px; }
   .field-row input[type=range] { -webkit-appearance: none; flex: 1; height: 6px; outline: none; cursor: pointer; background: repeating-linear-gradient(90deg, #000080 0px, #000080 2px, #c0c0c0 2px, #c0c0c0 4px); }
@@ -152,7 +152,7 @@
   .field-val { font-size: 28px; color: #000080; min-width: 62px; text-align: right; white-space: nowrap; }
   .field-val .unit { font-size: 15px; color: #404040; }
 
-  .win-btn { width: 100%; background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; padding: 10px; font-family: 'VT323', monospace; font-size: 22px; letter-spacing: 1px; cursor: pointer; color: #000; text-align: center; }
+  .win-btn { width: 100%; background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; padding: 10px; font-size: 22px; letter-spacing: 1px; cursor: pointer; color: #000; text-align: center; font-weight: bold; }
   .win-btn:active { border-top-color: #404040; border-left-color: #404040; border-right-color: #fff; border-bottom-color: #fff; }
   .win-btn.primary {
     background: #000080;
@@ -196,8 +196,8 @@
   .cta-panel { background: #000080; border-top: 2px solid #4040c0; border-left: 2px solid #4040c0; border-right: 2px solid #000020; border-bottom: 2px solid #000020; padding: 14px; text-align: center; display: flex; flex-direction: column; gap: 10px; }
   .cta-panel .cta-title { font-size: 22px; color: #ffff00; }
   .cta-panel .cta-sub { font-size: 15px; color: #a0a0ff; }
-  .cta-btn { background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; padding: 10px; font-family: 'VT323', monospace; font-size: 22px; letter-spacing: 1px; cursor: pointer; color: #000; }
-  .retry-btn { background: transparent; border: none; font-family: 'VT323', monospace; font-size: 16px; color: #000080; cursor: pointer; text-decoration: underline; text-align: center; width: 100%; padding: 6px; }
+  .cta-btn { background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; padding: 10px; font-size: 22px; letter-spacing: 1px; cursor: pointer; color: #000; font-weight: bold; }
+  .retry-btn { background: transparent; border: none; font-size: 16px; color: #000080; cursor: pointer; text-decoration: underline; text-align: center; width: 100%; padding: 6px; }
 
   .status-bar { display: flex; gap: 2px; padding: 3px 5px; border-top: 1px solid #808080; }
   .status-cell { font-size: 14px; color: #000; border-top: 1px solid #404040; border-left: 1px solid #404040; border-right: 1px solid #fff; border-bottom: 1px solid #fff; padding: 2px 8px; flex: 1; }
@@ -222,7 +222,7 @@
   .clippy-bubble-text { margin-bottom:10px; }
   .clippy-bubble-text b { color:#800000; }
   .clippy-btns { display:flex; gap:8px; flex-wrap:wrap; }
-  .clippy-btn { background:#c0c0c0; border-top:2px solid #fff; border-left:2px solid #fff; border-right:2px solid #404040; border-bottom:2px solid #404040; padding:4px 12px; font-family:'VT323',monospace; font-size:15px; cursor:pointer; color:#000; white-space:nowrap; }
+  .clippy-btn { background:#c0c0c0; border-top:2px solid #fff; border-left:2px solid #fff; border-right:2px solid #404040; border-bottom:2px solid #404040; padding:4px 12px; font-size:15px; cursor:pointer; color:#000; white-space:nowrap; }
   .clippy-btn:active { border-top-color:#404040; border-left-color:#404040; border-right-color:#fff; border-bottom-color:#fff; }
   .clippy-btn.primary { background:#000080; color:#fff; border-top-color:#4040c0; border-left-color:#4040c0; border-right-color:#000020; border-bottom-color:#000020; }
   @media (max-width:600px) {
@@ -242,7 +242,7 @@
   }
   .cards-backdrop.open { display:flex; animation: backdropFadeIn 0.3s ease; }
   @keyframes backdropFadeIn { from{opacity:0} to{opacity:1} }
-  .cards-close-top { position:fixed; top:16px; right:16px; z-index:8001; width:28px; height:26px; background:#c0c0c0; border-top:2px solid #fff; border-left:2px solid #fff; border-right:2px solid #404040; border-bottom:2px solid #404040; display:flex; align-items:center; justify-content:center; cursor:pointer; font-family:'VT323',monospace; font-size:18px; color:#000; line-height:1; padding-bottom:2px; }
+  .cards-close-top { position:fixed; top:16px; right:16px; z-index:8001; width:28px; height:26px; background:#c0c0c0; border-top:2px solid #fff; border-left:2px solid #fff; border-right:2px solid #404040; border-bottom:2px solid #404040; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; color:#000; line-height:1; padding-bottom:2px; }
   .cards-title { color:#fff; font-family:'VT323',monospace; font-size:18px; letter-spacing:1px; margin:40px 20px 16px; text-align:center; flex-shrink:0; line-height:1.4; }
   .carousel-wrap { width:100%; overflow-x:auto; overflow-y:visible; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; display:flex; gap:14px; padding:20px calc(50vw - 155px); scrollbar-width:none; flex-shrink:0; }
   .carousel-wrap::-webkit-scrollbar { display:none; }
@@ -256,7 +256,7 @@
   .carousel-dot.active { background:#fff; }
   .carousel-selection { display:none; flex-direction:column; align-items:center; gap:10px; margin-top:14px; width:100%; max-width:360px; flex-shrink:0; padding:0 20px; }
   .carousel-selection.visible { display:flex; }
-  .carousel-selection-text { color:#fff; font-family:'VT323',monospace; font-size:20px; text-align:center; }
+  .carousel-selection-text { color:#fff; font-size:20px; text-align:center; }
   .cards-share-btn { max-width:360px; }
   .cards-share-btn.done { background:#198754; color:#fff; border-color:#198754; }
   .cards-share-btn.done::after { animation:none; }
@@ -266,7 +266,7 @@
     width: 52px; height: 52px; background: #c0c0c0;
     border-top: 2px solid #fff; border-left: 2px solid #fff;
     border-right: 2px solid #404040; border-bottom: 2px solid #404040;
-    cursor: pointer; font-family: 'VT323', monospace; font-size: 32px;
+    cursor: pointer; font-size: 32px; font-weight: bold;
     color: #000; z-index: 8002; flex-shrink: 0;
     user-select: none; -webkit-user-select: none;
     position: fixed; top: 50%;
@@ -323,7 +323,7 @@
     background: #000080; color: #ffff00;
     border-top: 2px solid #4040c0; border-left: 2px solid #4040c0;
     border-right: 2px solid #000020; border-bottom: 2px solid #000020;
-    font-family: 'VT323', monospace; font-size: 24px; letter-spacing: 2px;
+    font-size: 24px; letter-spacing: 2px; font-weight: bold;
     cursor: pointer; text-align: center;
     position: relative; overflow: hidden;
   }
@@ -350,39 +350,43 @@
     .icon-img, .icon-img img { width: 38px; height: 38px; }
     .icon-badge { font-size: 10px; min-width: 16px; height: 16px; border-radius: 8px; top: -3px; right: -3px; }
     .icon-label { font-size: 12px; }
-    .win-body { padding: 8px; gap: 6px; }
-    .marquee-wrap { height: 22px; }
-    .marquee-inner { font-size: 15px; line-height: 22px; }
-    .crt-screen { padding: 6px 8px; }
-    .crt-line { font-size: 13px; line-height: 1.5; }
-    .sec-header { font-size: 16px; padding: 3px 8px; }
-    .field { margin-bottom: 2px; }
-    .field-label { font-size: 16px; margin-bottom: 2px; }
-    .field-row { padding: 5px 8px; gap: 8px; }
-    .field-val { font-size: 22px; min-width: 50px; }
-    .win-btn { padding: 7px; font-size: 19px; }
-    .win-btn.primary { font-size: 22px; padding: 14px 12px; }
-    .result { gap: 6px; }
-    .result-main { padding: 10px 10px; }
-    .result-main .r-intro { font-size: 13px; }
-    .result-main .r-years { font-size: 64px; }
-    .result-main .r-unit { font-size: 18px; }
-    .result-main .r-copy { font-size: 14px; margin-top: 6px; }
+    .win-body { padding: 10px; gap: 8px; }
+    .marquee-wrap { height: 24px; }
+    .marquee-inner { font-size: 16px; line-height: 24px; }
+    .crt-screen { padding: 8px 10px; }
+    .crt-line { font-size: 14px; line-height: 1.6; }
+    .sec-header { font-size: 17px; padding: 4px 10px; }
+    .field { margin-bottom: 4px; }
+    .field-label { font-size: 18px; margin-bottom: 3px; }
+    .field-label .hint { font-size: 14px; }
+    .field-row { padding: 8px 10px; gap: 10px; }
+    .field-row input[type=range] { height: 10px; }
+    .field-row input[type=range]::-webkit-slider-thumb { width: 28px; height: 38px; }
+    .field-val { font-size: 26px; min-width: 58px; }
+    .field-val .unit { font-size: 16px; }
+    .win-btn { padding: 9px; font-size: 20px; }
+    .win-btn.primary { font-size: 24px; padding: 16px 14px; }
+    .result { gap: 8px; }
+    .result-main { padding: 14px 12px; }
+    .result-main .r-intro { font-size: 16px; }
+    .result-main .r-years { font-size: 80px; }
+    .result-main .r-unit { font-size: 22px; }
+    .result-main .r-copy { font-size: 17px; margin-top: 8px; line-height: 1.5; }
     .stats-row { grid-template-columns: repeat(4,1fr); }
-    .stat-cell { padding: 6px 2px; }
-    .stat-cell .s-num { font-size: 18px; }
-    .stat-cell .s-lbl { font-size: 10px; }
-    .fun-fact { padding: 6px 8px; font-size: 13px; }
-    .cta-panel { padding: 8px; gap: 6px; }
-    .cta-panel .cta-title { font-size: 18px; }
-    .cta-panel .cta-sub { font-size: 13px; }
-    .cta-btn { padding: 7px; font-size: 18px; }
-    .retry-btn { font-size: 14px; padding: 4px; }
-    .share-btn { font-size: 20px; padding: 10px; }
+    .stat-cell { padding: 8px 4px; }
+    .stat-cell .s-num { font-size: 22px; }
+    .stat-cell .s-lbl { font-size: 12px; }
+    .fun-fact { padding: 8px 10px; font-size: 15px; }
+    .cta-panel { padding: 12px; gap: 8px; }
+    .cta-panel .cta-title { font-size: 20px; }
+    .cta-panel .cta-sub { font-size: 15px; }
+    .cta-btn { padding: 9px; font-size: 20px; }
+    .retry-btn { font-size: 15px; padding: 6px; }
+    .share-btn { font-size: 22px; padding: 12px; }
     .status-bar { padding: 2px 4px; }
     .status-cell { font-size: 12px; padding: 1px 6px; }
-    .err-body { padding: 6px 8px; gap: 8px; }
-    .err-text { font-size: 14px; }
+    .err-body { padding: 8px 10px; gap: 10px; }
+    .err-text { font-size: 17px; }
     .win-window { margin-bottom: 8px; }
   }
 
@@ -450,7 +454,6 @@
       align-items: center;
       padding: 2px 4px;
       gap: 4px;
-      font-family: 'VT323', monospace;
     }
     .taskbar-start {
       display: flex; align-items: center; gap: 4px;
@@ -815,7 +818,7 @@
     <span class="menu-item">File</span>
     <a href="https://www.opal.so" target="_blank" class="menu-item mobile-menu" style="text-decoration:underline;color:inherit">Opal</a>
     <a href="https://www.yourattentionplz.com" target="_blank" class="menu-item mobile-menu" style="text-decoration:underline;color:inherit">Your Attention Please</a>
-    <a href="https://www.vagrants.com" target="_blank" class="menu-item mobile-menu" style="text-decoration:underline;color:inherit">Vagrants</a>
+    <a href="https://www.vagrants.com/originals" target="_blank" class="menu-item mobile-menu" style="text-decoration:underline;color:inherit">Vagrants</a>
     <span class="menu-item desktop-menu">Edit</span>
     <span class="menu-item desktop-menu">View</span>
     <span class="menu-item desktop-menu">Existential Crisis</span>
@@ -831,7 +834,7 @@
       <div class="err-titlebar"><span>! attention.exe</span></div>
       <div class="err-body" style="padding:8px 12px">
         <div class="err-icon">[!]</div>
-        <div class="err-text" style="font-size:16px">WARNING: side effects may include existential dread.</div>
+        <div class="err-text">WARNING: side effects may include existential dread.</div>
       </div>
     </div>
 
