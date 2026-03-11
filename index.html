@@ -637,7 +637,7 @@
   <div class="titlebar"><div class="titlebar-title">catch_the_vagrant.exe</div><div class="win-close" onclick="closeWin('vagrants');resetVagrantGame()">x</div></div>
   <div class="dw-body" style="padding:0">
     <div id="vagrantGame" style="position:relative;width:100%;height:260px;background:#001200;border-top:2px solid #404040;border-left:2px solid #404040;border-right:2px solid #c0c0c0;border-bottom:2px solid #c0c0c0;overflow:hidden;cursor:crosshair">
-      <img id="vagrantRunner" src="assets/vagrant-runner.svg" style="position:absolute;width:50px;height:50px;top:100px;left:100px;pointer-events:auto;cursor:pointer;filter:drop-shadow(0 0 4px rgba(255,0,0,0.5))" onclick="catchVagrant(event)">
+      <img id="vagrantRunner" src="assets/vagrant-runner.svg" style="position:absolute;width:44px;height:44px;top:100px;left:100px;pointer-events:auto;cursor:pointer;image-rendering:pixelated;filter:drop-shadow(0 0 6px rgba(255,50,50,0.8))" onclick="catchVagrant(event)">
     </div>
     <div style="padding:8px 12px;display:flex;justify-content:space-between;align-items:center">
       <div style="font-family:'VT323',monospace;font-size:16px;color:#000" id="vagrantScore">Score: 0 / 5</div>
@@ -783,7 +783,7 @@
     <div class="icon-label">Recycle Bin</div>
   </div>
   <div class="icon" onclick="openWin('vagrants')">
-    <div class="icon-img"><img src="assets/vagrant-runner.svg" style="width:42px;height:42px;object-fit:contain;image-rendering:auto"></div>
+    <div class="icon-img"><img src="assets/vagrant-runner.svg" style="width:42px;height:42px;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(1px 0 0 #000) drop-shadow(-1px 0 0 #000) drop-shadow(0 1px 0 #000) drop-shadow(0 -1px 0 #000)"></div>
     <div class="icon-label">Vagrants</div>
   </div>
   <div class="icon" onclick="openWin('years')">
@@ -1333,17 +1333,21 @@
   // ── VAGRANT GAME ──
   var vagrantScore = 0;
   var vagrantInterval = null;
-  var vagrantSpeed = 1200;
+  var vagrantSpeed = 700;
+  var vagrantSize = 44;
 
   function startVagrantGame() {
     vagrantScore = 0;
-    vagrantSpeed = 1200;
+    vagrantSpeed = 700;
+    vagrantSize = 44;
     document.getElementById('vagrantScore').textContent = 'Score: 0 / 5';
     document.getElementById('vagrantHint').textContent = 'Click the runner!';
     document.getElementById('vagrantWin').style.display = 'none';
     document.getElementById('vagrantGame').style.display = 'block';
     var runner = document.getElementById('vagrantRunner');
     runner.style.display = 'block';
+    runner.style.width = vagrantSize + 'px';
+    runner.style.height = vagrantSize + 'px';
     moveVagrant();
     vagrantInterval = setInterval(moveVagrant, vagrantSpeed);
   }
@@ -1351,13 +1355,15 @@
   function moveVagrant() {
     var game = document.getElementById('vagrantGame');
     var runner = document.getElementById('vagrantRunner');
-    var maxX = game.offsetWidth - 50;
-    var maxY = game.offsetHeight - 50;
+    var maxX = game.offsetWidth - vagrantSize;
+    var maxY = game.offsetHeight - vagrantSize;
     var x = Math.floor(Math.random() * maxX);
     var y = Math.floor(Math.random() * maxY);
     runner.style.left = x + 'px';
     runner.style.top = y + 'px';
-    runner.style.transform = Math.random() > 0.5 ? 'scaleX(-1)' : 'scaleX(1)';
+    var rot = Math.floor(Math.random() * 30) - 15;
+    var flip = Math.random() > 0.5 ? -1 : 1;
+    runner.style.transform = 'scaleX(' + flip + ') rotate(' + rot + 'deg)';
   }
 
   function catchVagrant(e) {
@@ -1370,7 +1376,12 @@
       document.getElementById('vagrantHint').textContent = '';
       document.getElementById('vagrantWin').style.display = 'block';
     } else {
-      vagrantSpeed = Math.max(400, vagrantSpeed - 150);
+      // Faster + smaller each catch
+      vagrantSpeed = Math.max(250, vagrantSpeed - 100);
+      vagrantSize = Math.max(28, vagrantSize - 3);
+      var runner = document.getElementById('vagrantRunner');
+      runner.style.width = vagrantSize + 'px';
+      runner.style.height = vagrantSize + 'px';
       clearInterval(vagrantInterval);
       vagrantInterval = setInterval(moveVagrant, vagrantSpeed);
       moveVagrant();
@@ -1380,7 +1391,8 @@
   function resetVagrantGame() {
     clearInterval(vagrantInterval);
     vagrantScore = 0;
-    vagrantSpeed = 1200;
+    vagrantSpeed = 700;
+    vagrantSize = 44;
   }
 
   // ── MUSIC ──
