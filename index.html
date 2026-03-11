@@ -315,7 +315,7 @@
   .sc-copy-years-label { font-size: 18px; color: rgba(255,255,255,0.9); letter-spacing: 6px; display: block; margin-top: 4px; }
   .sc-copy-line1 { font-size: 26px; color: #00ffff; text-shadow: 2px 2px 0 rgba(0,0,0,0.5); line-height: 1.2; margin-top: 8px; display: block; }
   .sc-copy-line2 { font-size: 26px; color: #00ffff; text-shadow: 2px 2px 0 rgba(0,0,0,0.5); line-height: 1.2; display: block; }
-  .sc-card-img { width: 270px; height: auto; position: relative; z-index: 1; margin: 8px auto 0; }
+  .sc-card-img { width: 270px; height: auto; position: relative; z-index: 1; margin: 6px auto 0; align-self: center; }
   .sc-bottom { position: absolute; bottom: 0; left: 0; right: 0; height: 100px; z-index: 2; }
   .sc-bottom-logos { position: absolute; left: 40px; bottom: 36px; display: flex; align-items: center; gap: 5px; }
   .sc-logo-yap { height: 36px; width: auto; }
@@ -1319,11 +1319,17 @@
     var scBottom = document.getElementById('scBottom');
     if (shareCardImgs[cardData.title]) {
       scCardImg.src = shareCardImgs[cardData.title];
-      scCardImg.style.width = '330px';
+      scCardImg.style.width = '260px';
+      scCardImg.style.marginLeft = '22px';
+      scCardImg.style.marginRight = 'auto';
+      scCardImg.style.alignSelf = 'flex-start';
       if (scBottom) scBottom.style.display = 'none';
     } else {
       scCardImg.src = cardData.img;
       scCardImg.style.width = '270px';
+      scCardImg.style.marginLeft = 'auto';
+      scCardImg.style.marginRight = 'auto';
+      scCardImg.style.alignSelf = 'center';
       if (scBottom) scBottom.style.display = 'block';
     }
     document.getElementById('scYears').textContent = certData.years;
