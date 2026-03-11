@@ -581,7 +581,7 @@
     <span class="sc-copy-line2" id="scLine2">a &mdash;</span>
   </div>
   <img class="sc-card-img" id="scCardImg" src="" alt="Card">
-  <div class="sc-bottom">
+  <div class="sc-bottom" id="scBottom">
     <div class="sc-bottom-logos">
       <img class="sc-logo-yap" id="scLogoYap" src="" alt="YAP">
       <div class="sc-logo-divider"></div>
@@ -1299,6 +1299,9 @@
       'Film Snob':'assets/filmsnob-background.jpg.jpg',
       'Language Collector':'assets/languagecollector-background.jpg.jpg'
     };
+    var shareCardImgs = {
+      'Chess Nerd':'assets/Chess-nerd-screenshotcard.png'
+    };
     var textColors = {
       'Chess Nerd':'#FFFF9F',
       'Puzzle Fiend':'#FFFF00',
@@ -1312,13 +1315,18 @@
     var sc = document.getElementById('shareCard');
     sc.style.backgroundColor = '#1a1a2e';
     document.getElementById('scBg').src = backgrounds[cardData.title] || '';
-    document.getElementById('scCardImg').src = cardData.img;
+    var scCardImg = document.getElementById('scCardImg');
+    var scBottom = document.getElementById('scBottom');
+    if (shareCardImgs[cardData.title]) {
+      scCardImg.src = shareCardImgs[cardData.title];
+      scCardImg.style.width = '330px';
+      if (scBottom) scBottom.style.display = 'none';
+    } else {
+      scCardImg.src = cardData.img;
+      scCardImg.style.width = '270px';
+      if (scBottom) scBottom.style.display = 'block';
+    }
     document.getElementById('scYears').textContent = certData.years;
-    // Set logo srcs for html2canvas
-    var yapEl = document.getElementById('scLogoYap');
-    var opalEl = document.getElementById('scLogoOpal');
-    if (yapEl && !yapEl.src.startsWith('data:')) yapEl.src = window._yapLogoSrc || '';
-    if (opalEl && !opalEl.src.startsWith('data:')) opalEl.src = window._opalLogoSrc || '';
     var line1 = document.querySelector('.sc-copy-line1');
     var line2 = document.getElementById('scLine2');
     var txtColor = textColors[cardData.title] || '#FFFF00';
