@@ -504,8 +504,8 @@
       display: flex; align-items: center;
       white-space: nowrap; padding: 0 4px;
     }
-    /* Music button visible on desktop too */
-    .cd-btn { margin-right: 8px; flex-shrink: 0; }
+    /* Music button visible on desktop — sized properly */
+    .cd-btn { margin-right: 0; flex-shrink: 0; width: 48px; height: 48px; }
     /* No shimmer on desktop share button */
     .share-btn::after { animation: none; }
     /* Move mini clippy above taskbar on desktop */
@@ -1846,7 +1846,6 @@
   <a class="taskbar-start" href="https://www.opal.so" target="_blank">Opal Start</a>
   <div class="taskbar-tab">Chronically_Online_Calculator.exe</div>
   <div class="taskbar-tray">
-    <div class="taskbar-music" id="taskbarMusic" onclick="toggleMusic()" title="Music on/off"><img src="assets/CD.png" style="width:18px;height:18px;image-rendering:pixelated;"></div>
     <div class="taskbar-clock" id="taskbarClock">12:00 AM</div>
   </div>
 </div>
