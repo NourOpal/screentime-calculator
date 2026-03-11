@@ -680,16 +680,16 @@
 <div class="desk-win w95" id="win-outlook">
   <div class="titlebar"><div class="titlebar-title">Outlook Express</div><div class="win-close" onclick="closeWin('outlook')">x</div></div>
   <div class="dw-body">
-    <div style="font-size:15px;color:#404040;margin-bottom:10px">Inbox — 0 new messages</div>
+    <div style="font-size:15px;color:#404040;margin-bottom:10px">Inbox — 1,247 unread messages</div>
     <div class="file-list">
-      <div class="file-item">📧 You have <b>0</b> new emails.</div>
-      <div class="file-item" style="color:#808080;font-style:italic">You've been too busy scrolling to check.</div>
-      <div class="file-item">📧 [SPAM] "You won a free attention span!"</div>
-      <div class="file-item">📧 [SPAM] "Doctors hate this one weird trick to stop doomscrolling"</div>
-      <div class="file-item">📧 From: Mom — "Please call me. It's been 3 weeks."</div>
-      <div class="file-item">📧 From: Boss — "Are you even working right now?"</div>
+      <div class="file-item">📧 From: Duolingo — "It's been 842 days. The owl remembers."</div>
+      <div class="file-item">📧 From: LinkedIn — "Congrats! 14 people viewed your profile while you viewed 14,000 reels."</div>
+      <div class="file-item">📧 [SPAM] "Extend your attention span — LIMITED TIME OFFER"</div>
+      <div class="file-item">📧 From: Gym — "We miss you. Your membership is mostly decorative at this point."</div>
+      <div class="file-item">📧 From: Library — "Your book is 6 months overdue. We assume you forgot books exist."</div>
+      <div class="file-item">📧 From: Screen Time Report — "Congratulations! New personal best this week."</div>
     </div>
-    <div style="font-size:13px;color:#808080;margin-top:8px">Last checked: never (you were on TikTok)</div>
+    <div style="font-size:13px;color:#808080;margin-top:8px">Last checked: technically right now, but are you really present?</div>
     <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="win-btn-sm" onclick="closeWin('outlook')">Close</button></div>
   </div>
 </div>
@@ -971,8 +971,8 @@
     var row = document.createElement('div'); row.className = 'year-row';
     var note = yearNotes[y];
     if (!note) continue;
-    var status = statuses[Math.floor(Math.random() * statuses.length)];
-    row.innerHTML = '<span class="y-yr">'+y+'</span><span style="font-size:14px;flex:1">'+note+'</span><span class="y-status">['+status+']</span>';
+    var status = (y === 2026) ? '<a href="https://schedule.sxsw.com/2026/films/2249880" target="_blank" style="color:#000080;text-decoration:underline">SXSW 2026</a>' : '['+statuses[Math.floor(Math.random() * statuses.length)]+']';
+    row.innerHTML = '<span class="y-yr">'+y+'</span><span style="font-size:14px;flex:1">'+note+'</span><span class="y-status">'+status+'</span>';
     yl.appendChild(row);
   }
 
