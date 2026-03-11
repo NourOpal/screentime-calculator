@@ -644,10 +644,10 @@
       <div style="font-family:'VT323',monospace;font-size:16px;color:#000" id="vagrantScore">Score: 0 / 5</div>
       <div style="font-family:'VT323',monospace;font-size:14px;color:#808080" id="vagrantHint">Click the runner!</div>
     </div>
-    <div id="vagrantWin" style="display:none;padding:12px;text-align:center">
-      <div style="font-family:'VT323',monospace;font-size:20px;color:#800000;margin-bottom:6px">YOU CAUGHT ME!</div>
-      <div style="font-family:'VT323',monospace;font-size:15px;color:#000;margin-bottom:10px">Nice reflexes. The Vagrants crew would be impressed.</div>
-      <a href="https://www.vagrants.com/originals" target="_blank" class="win-btn-sm" style="display:inline-block;text-decoration:none;background:#000080;color:#fff;border-top-color:#4040c0;border-left-color:#4040c0;border-right-color:#000020;border-bottom-color:#000020;font-family:'VT323',monospace">Visit Vagrants →</a>
+    <div id="vagrantWin" style="display:none;padding:16px;text-align:center;background:#c0c0c0">
+      <div style="font-family:'VT323',monospace;font-size:24px;color:#000080;margin-bottom:4px">&#127942; YOU CAUGHT THE VAGRANT! &#127942;</div>
+      <div style="font-family:'VT323',monospace;font-size:15px;color:#000;margin-bottom:12px">Nice reflexes. Wanna see what else the crew's been up to?</div>
+      <a href="https://www.vagrants.com/originals" target="_blank" class="win-btn-sm" style="display:inline-block;text-decoration:none;padding:6px 16px;font-size:16px;background:#000080;color:#fff;border-top-color:#4040c0;border-left-color:#4040c0;border-right-color:#000020;border-bottom-color:#000020;font-family:'VT323',monospace">Visit Vagrants &#8594;</a>
     </div>
   </div>
 </div>
@@ -1339,34 +1339,40 @@
   var vagrantScore = 0;
   var vagrantInterval = null;
   var vagrantSpeed = 700;
-  var vagrantSize = 44;
+  var vagrantSize = 48;
   var vagrantMisses = 0;
+  var vagrantCatching = false;
 
   function startVagrantGame() {
     vagrantScore = 0;
     vagrantSpeed = 700;
     vagrantSize = 48;
     vagrantMisses = 0;
+    vagrantCatching = false;
     document.getElementById('vagrantScore').textContent = 'Score: 0 / 5';
     document.getElementById('vagrantHint').textContent = 'Click the runner!';
     document.getElementById('vagrantWin').style.display = 'none';
-    document.getElementById('vagrantGame').style.display = 'block';
+    var game = document.getElementById('vagrantGame');
+    game.style.display = 'block';
+    game.style.background = '#001200';
     var runner = document.getElementById('vagrantRunner');
     runner.style.display = 'block';
     runner.style.width = vagrantSize + 'px';
     runner.style.height = vagrantSize + 'px';
+    runner.style.filter = 'drop-shadow(0 0 6px rgba(255,50,50,0.8))';
     moveVagrant();
-    vagrantInterval = setInterval(moveVagrant, vagrantSpeed);
+    vagrantInterval = setInterval(function() {
+      vagrantMisses++;
+      if (vagrantMisses >= 4 && vagrantSpeed < 500) {
+        vagrantSpeed = Math.min(500, vagrantSpeed + 60);
+        clearInterval(vagrantInterval);
+        vagrantInterval = setInterval(function() { vagrantMisses++; moveVagrant(); }, vagrantSpeed);
+      }
+      moveVagrant();
+    }, vagrantSpeed);
   }
 
   function moveVagrant() {
-    vagrantMisses++;
-    // Ease up after 3 consecutive misses — slow down a bit
-    if (vagrantMisses >= 3 && vagrantSpeed < 500) {
-      vagrantSpeed = Math.min(500, vagrantSpeed + 80);
-      clearInterval(vagrantInterval);
-      vagrantInterval = setInterval(moveVagrant, vagrantSpeed);
-    }
     var game = document.getElementById('vagrantGame');
     var runner = document.getElementById('vagrantRunner');
     var maxX = game.offsetWidth - vagrantSize;
@@ -1382,33 +1388,34 @@
 
   function catchVagrant(e) {
     e.stopPropagation();
+    if (vagrantCatching) return;
+    vagrantCatching = true;
     vagrantScore++;
     vagrantMisses = 0;
     document.getElementById('vagrantScore').textContent = 'Score: ' + vagrantScore + ' / 5';
     var runner = document.getElementById('vagrantRunner');
-    // Flash feedback — brief invert flash
+    // Flash feedback
     runner.style.filter = 'invert(1) drop-shadow(0 0 6px rgba(255,255,255,0.8))';
-    setTimeout(function() {
-      runner.style.filter = 'drop-shadow(0 0 6px rgba(255,50,50,0.8))';
-    }, 120);
+    clearInterval(vagrantInterval);
     if (vagrantScore >= 5) {
-      clearInterval(vagrantInterval);
       setTimeout(function() {
         runner.style.display = 'none';
         document.getElementById('vagrantHint').textContent = '';
+        document.getElementById('vagrantGame').style.background = '#002200';
         document.getElementById('vagrantWin').style.display = 'block';
+        vagrantCatching = false;
       }, 200);
     } else {
-      // Faster + smaller each catch
-      vagrantSpeed = Math.max(250, vagrantSpeed - 100);
-      vagrantSize = Math.max(30, vagrantSize - 4);
+      vagrantSpeed = Math.max(300, vagrantSpeed - 90);
+      vagrantSize = Math.max(34, vagrantSize - 3);
       runner.style.width = vagrantSize + 'px';
       runner.style.height = vagrantSize + 'px';
-      clearInterval(vagrantInterval);
       setTimeout(function() {
-        vagrantInterval = setInterval(moveVagrant, vagrantSpeed);
+        runner.style.filter = 'drop-shadow(0 0 6px rgba(255,50,50,0.8))';
         moveVagrant();
-      }, 200);
+        vagrantInterval = setInterval(function() { vagrantMisses++; moveVagrant(); }, vagrantSpeed);
+        vagrantCatching = false;
+      }, 180);
     }
   }
 
