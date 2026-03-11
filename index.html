@@ -19,7 +19,8 @@
 <title>Opal Screen Time Calculator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=VT323&display=block" rel="stylesheet">
+<link rel="preload" href="https://html2canvas.hertzen.com/dist/html2canvas.min.js" as="script">
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 <link rel="preload" href="assets/ms-sans-serif.ttf" as="font" type="font/ttf" crossorigin>
 <link rel="preload" href="assets/ms-sans-serif-bold.ttf" as="font" type="font/ttf" crossorigin>
 <style>
@@ -927,7 +928,7 @@
 
 <!-- ── SHARE CARD (hidden, rendered at 3x by html2canvas) ── -->
 
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js" defer></script>
 <script>
   // ── OPAL DOWNLOAD ──
   (function() {
@@ -1617,25 +1618,24 @@
 
   function shareStory() {
     var btn = document.getElementById('cardsShareBtn');
-    // If Done, close everything
-    if (btn.classList.contains('done')) {
-      closeCards();
-      return;
-    }
+    if (btn.classList.contains('done')) { closeCards(); return; }
+    if (!chosenCardData) return;
+    if (typeof html2canvas === 'undefined') { btn.textContent = '[ LOADING... ]'; btn.disabled = true; var s = document.createElement('script'); s.src = 'https://html2canvas.hertzen.com/dist/html2canvas.min.js'; s.onload = function() { shareStory(); }; s.onerror = function() { btn.textContent = '[ SHARE ]'; btn.disabled = false; }; document.head.appendChild(s); return; }
     btn.textContent = '[ GENERATING... ]';
     btn.disabled = true;
     var card = document.getElementById('shareCard');
     card.style.left = '-9999px';
     card.style.top = '0';
     card.style.position = 'fixed';
-    // Preload share card images before rendering
+    // Wait for all images to load
     var imgs = card.querySelectorAll('img');
     var imgPromises = [];
     imgs.forEach(function(img) {
-      if (img.src && !img.complete) {
+      if (img.src && img.src !== window.location.href && !img.complete) {
         imgPromises.push(new Promise(function(resolve) {
           img.onload = resolve;
           img.onerror = resolve;
+          setTimeout(resolve, 5000); // 5s timeout per image
         }));
       }
     });
@@ -1644,25 +1644,36 @@
     }).then(function(canvas) {
       card.style.left = '-9999px';
       card.style.top = '-9999px';
-      canvas.toBlob(function(blob) {
+      // toBlob with fallback for old Safari
+      function handleBlob(blob) {
         if (!blob) { btn.textContent = '[ SHARE ]'; btn.disabled = false; return; }
-        var file = new File([blob], 'my-screen-time-card.png', { type: 'image/png' });
         var shareText = certData.years + ' years of my life went to a screen. I\'m reclaiming my time as a ' + (chosenActivity || 'new person');
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          navigator.share({ files: [file], title: 'My Screen Time Card', text: shareText }).then(function() {
-            markShareDone(btn);
-          }).catch(function() {
-            markShareDone(btn);
-          });
-        } else {
-          var url = URL.createObjectURL(blob);
-          var a = document.createElement('a');
-          a.href = url; a.download = 'my-screen-time-card.png';
-          document.body.appendChild(a); a.click(); document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          markShareDone(btn);
-        }
-      }, 'image/png');
+        try {
+          var file = new File([blob], 'my-screen-time-card.png', { type: 'image/png' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            navigator.share({ files: [file], title: 'My Screen Time Card', text: shareText }).then(function() {
+              markShareDone(btn);
+            }).catch(function() { markShareDone(btn); });
+            return;
+          }
+        } catch(e) {}
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = 'my-screen-time-card.png';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+        markShareDone(btn);
+      }
+      if (canvas.toBlob) {
+        canvas.toBlob(handleBlob, 'image/png');
+      } else {
+        // Fallback for old Safari
+        var dataUrl = canvas.toDataURL('image/png');
+        var parts = dataUrl.split(','); var mime = parts[0].match(/:(.*?);/)[1];
+        var raw = atob(parts[1]); var arr = new Uint8Array(raw.length);
+        for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+        handleBlob(new Blob([arr], { type: mime }));
+      }
     }).catch(function() {
       btn.textContent = '[ SHARE ]'; btn.disabled = false;
     });
