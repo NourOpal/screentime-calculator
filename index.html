@@ -638,7 +638,7 @@
   <div class="titlebar"><div class="titlebar-title">catch_the_vagrant.exe</div><div class="win-close" onclick="closeWin('vagrants');resetVagrantGame()">x</div></div>
   <div class="dw-body" style="padding:0">
     <div id="vagrantGame" style="position:relative;width:100%;height:260px;background:#001200;border-top:2px solid #404040;border-left:2px solid #404040;border-right:2px solid #c0c0c0;border-bottom:2px solid #c0c0c0;overflow:hidden;cursor:crosshair">
-      <img id="vagrantRunner" src="assets/pixelated-vagrant-runner.svg" style="position:absolute;width:54px;height:54px;top:100px;left:100px;pointer-events:auto;cursor:pointer;filter:drop-shadow(0 0 6px rgba(255,50,50,0.8));transition:transform 0.05s" onclick="catchVagrant(event)">
+      <img id="vagrantRunner" src="assets/pixelated-vagrant-runner.svg" style="position:absolute;width:48px;height:48px;top:100px;left:100px;pointer-events:auto;cursor:pointer;filter:drop-shadow(0 0 6px rgba(255,50,50,0.8));transition:transform 0.05s" onclick="catchVagrant(event)">
     </div>
     <div style="padding:8px 12px;display:flex;justify-content:space-between;align-items:center">
       <div style="font-family:'VT323',monospace;font-size:16px;color:#000" id="vagrantScore">Score: 0 / 5</div>
@@ -1343,8 +1343,8 @@
 
   function startVagrantGame() {
     vagrantScore = 0;
-    vagrantSpeed = 900;
-    vagrantSize = 54;
+    vagrantSpeed = 700;
+    vagrantSize = 48;
     document.getElementById('vagrantScore').textContent = 'Score: 0 / 5';
     document.getElementById('vagrantHint').textContent = 'Click the runner!';
     document.getElementById('vagrantWin').style.display = 'none';
@@ -1376,13 +1376,11 @@
     vagrantScore++;
     document.getElementById('vagrantScore').textContent = 'Score: ' + vagrantScore + ' / 5';
     var runner = document.getElementById('vagrantRunner');
-    // Flash feedback — brief scale up + bright glow
-    runner.style.filter = 'drop-shadow(0 0 12px rgba(0,255,0,1)) brightness(2)';
-    runner.style.transform = 'scale(1.4)';
+    // Flash feedback — brief invert flash
+    runner.style.filter = 'invert(1) drop-shadow(0 0 6px rgba(255,255,255,0.8))';
     setTimeout(function() {
       runner.style.filter = 'drop-shadow(0 0 6px rgba(255,50,50,0.8))';
-      runner.style.transform = '';
-    }, 150);
+    }, 120);
     if (vagrantScore >= 5) {
       clearInterval(vagrantInterval);
       setTimeout(function() {
@@ -1392,8 +1390,8 @@
       }, 200);
     } else {
       // Faster + smaller each catch
-      vagrantSpeed = Math.max(350, vagrantSpeed - 80);
-      vagrantSize = Math.max(36, vagrantSize - 3);
+      vagrantSpeed = Math.max(200, vagrantSpeed - 120);
+      vagrantSize = Math.max(30, vagrantSize - 4);
       runner.style.width = vagrantSize + 'px';
       runner.style.height = vagrantSize + 'px';
       clearInterval(vagrantInterval);
