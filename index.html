@@ -637,7 +637,7 @@
   <div class="titlebar"><div class="titlebar-title">catch_the_vagrant.exe</div><div class="win-close" onclick="closeWin('vagrants');resetVagrantGame()">x</div></div>
   <div class="dw-body" style="padding:0">
     <div id="vagrantGame" style="position:relative;width:100%;height:260px;background:#001200;border-top:2px solid #404040;border-left:2px solid #404040;border-right:2px solid #c0c0c0;border-bottom:2px solid #c0c0c0;overflow:hidden;cursor:crosshair">
-      <img id="vagrantRunner" src="assets/vagrant-runner.svg" style="position:absolute;width:44px;height:44px;top:100px;left:100px;pointer-events:auto;cursor:pointer;image-rendering:pixelated;filter:drop-shadow(0 0 6px rgba(255,50,50,0.8))" onclick="catchVagrant(event)">
+      <img id="vagrantRunner" src="assets/pixelated-vagrant-runner.svg" style="position:absolute;width:54px;height:54px;top:100px;left:100px;pointer-events:auto;cursor:pointer;filter:drop-shadow(0 0 6px rgba(255,50,50,0.8));transition:transform 0.05s" onclick="catchVagrant(event)">
     </div>
     <div style="padding:8px 12px;display:flex;justify-content:space-between;align-items:center">
       <div style="font-family:'VT323',monospace;font-size:16px;color:#000" id="vagrantScore">Score: 0 / 5</div>
@@ -1338,8 +1338,8 @@
 
   function startVagrantGame() {
     vagrantScore = 0;
-    vagrantSpeed = 700;
-    vagrantSize = 44;
+    vagrantSpeed = 900;
+    vagrantSize = 54;
     document.getElementById('vagrantScore').textContent = 'Score: 0 / 5';
     document.getElementById('vagrantHint').textContent = 'Click the runner!';
     document.getElementById('vagrantWin').style.display = 'none';
@@ -1370,21 +1370,32 @@
     e.stopPropagation();
     vagrantScore++;
     document.getElementById('vagrantScore').textContent = 'Score: ' + vagrantScore + ' / 5';
+    var runner = document.getElementById('vagrantRunner');
+    // Flash feedback — brief scale up + bright glow
+    runner.style.filter = 'drop-shadow(0 0 12px rgba(0,255,0,1)) brightness(2)';
+    runner.style.transform = 'scale(1.4)';
+    setTimeout(function() {
+      runner.style.filter = 'drop-shadow(0 0 6px rgba(255,50,50,0.8))';
+      runner.style.transform = '';
+    }, 150);
     if (vagrantScore >= 5) {
       clearInterval(vagrantInterval);
-      document.getElementById('vagrantRunner').style.display = 'none';
-      document.getElementById('vagrantHint').textContent = '';
-      document.getElementById('vagrantWin').style.display = 'block';
+      setTimeout(function() {
+        runner.style.display = 'none';
+        document.getElementById('vagrantHint').textContent = '';
+        document.getElementById('vagrantWin').style.display = 'block';
+      }, 200);
     } else {
       // Faster + smaller each catch
-      vagrantSpeed = Math.max(250, vagrantSpeed - 100);
-      vagrantSize = Math.max(28, vagrantSize - 3);
-      var runner = document.getElementById('vagrantRunner');
+      vagrantSpeed = Math.max(350, vagrantSpeed - 80);
+      vagrantSize = Math.max(36, vagrantSize - 3);
       runner.style.width = vagrantSize + 'px';
       runner.style.height = vagrantSize + 'px';
       clearInterval(vagrantInterval);
-      vagrantInterval = setInterval(moveVagrant, vagrantSpeed);
-      moveVagrant();
+      setTimeout(function() {
+        vagrantInterval = setInterval(moveVagrant, vagrantSpeed);
+        moveVagrant();
+      }, 200);
     }
   }
 
