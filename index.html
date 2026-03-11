@@ -100,6 +100,7 @@
 
   /* ── POPUP WINDOWS (icons) ── */
   .desk-win { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 88vw; max-width: 340px; z-index: 300; }
+  .close-all-btn { display: none; position: fixed; top: 70px; right: 24px; z-index: 350; background: #c0c0c0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; font-family: 'VT323', monospace; font-size: 16px; color: #800000; padding: 4px 14px; cursor: pointer; }
   .dw-body { padding: 12px; }
   .apps-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
   .app-item { display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative; cursor: default; }
@@ -421,8 +422,7 @@
     }
     .top-logos img { height: 24px; }
     .top-logos a img { height: 48px; }
-    .top-logos .logo-divider { width: 2px; height: 36px; }
-    .cd-btn { margin-right: 8px; flex-shrink: 0; }
+    .top-logos .logo-divider { width: 2px; height: 32px; align-self: center; }
     /* Icons vertically centered on left */
     .desktop-icons {
       position: fixed; top: 50%; left: 24px;
@@ -504,8 +504,8 @@
       display: flex; align-items: center;
       white-space: nowrap; padding: 0 4px;
     }
-    /* Hide top-bar music button on desktop — it's in the taskbar now */
-    .cd-btn { display: none !important; }
+    /* Music button visible on desktop too */
+    .cd-btn { margin-right: 8px; flex-shrink: 0; }
     /* No shimmer on desktop share button */
     .share-btn::after { animation: none; }
     /* Move mini clippy above taskbar on desktop */
@@ -813,9 +813,9 @@
     <div class="icon-img"><img src="assets/documents.png" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('afterbegin','📂')"></div>
     <div class="icon-label">My Documents</div>
   </div>
-  <div class="icon desktop-only" onclick="openWin('minesweeper')">
-    <div class="icon-img"><img src="assets/minesweeper.png" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('afterbegin','💣')"></div>
-    <div class="icon-label">Minesweeper</div>
+  <div class="icon desktop-only" onclick="openWin('vagrants')">
+    <div class="icon-img"><img src="assets/pixelated-vagrant-runner.svg" style="width:42px;height:42px;object-fit:contain;transform:scaleX(-1)"></div>
+    <div class="icon-label">Catch the Vagrant</div>
   </div>
 </div>
 
@@ -834,10 +834,9 @@
     <a href="https://www.opal.so" target="_blank" class="menu-item mobile-menu" style="text-decoration:underline;color:inherit">Opal</a>
     <a href="https://www.yourattentionplz.com" target="_blank" class="menu-item mobile-menu" style="text-decoration:underline;color:inherit">Your Attention Please</a>
     <a href="https://www.vagrants.com/originals" target="_blank" class="menu-item mobile-menu" style="text-decoration:underline;color:inherit">Vagrants</a>
-    <span class="menu-item desktop-menu">Edit</span>
-    <span class="menu-item desktop-menu">View</span>
-    <span class="menu-item desktop-menu">Existential Crisis</span>
-    <span class="menu-item desktop-menu">About YAP</span>
+    <a href="https://www.opal.so" target="_blank" class="menu-item desktop-menu" style="text-decoration:underline;color:inherit">Opal</a>
+    <a href="https://www.yourattentionplz.com" target="_blank" class="menu-item desktop-menu" style="text-decoration:underline;color:inherit">Your Attention Please</a>
+    <a href="https://www.vagrants.com/originals" target="_blank" class="menu-item desktop-menu" style="text-decoration:underline;color:inherit">Vagrants</a>
   </div>
   <div class="win-body">
 
@@ -1709,12 +1708,23 @@
   updateTaskbarClock();
   setInterval(updateTaskbarClock, 10000);
 
-  // ── WINDOW MANAGEMENT UPDATE (include new desktop windows) ──
-  var allWinIds = ['computer','trash','phone','vagrants','years','ie','outlook','notepad','control','documents','minesweeper'];
+  // ── WINDOW MANAGEMENT UPDATE (random positions, multiple open) ──
+  var allWinIds = ['computer','trash','phone','vagrants','years','ie','outlook','notepad','control','documents'];
+  var openWinCount = 0;
+  var winZCounter = 300;
 
-  // Override openWin to support new windows
-  var _origOpenWin = openWin;
-  openWin = function(id) {
+  function updateCloseAllBtn() {
+    var count = 0;
+    allWinIds.forEach(function(wid) {
+      var w = document.getElementById('win-'+wid);
+      if (w && w.style.display === 'block') count++;
+    });
+    openWinCount = count;
+    var btn = document.getElementById('closeAllBtn');
+    if (btn) btn.style.display = count >= 2 ? 'block' : 'none';
+  }
+
+  function closeAllWins() {
     allWinIds.forEach(function(wid) {
       var w = document.getElementById('win-'+wid);
       if (w) w.style.display = 'none';
@@ -1722,7 +1732,23 @@
     document.getElementById('vagrantOverlay').style.display = 'none';
     resetVagrantGame();
     if (notifIv) clearInterval(notifIv);
-    // Remove badge from the clicked icon (original 4 only)
+    updateCloseAllBtn();
+  }
+
+  function getRandomPos() {
+    var maxX = window.innerWidth - 380;
+    var maxY = window.innerHeight - 300;
+    var x = Math.max(60, Math.floor(Math.random() * maxX));
+    var y = Math.max(70, Math.floor(Math.random() * maxY));
+    return { x: x, y: y };
+  }
+
+  // Override openWin — desktop: random pos + multiple open; mobile: centered single
+  var _origOpenWin = openWin;
+  openWin = function(id) {
+    var isDesktop = window.innerWidth >= 768;
+
+    // Remove badge from the clicked icon
     var iconMap = {computer:0, trash:1, vagrants:2, years:3};
     var icons = document.querySelectorAll('.desktop-icons .icon');
     var idx = iconMap[id];
@@ -1730,19 +1756,47 @@
       var badge = icons[idx].querySelector('.icon-badge');
       if (badge) badge.remove();
     }
+
+    if (!isDesktop) {
+      // Mobile: close all others first
+      allWinIds.forEach(function(wid) {
+        var w = document.getElementById('win-'+wid);
+        if (w) w.style.display = 'none';
+      });
+      document.getElementById('vagrantOverlay').style.display = 'none';
+      resetVagrantGame();
+    }
+
+    if (notifIv) clearInterval(notifIv);
+
     var w = document.getElementById('win-'+id);
-    if (w) w.style.display = 'block';
+    if (w) {
+      w.style.display = 'block';
+      winZCounter++;
+      w.style.zIndex = winZCounter;
+      if (isDesktop && id !== 'vagrants') {
+        var pos = getRandomPos();
+        w.style.top = pos.y + 'px';
+        w.style.left = pos.x + 'px';
+        w.style.transform = 'none';
+      }
+    }
+
     if (id === 'vagrants') {
       document.getElementById('vagrantOverlay').style.display = 'block';
       startVagrantGame();
     }
+    updateCloseAllBtn();
   };
 
-  // Override closeWin to support overlay
+  // Override closeWin
   var _origCloseWin = closeWin;
   closeWin = function(id) {
-    _origCloseWin(id);
+    var w = document.getElementById('win-'+id);
+    if (w) w.style.display = 'none';
     if (id === 'vagrants') document.getElementById('vagrantOverlay').style.display = 'none';
+    if (id === 'phone' && notifIv) clearInterval(notifIv);
+    updateCloseAllBtn();
   };
 
   // Show badges only after icon images have loaded
@@ -1762,6 +1816,8 @@
     if (loaded >= imgs.length) showBadges();
   })();
 </script>
+
+<button class="close-all-btn" id="closeAllBtn" onclick="closeAllWins()">[ X Close All Windows ]</button>
 
 <!-- ── TASKBAR (desktop only, shown via CSS) ── -->
 <div class="taskbar">
