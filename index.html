@@ -1340,11 +1340,13 @@
   var vagrantInterval = null;
   var vagrantSpeed = 700;
   var vagrantSize = 44;
+  var vagrantMisses = 0;
 
   function startVagrantGame() {
     vagrantScore = 0;
     vagrantSpeed = 700;
     vagrantSize = 48;
+    vagrantMisses = 0;
     document.getElementById('vagrantScore').textContent = 'Score: 0 / 5';
     document.getElementById('vagrantHint').textContent = 'Click the runner!';
     document.getElementById('vagrantWin').style.display = 'none';
@@ -1358,6 +1360,13 @@
   }
 
   function moveVagrant() {
+    vagrantMisses++;
+    // Ease up after 3 consecutive misses — slow down a bit
+    if (vagrantMisses >= 3 && vagrantSpeed < 500) {
+      vagrantSpeed = Math.min(500, vagrantSpeed + 80);
+      clearInterval(vagrantInterval);
+      vagrantInterval = setInterval(moveVagrant, vagrantSpeed);
+    }
     var game = document.getElementById('vagrantGame');
     var runner = document.getElementById('vagrantRunner');
     var maxX = game.offsetWidth - vagrantSize;
@@ -1374,6 +1383,7 @@
   function catchVagrant(e) {
     e.stopPropagation();
     vagrantScore++;
+    vagrantMisses = 0;
     document.getElementById('vagrantScore').textContent = 'Score: ' + vagrantScore + ' / 5';
     var runner = document.getElementById('vagrantRunner');
     // Flash feedback — brief invert flash
@@ -1390,7 +1400,7 @@
       }, 200);
     } else {
       // Faster + smaller each catch
-      vagrantSpeed = Math.max(200, vagrantSpeed - 120);
+      vagrantSpeed = Math.max(250, vagrantSpeed - 100);
       vagrantSize = Math.max(30, vagrantSize - 4);
       runner.style.width = vagrantSize + 'px';
       runner.style.height = vagrantSize + 'px';
