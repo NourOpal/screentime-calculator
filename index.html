@@ -1727,60 +1727,92 @@
   function showShareImageOverlay(dataUrl) {
     var existing = document.getElementById('shareImgOverlay');
     if (existing) existing.remove();
-    var overlay = document.createElement('div');
-    overlay.id = 'shareImgOverlay';
-    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;';
 
-    var img = document.createElement('img');
-    img.src = dataUrl;
-    img.style.cssText = 'max-width:85%;max-height:60vh;border:2px solid #fff;border-radius:4px;';
-
-    var btnStyle = 'display:block;width:200px;margin-top:10px;padding:8px 20px;font-family:VT323,monospace;font-size:18px;text-align:center;cursor:pointer;text-decoration:none;';
-    var w95Btn = 'background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #404040;border-bottom:2px solid #404040;color:#000;';
-
-    // Save button — convert to blob URL and open (works on Chrome iOS)
-    var saveLink = document.createElement('a');
-    saveLink.textContent = '[ SAVE IMAGE ]';
-    saveLink.style.cssText = btnStyle + w95Btn;
-    // Create blob URL (more compatible than data URL for downloads)
+    // Convert to blob URL for saving
     var parts = dataUrl.split(','); var mime = parts[0].match(/:(.*?);/)[1];
     var raw = atob(parts[1]); var arr = new Uint8Array(raw.length);
     for (var k = 0; k < raw.length; k++) arr[k] = raw.charCodeAt(k);
     var imgBlob = new Blob([arr], { type: mime });
     var blobUrl = URL.createObjectURL(imgBlob);
-    saveLink.href = blobUrl;
-    saveLink.target = '_blank';
-    saveLink.download = 'my-screen-time-card.png';
 
-    // Share link button (text only, no file — works on all browsers)
-    var shareBtn = document.createElement('button');
-    shareBtn.textContent = '[ SHARE LINK ]';
-    shareBtn.style.cssText = btnStyle + w95Btn;
-    shareBtn.onclick = function() {
-      if (navigator.share) {
-        navigator.share({ title: 'My Screen Time Card', text: certData.years + ' years on a screen. I\'m reclaiming my time.', url: 'https://screentimecalculator.opal.so' }).catch(function(){});
-      } else {
-        navigator.clipboard.writeText('https://screentimecalculator.opal.so').then(function() {
-          shareBtn.textContent = '[ LINK COPIED ]';
-        });
-      }
-    };
-
-    var closeBtn = document.createElement('button');
-    closeBtn.textContent = '[ CLOSE ]';
-    closeBtn.style.cssText = btnStyle + w95Btn + 'margin-top:6px;';
-    closeBtn.onclick = function() { overlay.remove(); };
-
-    var title = document.createElement('div');
     var isChromeIOS = /CriOS/.test(navigator.userAgent);
-    title.innerHTML = isChromeIOS ? 'Screenshot this card to share!<br><span style="font-size:14px;opacity:0.7">For the full sharing experience, use Safari</span>' : 'Your card is ready!';
-    title.style.cssText = 'color:#fff;font-family:VT323,monospace;font-size:20px;margin-bottom:12px;text-align:center;';
+    var isMobile = window.innerWidth < 768;
 
-    overlay.appendChild(title);
-    overlay.appendChild(img);
-    overlay.appendChild(saveLink);
-    overlay.appendChild(shareBtn);
-    overlay.appendChild(closeBtn);
+    var overlay = document.createElement('div');
+    overlay.id = 'shareImgOverlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;';
+
+    var img = document.createElement('img');
+    img.src = dataUrl;
+
+    var btnStyle = 'display:block;width:220px;padding:10px 20px;font-family:VT323,monospace;font-size:18px;text-align:center;cursor:pointer;text-decoration:none;';
+    var w95Btn = 'background:#c0c0c0;border-top:2px solid #fff;border-left:2px solid #fff;border-right:2px solid #404040;border-bottom:2px solid #404040;color:#000;';
+
+    if (isChromeIOS) {
+      // Chrome iOS: big image + single "Save & Share" button
+      // Saving to Files works, and from Files they can share to IG/Stories
+      img.style.cssText = 'max-width:92%;max-height:72vh;border:2px solid #fff;border-radius:4px;';
+
+      var hint = document.createElement('div');
+      hint.innerHTML = 'Save it, then share from Files \u2728';
+      hint.style.cssText = 'color:#fff;font-family:VT323,monospace;font-size:18px;margin-bottom:10px;text-align:center;opacity:0.9;';
+
+      var saveBtn = document.createElement('a');
+      saveBtn.textContent = '[ SAVE CARD ]';
+      saveBtn.style.cssText = btnStyle + w95Btn + 'margin-top:12px;';
+      saveBtn.href = blobUrl;
+      saveBtn.target = '_blank';
+      saveBtn.download = 'my-screen-time-card.png';
+
+      var closeX = document.createElement('button');
+      closeX.textContent = '\u2715';
+      closeX.style.cssText = 'position:absolute;top:12px;right:16px;background:none;border:none;color:#fff;font-size:28px;cursor:pointer;opacity:0.7;z-index:10001;';
+      closeX.onclick = function() { overlay.remove(); };
+
+      overlay.appendChild(closeX);
+      overlay.appendChild(hint);
+      overlay.appendChild(img);
+      overlay.appendChild(saveBtn);
+    } else {
+      // Desktop & other browsers: save + share link + close
+      img.style.cssText = 'max-width:85%;max-height:60vh;border:2px solid #fff;border-radius:4px;';
+
+      var title = document.createElement('div');
+      title.textContent = 'Your card is ready!';
+      title.style.cssText = 'color:#fff;font-family:VT323,monospace;font-size:20px;margin-bottom:12px;text-align:center;';
+
+      var saveLink = document.createElement('a');
+      saveLink.textContent = '[ SAVE IMAGE ]';
+      saveLink.style.cssText = btnStyle + w95Btn + 'margin-top:12px;';
+      saveLink.href = blobUrl;
+      saveLink.target = '_blank';
+      saveLink.download = 'my-screen-time-card.png';
+
+      var shareBtn = document.createElement('button');
+      shareBtn.textContent = '[ SHARE LINK ]';
+      shareBtn.style.cssText = btnStyle + w95Btn + 'margin-top:6px;';
+      shareBtn.onclick = function() {
+        if (navigator.share) {
+          navigator.share({ title: 'My Screen Time Card', text: certData.years + ' years on a screen. I\'m reclaiming my time.', url: 'https://screentimecalculator.opal.so' }).catch(function(){});
+        } else {
+          navigator.clipboard.writeText('https://screentimecalculator.opal.so').then(function() {
+            shareBtn.textContent = '[ LINK COPIED ]';
+          });
+        }
+      };
+
+      var closeBtn = document.createElement('button');
+      closeBtn.textContent = '[ CLOSE ]';
+      closeBtn.style.cssText = btnStyle + w95Btn + 'margin-top:6px;';
+      closeBtn.onclick = function() { overlay.remove(); };
+
+      overlay.appendChild(title);
+      overlay.appendChild(img);
+      overlay.appendChild(saveLink);
+      overlay.appendChild(shareBtn);
+      overlay.appendChild(closeBtn);
+    }
+
     overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
     document.body.appendChild(overlay);
   }
