@@ -1284,6 +1284,8 @@
 
     document.getElementById('carouselSelection').classList.add('visible');
     populateShareCard(cardData);
+    _shareDataUrl = null; // reset so it regenerates
+    setTimeout(preGenerateShareImage, 300); // pre-generate in background
   }
 
   window._yapLogoSrc = "data:image/png;base64,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";
@@ -1616,60 +1618,95 @@
     showCertToast(years, pct, hours);
   }
 
+  var _shareDataUrl = null; // pre-generated share image
+
+  function preGenerateShareImage() {
+    if (typeof html2canvas === 'undefined') return;
+    var card = document.getElementById('shareCard');
+    if (!card) return;
+    card.style.left = '-9999px';
+    card.style.top = '0';
+    card.style.position = 'fixed';
+    // Wait for images
+    var imgs = card.querySelectorAll('img');
+    var ready = true;
+    imgs.forEach(function(img) { if (img.src && img.src !== window.location.href && !img.complete) ready = false; });
+    if (!ready) { setTimeout(preGenerateShareImage, 500); return; }
+    html2canvas(card, { scale: 3, useCORS: true, allowTaint: true, backgroundColor: null, width: 360, height: 640 }).then(function(canvas) {
+      card.style.left = '-9999px'; card.style.top = '-9999px';
+      _shareDataUrl = canvas.toDataURL('image/png');
+    }).catch(function() {});
+  }
+
   function shareStory() {
     var btn = document.getElementById('cardsShareBtn');
     if (btn.classList.contains('done')) { closeCards(); return; }
     if (!chosenCardData) return;
-    if (typeof html2canvas === 'undefined') { btn.textContent = '[ LOADING... ]'; btn.disabled = true; var s = document.createElement('script'); s.src = 'https://html2canvas.hertzen.com/dist/html2canvas.min.js'; s.onload = function() { shareStory(); }; s.onerror = function() { btn.textContent = '[ SHARE ]'; btn.disabled = false; }; document.head.appendChild(s); return; }
-    btn.textContent = '[ GENERATING... ]';
-    btn.disabled = true;
+
+    // If image not pre-generated yet, generate now
+    if (!_shareDataUrl) {
+      btn.textContent = '[ GENERATING... ]';
+      btn.disabled = true;
+      if (typeof html2canvas === 'undefined') {
+        var s = document.createElement('script');
+        s.src = 'https://html2canvas.hertzen.com/dist/html2canvas.min.js';
+        s.onload = function() { _generateAndShare(btn); };
+        s.onerror = function() { btn.textContent = '[ SHARE ]'; btn.disabled = false; };
+        document.head.appendChild(s);
+        return;
+      }
+      _generateAndShare(btn);
+      return;
+    }
+
+    // Image ready — share immediately from user gesture
+    _doShare(btn, _shareDataUrl);
+  }
+
+  function _generateAndShare(btn) {
     var card = document.getElementById('shareCard');
-    card.style.left = '-9999px';
-    card.style.top = '0';
-    card.style.position = 'fixed';
-    // Wait for all images to load
+    card.style.left = '-9999px'; card.style.top = '0'; card.style.position = 'fixed';
     var imgs = card.querySelectorAll('img');
     var imgPromises = [];
     imgs.forEach(function(img) {
       if (img.src && img.src !== window.location.href && !img.complete) {
         imgPromises.push(new Promise(function(resolve) {
-          img.onload = resolve;
-          img.onerror = resolve;
-          setTimeout(resolve, 5000);
+          img.onload = resolve; img.onerror = resolve; setTimeout(resolve, 5000);
         }));
       }
     });
     Promise.all(imgPromises).then(function() {
       return html2canvas(card, { scale: 3, useCORS: true, allowTaint: true, backgroundColor: null, width: 360, height: 640 });
     }).then(function(canvas) {
-      card.style.left = '-9999px';
-      card.style.top = '-9999px';
-      var dataUrl = canvas.toDataURL('image/png');
-      // Try converting to blob for native share
-      function dataUrlToBlob(url) {
-        var parts = url.split(','); var mime = parts[0].match(/:(.*?);/)[1];
-        var raw = atob(parts[1]); var arr = new Uint8Array(raw.length);
-        for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
-        return new Blob([arr], { type: mime });
+      card.style.left = '-9999px'; card.style.top = '-9999px';
+      _shareDataUrl = canvas.toDataURL('image/png');
+      _doShare(btn, _shareDataUrl);
+    }).catch(function() { btn.textContent = '[ SHARE ]'; btn.disabled = false; });
+  }
+
+  function _doShare(btn, dataUrl) {
+    var shareText = certData.years + ' years of my life went to a screen. I\'m reclaiming my time as a ' + (chosenActivity || 'new person');
+    // Try native share (works best on mobile Safari, directly from user gesture)
+    try {
+      var parts = dataUrl.split(','); var mime = parts[0].match(/:(.*?);/)[1];
+      var raw = atob(parts[1]); var arr = new Uint8Array(raw.length);
+      for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+      var blob = new Blob([arr], { type: mime });
+      var file = new File([blob], 'my-screen-time-card.png', { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file], title: 'My Screen Time Card', text: shareText }).then(function() {
+          markShareDone(btn);
+        }).catch(function(err) {
+          // User cancelled = still mark done; real error = show overlay
+          if (err && err.name === 'AbortError') { markShareDone(btn); }
+          else { showShareImageOverlay(dataUrl); markShareDone(btn); }
+        });
+        return;
       }
-      var shareText = certData.years + ' years of my life went to a screen. I\'m reclaiming my time as a ' + (chosenActivity || 'new person');
-      // Try Web Share API with file
-      try {
-        var blob = dataUrlToBlob(dataUrl);
-        var file = new File([blob], 'my-screen-time-card.png', { type: 'image/png' });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          navigator.share({ files: [file], title: 'My Screen Time Card', text: shareText }).then(function() {
-            markShareDone(btn);
-          }).catch(function() { markShareDone(btn); });
-          return;
-        }
-      } catch(e) {}
-      // Fallback: show image overlay so user can long-press to save (mobile) or right-click (desktop)
-      showShareImageOverlay(dataUrl);
-      markShareDone(btn);
-    }).catch(function() {
-      btn.textContent = '[ SHARE ]'; btn.disabled = false;
-    });
+    } catch(e) {}
+    // Fallback: show image for manual save
+    showShareImageOverlay(dataUrl);
+    markShareDone(btn);
   }
 
   function showShareImageOverlay(dataUrl) {
