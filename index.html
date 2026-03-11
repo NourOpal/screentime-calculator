@@ -1369,14 +1369,14 @@
   // ── VAGRANT GAME ──
   var vagrantScore = 0;
   var vagrantInterval = null;
-  var vagrantSpeed = 700;
+  var vagrantSpeed = 600;
   var vagrantSize = 48;
   var vagrantMisses = 0;
   var vagrantCatching = false;
 
   function startVagrantGame() {
     vagrantScore = 0;
-    vagrantSpeed = 700;
+    vagrantSpeed = 600;
     vagrantSize = 48;
     vagrantMisses = 0;
     vagrantCatching = false;
@@ -1407,11 +1407,18 @@
   function moveVagrant() {
     var game = document.getElementById('vagrantGame');
     var runner = document.getElementById('vagrantRunner');
-    var totalSize = vagrantSize + 24;
+    var totalSize = vagrantSize + 32;
     var maxX = game.offsetWidth - totalSize;
     var maxY = game.offsetHeight - totalSize;
-    var x = Math.max(0, Math.floor(Math.random() * maxX));
-    var y = Math.max(0, Math.floor(Math.random() * maxY));
+    var oldX = parseInt(runner.style.left) || 0;
+    var oldY = parseInt(runner.style.top) || 0;
+    var x, y, dist, tries = 0;
+    do {
+      x = Math.max(0, Math.floor(Math.random() * maxX));
+      y = Math.max(0, Math.floor(Math.random() * maxY));
+      dist = Math.sqrt((x - oldX) * (x - oldX) + (y - oldY) * (y - oldY));
+      tries++;
+    } while (dist < Math.max(maxX, maxY) * 0.4 && tries < 15);
     runner.style.left = x + 'px';
     runner.style.top = y + 'px';
     var rot = Math.floor(Math.random() * 20) - 10;
@@ -1457,7 +1464,7 @@
   function resetVagrantGame() {
     clearInterval(vagrantInterval);
     vagrantScore = 0;
-    vagrantSpeed = 700;
+    vagrantSpeed = 600;
     vagrantSize = 44;
   }
 
