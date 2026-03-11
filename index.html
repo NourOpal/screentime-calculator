@@ -1747,10 +1747,10 @@
   }
 
   function getRandomPos() {
-    var maxX = window.innerWidth - 380;
-    var maxY = window.innerHeight - 300;
-    var x = Math.max(60, Math.floor(Math.random() * maxX));
-    var y = Math.max(70, Math.floor(Math.random() * maxY));
+    var maxX = window.innerWidth - 420;
+    var maxY = window.innerHeight - 450;
+    var x = Math.max(220, Math.floor(Math.random() * Math.max(maxX, 240)));
+    var y = Math.max(70, Math.floor(Math.random() * Math.max(maxY, 80)));
     return { x: x, y: y };
   }
 
