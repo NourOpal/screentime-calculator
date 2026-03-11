@@ -641,7 +641,7 @@
   <div class="titlebar"><div class="titlebar-title">catch_the_vagrant.exe</div><div class="win-close" onclick="closeWin('vagrants');resetVagrantGame()">x</div></div>
   <div class="dw-body" style="padding:0">
     <div id="vagrantGame" style="position:relative;width:100%;height:260px;background:#001200;border-top:2px solid #404040;border-left:2px solid #404040;border-right:2px solid #c0c0c0;border-bottom:2px solid #c0c0c0;overflow:hidden;cursor:crosshair">
-      <div id="vagrantRunner" style="position:absolute;top:100px;left:100px;padding:12px;pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent" onclick="catchVagrant(event)" ontouchstart="catchVagrant(event)"><img id="vagrantRunnerImg" src="assets/pixelated-vagrant-runner.svg" style="width:48px;height:48px;display:block;filter:drop-shadow(0 0 6px rgba(255,50,50,0.8));pointer-events:none"></div>
+      <div id="vagrantRunner" style="position:absolute;top:100px;left:100px;padding:16px;pointer-events:auto;cursor:pointer;-webkit-tap-highlight-color:transparent" onmousedown="catchVagrant(event)" ontouchstart="catchVagrant(event)"><img id="vagrantRunnerImg" src="assets/pixelated-vagrant-runner.svg" style="width:48px;height:48px;display:block;filter:drop-shadow(0 0 6px rgba(255,50,50,0.8));pointer-events:none"></div>
     </div>
     <div style="padding:8px 12px;display:flex;justify-content:space-between;align-items:center">
       <div style="font-family:'VT323',monospace;font-size:16px;color:#000" id="vagrantScore">Score: 0 / 5</div>
@@ -1806,7 +1806,9 @@
       if (window.innerWidth < 768) return;
       var tb = e.target.closest('.desk-win .titlebar');
       if (!tb) return;
+      if (e.target.closest('.win-close')) return;
       var win = tb.closest('.desk-win');
+      if (win && win.id === 'win-vagrants') return;
       if (!win) return;
       e.preventDefault();
       dragEl = win;
