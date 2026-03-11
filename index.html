@@ -1275,7 +1275,7 @@
     var shareBtn = document.getElementById('cardsShareBtn');
     shareBtn.classList.remove('done');
     shareBtn.disabled = false;
-    shareBtn.textContent = window.innerWidth >= 768 ? '[ SHARE ]' : '[ SHARE TO STORIES ]';
+    shareBtn.textContent = '[ SHARE ]';
 
     document.getElementById('carouselSelection').classList.add('visible');
     populateShareCard(cardData);
@@ -1352,7 +1352,7 @@
     var selection = document.getElementById('carouselSelection');
     if (selection) selection.classList.remove('visible');
     var shareBtn = document.getElementById('cardsShareBtn');
-    if (shareBtn) { shareBtn.classList.remove('done'); shareBtn.disabled = false; shareBtn.textContent = window.innerWidth >= 768 ? '[ SHARE ]' : '[ SHARE TO STORIES ]'; }
+    if (shareBtn) { shareBtn.classList.remove('done'); shareBtn.disabled = false; shareBtn.textContent = '[ SHARE ]'; }
     chosenActivity = null;
     chosenCardData = null;
     // Show mini clippy after cards are closed (if results visible)
