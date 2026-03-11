@@ -1628,11 +1628,24 @@
     card.style.left = '-9999px';
     card.style.top = '0';
     card.style.position = 'fixed';
-    html2canvas(card, { scale: 3, useCORS: true, backgroundColor: null, width: 360, height: 640 }).then(function(canvas) {
+    // Preload share card images before rendering
+    var imgs = card.querySelectorAll('img');
+    var imgPromises = [];
+    imgs.forEach(function(img) {
+      if (img.src && !img.complete) {
+        imgPromises.push(new Promise(function(resolve) {
+          img.onload = resolve;
+          img.onerror = resolve;
+        }));
+      }
+    });
+    Promise.all(imgPromises).then(function() {
+      return html2canvas(card, { scale: 3, useCORS: true, allowTaint: true, backgroundColor: null, width: 360, height: 640 });
+    }).then(function(canvas) {
       card.style.left = '-9999px';
       card.style.top = '-9999px';
       canvas.toBlob(function(blob) {
-        if (!blob) { markShareDone(btn); return; }
+        if (!blob) { btn.textContent = '[ SHARE ]'; btn.disabled = false; return; }
         var file = new File([blob], 'my-screen-time-card.png', { type: 'image/png' });
         var shareText = certData.years + ' years of my life went to a screen. I\'m reclaiming my time as a ' + (chosenActivity || 'new person');
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -1651,7 +1664,7 @@
         }
       }, 'image/png');
     }).catch(function() {
-      markShareDone(btn);
+      btn.textContent = '[ SHARE ]'; btn.disabled = false;
     });
   }
 
