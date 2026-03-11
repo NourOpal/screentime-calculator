@@ -181,8 +181,8 @@
   .loading.visible { display: flex; }
   .progress-outer { background: #fff; border-top: 2px solid #404040; border-left: 2px solid #404040; border-right: 2px solid #fff; border-bottom: 2px solid #fff; padding: 2px; height: 26px; }
   .progress-inner { height: 100%; width: 0%; background: repeating-linear-gradient(90deg, #000080 0px, #000080 14px, #c0c0c0 14px, #c0c0c0 16px); transition: width 0.04s linear; }
-  .loading-msg { font-size: 18px; color: #000; }
-  .loading-sub { font-size: 14px; color: #808080; }
+  .loading-msg { font-family: 'MS Sans Serif', sans-serif; font-weight: bold; font-size: 18px; color: #000; }
+  .loading-sub { font-family: 'MS Sans Serif', sans-serif; font-size: 14px; color: #808080; }
 
   .result { display: none; flex-direction: column; gap: 10px; }
   .result.visible { display: flex; }
@@ -226,16 +226,16 @@
   .clippy-bubble-text { margin-bottom:10px; }
   .clippy-bubble-text b { color:#800000; }
   .clippy-btns { display:flex; gap:8px; flex-wrap:wrap; }
-  .clippy-btn { background:#c0c0c0; border-top:2px solid #fff; border-left:2px solid #fff; border-right:2px solid #404040; border-bottom:2px solid #404040; padding:4px 12px; font-family:'VT323',monospace; font-size:15px; cursor:pointer; color:#000; white-space:nowrap; }
+  .clippy-btn { background:#c0c0c0; border-top:2px solid #fff; border-left:2px solid #fff; border-right:2px solid #404040; border-bottom:2px solid #404040; padding:5px 14px; font-family:'VT323',monospace; font-size:16px; cursor:pointer; color:#000; white-space:nowrap; }
   .clippy-btn:active { border-top-color:#404040; border-left-color:#404040; border-right-color:#fff; border-bottom-color:#fff; }
   .clippy-btn.primary { background:#000080; color:#fff; border-top-color:#4040c0; border-left-color:#4040c0; border-right-color:#000020; border-bottom-color:#000020; }
   @media (max-width:600px) {
     .clippy-container { right:10px; left:10px; bottom:20px; flex-direction:column-reverse; align-items:center; }
-    .clippy-bubble { max-width:100%; margin-right:0; margin-bottom:0; font-size:14px; }
+    .clippy-bubble { max-width:100%; margin-right:0; margin-bottom:0; font-size:16px; }
     .clippy-bubble::after { bottom:-12px; right:50%; transform:translateX(50%); }
     .clippy-bubble::before { bottom:-15px; right:50%; transform:translateX(50%); }
     .clippy-character { margin-top:-6px; }
-    .clippy-character img { width:45px !important; }
+    .clippy-character img { width:55px !important; }
   }
 
   /* ── CARDS OVERLAY ── */
