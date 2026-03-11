@@ -1656,15 +1656,20 @@
     if (!_shareDataUrl) {
       btn.textContent = '[ GENERATING... ]';
       btn.disabled = true;
+      // Timeout fallback — if generation takes too long, reset button
+      var genTimeout = setTimeout(function() { btn.textContent = '[ SHARE ]'; btn.disabled = false; }, 8000);
+      var origGenShare = function() {
+        _generateAndShare(btn, function() { clearTimeout(genTimeout); });
+      };
       if (typeof html2canvas === 'undefined') {
         var s = document.createElement('script');
         s.src = 'https://html2canvas.hertzen.com/dist/html2canvas.min.js';
-        s.onload = function() { _generateAndShare(btn); };
-        s.onerror = function() { btn.textContent = '[ SHARE ]'; btn.disabled = false; };
+        s.onload = function() { origGenShare(); };
+        s.onerror = function() { clearTimeout(genTimeout); btn.textContent = '[ SHARE ]'; btn.disabled = false; };
         document.head.appendChild(s);
         return;
       }
-      _generateAndShare(btn);
+      origGenShare();
       return;
     }
 
@@ -1672,7 +1677,7 @@
     _doShare(btn, _shareDataUrl);
   }
 
-  function _generateAndShare(btn) {
+  function _generateAndShare(btn, onDone) {
     var card = document.getElementById('shareCard');
     card.style.left = '-9999px'; card.style.top = '0'; card.style.position = 'fixed';
     var imgs = card.querySelectorAll('img');
@@ -1689,8 +1694,9 @@
     }).then(function(canvas) {
       card.style.left = '-9999px'; card.style.top = '-9999px';
       _shareDataUrl = canvas.toDataURL('image/png');
+      if (onDone) onDone();
       _doShare(btn, _shareDataUrl);
-    }).catch(function() { btn.textContent = '[ SHARE ]'; btn.disabled = false; });
+    }).catch(function() { if (onDone) onDone(); btn.textContent = '[ SHARE ]'; btn.disabled = false; });
   }
 
   function _isSafariNative() {
