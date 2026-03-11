@@ -1713,16 +1713,18 @@
     });
   }
 
-  function _isSafariNative() {
+  function _isMobileSafari() {
     var ua = navigator.userAgent || '';
-    // Must be Safari on iOS/Mac, NOT Chrome (CriOS), Firefox (FxiOS), or other wrappers
-    return /Safari/.test(ua) && /Apple/.test(navigator.vendor) && !/CriOS|FxiOS|OPiOS|EdgiOS/.test(ua);
+    // Must be Safari on iOS (not desktop), NOT Chrome (CriOS), Firefox (FxiOS), or other wrappers
+    var isSafari = /Safari/.test(ua) && /Apple/.test(navigator.vendor) && !/CriOS|FxiOS|OPiOS|EdgiOS/.test(ua);
+    var isMobile = /iPhone|iPad|iPod/.test(ua) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(ua));
+    return isSafari && isMobile;
   }
 
   function _doShare(btn, dataUrl) {
     var shareText = certData.years + ' years of my life went to a screen. I\'m reclaiming my time as a ' + (chosenActivity || 'new person');
     // Only try native file share on actual Safari (it's the only browser that does it reliably)
-    if (_isSafariNative()) {
+    if (_isMobileSafari()) {
       try {
         var parts = dataUrl.split(','); var mime = parts[0].match(/:(.*?);/)[1];
         var raw = atob(parts[1]); var arr = new Uint8Array(raw.length);
