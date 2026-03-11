@@ -633,14 +633,20 @@
   </div>
 </div>
 
-<div class="desk-win w95" id="win-phone">
-  <div class="titlebar"><div class="titlebar-title">My Phone — Incoming</div><div class="win-close" onclick="closeWin('phone')">x</div></div>
-  <div class="dw-body">
-    <div class="phone-screen" id="notifContainer"></div>
-    <div class="phone-footer" id="notifCount">connecting...</div>
-    <div style="display:flex;gap:8px;margin-top:10px;justify-content:space-between">
-      <button class="win-btn-sm" onclick="clearNotifs()">Mark all read</button>
-      <button class="win-btn-sm" onclick="closeWin('phone')">Close</button>
+<div class="desk-win w95" id="win-vagrants" style="max-width:360px">
+  <div class="titlebar"><div class="titlebar-title">catch_the_vagrant.exe</div><div class="win-close" onclick="closeWin('vagrants');resetVagrantGame()">x</div></div>
+  <div class="dw-body" style="padding:0">
+    <div id="vagrantGame" style="position:relative;width:100%;height:260px;background:#001200;border-top:2px solid #404040;border-left:2px solid #404040;border-right:2px solid #c0c0c0;border-bottom:2px solid #c0c0c0;overflow:hidden;cursor:crosshair">
+      <img id="vagrantRunner" src="assets/vagrant-runner.svg" style="position:absolute;width:50px;height:50px;top:100px;left:100px;pointer-events:auto;cursor:pointer;filter:drop-shadow(0 0 4px rgba(255,0,0,0.5))" onclick="catchVagrant(event)">
+    </div>
+    <div style="padding:8px 12px;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-family:'VT323',monospace;font-size:16px;color:#000" id="vagrantScore">Score: 0 / 5</div>
+      <div style="font-family:'VT323',monospace;font-size:14px;color:#808080" id="vagrantHint">Click the runner!</div>
+    </div>
+    <div id="vagrantWin" style="display:none;padding:12px;text-align:center">
+      <div style="font-family:'VT323',monospace;font-size:20px;color:#800000;margin-bottom:6px">YOU CAUGHT ME!</div>
+      <div style="font-family:'VT323',monospace;font-size:15px;color:#000;margin-bottom:10px">Nice reflexes. The Vagrants crew would be impressed.</div>
+      <a href="https://www.vagrants.com/originals" target="_blank" class="win-btn-sm" style="display:inline-block;text-decoration:none;background:#000080;color:#fff;border-top-color:#4040c0;border-left-color:#4040c0;border-right-color:#000020;border-bottom-color:#000020;font-family:'VT323',monospace">Visit Vagrants →</a>
     </div>
   </div>
 </div>
@@ -776,9 +782,9 @@
     <div class="icon-img"><span class="icon-badge">12</span><img src="assets/recyclebin_file.png" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('afterbegin','🗑️')"></div>
     <div class="icon-label">Recycle Bin</div>
   </div>
-  <div class="icon" onclick="openWin('phone')">
-    <div class="icon-img"><span class="icon-badge">47</span><img src="assets/phone.png" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('afterbegin','📞')"></div>
-    <div class="icon-label">My Phone</div>
+  <div class="icon" onclick="openWin('vagrants')">
+    <div class="icon-img"><img src="assets/vagrant-runner.svg" style="width:42px;height:42px;object-fit:contain;image-rendering:auto"></div>
+    <div class="icon-label">Vagrants</div>
   </div>
   <div class="icon" onclick="openWin('years')">
     <div class="icon-img"><span class="icon-badge">!</span><img src="assets/file.png" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('afterbegin','📁')"></div>
@@ -1006,13 +1012,13 @@
 
   // ── WINDOW MANAGEMENT ──
   function openWin(id) {
-    ['computer','trash','phone','years'].forEach(function(wid) {
+    ['computer','trash','vagrants','years'].forEach(function(wid) {
       var w = document.getElementById('win-'+wid);
       if (w) w.style.display = 'none';
     });
     if (notifIv) clearInterval(notifIv);
     // Remove badge from the clicked icon
-    var iconMap = {computer:0, trash:1, phone:2, years:3};
+    var iconMap = {computer:0, trash:1, vagrants:2, years:3};
     var icons = document.querySelectorAll('.desktop-icons .icon');
     var idx = iconMap[id];
     if (idx !== undefined && icons[idx]) {
@@ -1021,7 +1027,7 @@
     }
     var w = document.getElementById('win-'+id);
     if (w) w.style.display = 'block';
-    if (id === 'phone') setTimeout(startNotifs, 100);
+    if (id === 'vagrants') startVagrantGame();
   }
 
   function closeWin(id) {
@@ -1324,6 +1330,59 @@
     }
   }
 
+  // ── VAGRANT GAME ──
+  var vagrantScore = 0;
+  var vagrantInterval = null;
+  var vagrantSpeed = 1200;
+
+  function startVagrantGame() {
+    vagrantScore = 0;
+    vagrantSpeed = 1200;
+    document.getElementById('vagrantScore').textContent = 'Score: 0 / 5';
+    document.getElementById('vagrantHint').textContent = 'Click the runner!';
+    document.getElementById('vagrantWin').style.display = 'none';
+    document.getElementById('vagrantGame').style.display = 'block';
+    var runner = document.getElementById('vagrantRunner');
+    runner.style.display = 'block';
+    moveVagrant();
+    vagrantInterval = setInterval(moveVagrant, vagrantSpeed);
+  }
+
+  function moveVagrant() {
+    var game = document.getElementById('vagrantGame');
+    var runner = document.getElementById('vagrantRunner');
+    var maxX = game.offsetWidth - 50;
+    var maxY = game.offsetHeight - 50;
+    var x = Math.floor(Math.random() * maxX);
+    var y = Math.floor(Math.random() * maxY);
+    runner.style.left = x + 'px';
+    runner.style.top = y + 'px';
+    runner.style.transform = Math.random() > 0.5 ? 'scaleX(-1)' : 'scaleX(1)';
+  }
+
+  function catchVagrant(e) {
+    e.stopPropagation();
+    vagrantScore++;
+    document.getElementById('vagrantScore').textContent = 'Score: ' + vagrantScore + ' / 5';
+    if (vagrantScore >= 5) {
+      clearInterval(vagrantInterval);
+      document.getElementById('vagrantRunner').style.display = 'none';
+      document.getElementById('vagrantHint').textContent = '';
+      document.getElementById('vagrantWin').style.display = 'block';
+    } else {
+      vagrantSpeed = Math.max(400, vagrantSpeed - 150);
+      clearInterval(vagrantInterval);
+      vagrantInterval = setInterval(moveVagrant, vagrantSpeed);
+      moveVagrant();
+    }
+  }
+
+  function resetVagrantGame() {
+    clearInterval(vagrantInterval);
+    vagrantScore = 0;
+    vagrantSpeed = 1200;
+  }
+
   // ── MUSIC ──
   var audioCtx = null, musicPlaying = false, musicTimeout = null;
   var notes = [[523,0],[523,0.2],[659,0.4],[784,0.6],[880,0.8],[784,1.0],[659,1.2],[523,1.4],[0,1.6],[392,1.8],[523,2.0],[659,2.2],[784,2.4],[659,2.6],[523,2.8],[392,3.0],[392,3.2],[0,3.4],[523,3.6],[659,3.8],[784,4.0],[1047,4.2],[880,4.4],[784,4.6],[659,4.8],[523,5.0],[0,5.2],[392,5.4],[523,5.6],[659,5.8],[523,6.0],[392,6.2],[523,6.4]];
@@ -1584,7 +1643,7 @@
     });
     if (notifIv) clearInterval(notifIv);
     // Remove badge from the clicked icon (original 4 only)
-    var iconMap = {computer:0, trash:1, phone:2, years:3};
+    var iconMap = {computer:0, trash:1, vagrants:2, years:3};
     var icons = document.querySelectorAll('.desktop-icons .icon');
     var idx = iconMap[id];
     if (idx !== undefined && icons[idx]) {
@@ -1593,7 +1652,7 @@
     }
     var w = document.getElementById('win-'+id);
     if (w) w.style.display = 'block';
-    if (id === 'phone') setTimeout(startNotifs, 100);
+    if (id === 'vagrants') startVagrantGame();
   };
 
   // Show badges only after icon images have loaded
