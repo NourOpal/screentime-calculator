@@ -1630,18 +1630,23 @@
   var _shareDataUrl = null; // pre-generated share image
 
   function preGenerateShareImage() {
-    if (typeof html2canvas === 'undefined') return;
+    if (typeof html2canvas === 'undefined') {
+      // html2canvas not loaded yet, retry in 1s
+      setTimeout(preGenerateShareImage, 1000);
+      return;
+    }
     var card = document.getElementById('shareCard');
     if (!card) return;
+    card.style.position = 'fixed';
     card.style.left = '-9999px';
     card.style.top = '0';
-    card.style.position = 'fixed';
+    card.style.display = 'flex';
     // Wait for images
     var imgs = card.querySelectorAll('img');
     var ready = true;
     imgs.forEach(function(img) { if (img.src && img.src !== window.location.href && !img.complete) ready = false; });
     if (!ready) { setTimeout(preGenerateShareImage, 500); return; }
-    html2canvas(card, { scale: 3, useCORS: true, allowTaint: true, backgroundColor: null, width: 360, height: 640 }).then(function(canvas) {
+    html2canvas(card, { scale: 3, useCORS: true, allowTaint: true, backgroundColor: null, width: 360, height: 640, logging: false }).then(function(canvas) {
       card.style.left = '-9999px'; card.style.top = '-9999px';
       _shareDataUrl = canvas.toDataURL('image/png');
     }).catch(function() {});
@@ -1680,23 +1685,32 @@
   function _generateAndShare(btn, onDone) {
     var card = document.getElementById('shareCard');
     card.style.left = '-9999px'; card.style.top = '0'; card.style.position = 'fixed';
+    card.style.display = 'flex';
     var imgs = card.querySelectorAll('img');
     var imgPromises = [];
     imgs.forEach(function(img) {
       if (img.src && img.src !== window.location.href && !img.complete) {
         imgPromises.push(new Promise(function(resolve) {
-          img.onload = resolve; img.onerror = resolve; setTimeout(resolve, 5000);
+          img.onload = resolve; img.onerror = resolve; setTimeout(resolve, 3000);
         }));
       }
     });
     Promise.all(imgPromises).then(function() {
-      return html2canvas(card, { scale: 3, useCORS: true, allowTaint: true, backgroundColor: null, width: 360, height: 640 });
+      return html2canvas(card, { scale: 3, useCORS: true, allowTaint: true, backgroundColor: null, width: 360, height: 640, logging: false });
     }).then(function(canvas) {
       card.style.left = '-9999px'; card.style.top = '-9999px';
       _shareDataUrl = canvas.toDataURL('image/png');
       if (onDone) onDone();
       _doShare(btn, _shareDataUrl);
-    }).catch(function() { if (onDone) onDone(); btn.textContent = '[ SHARE ]'; btn.disabled = false; });
+    }).catch(function(err) {
+      if (onDone) onDone();
+      card.style.left = '-9999px'; card.style.top = '-9999px';
+      // If generation fails, try native share with just text/link
+      btn.textContent = '[ SHARE ]'; btn.disabled = false;
+      if (navigator.share) {
+        navigator.share({ title: 'My Screen Time Card', text: certData.years + ' years on a screen. I\'m reclaiming my time.', url: 'https://screentimecalculator.opal.so' }).catch(function(){});
+      }
+    });
   }
 
   function _isSafariNative() {
