@@ -185,10 +185,10 @@
   .result { display: none; flex-direction: column; gap: 10px; }
   .result.visible { display: flex; }
   .result-main { background: #fff; border-top: 2px solid #404040; border-left: 2px solid #404040; border-right: 2px solid #fff; border-bottom: 2px solid #fff; padding: 16px 14px; text-align: center; }
-  .result-main .r-intro { font-family: 'MS Sans Serif', sans-serif; font-size: 16px; color: #000; letter-spacing: 1px; }
+  .result-main .r-intro { font-family: 'MS Sans Serif', sans-serif; font-size: 18px; color: #000; line-height: 1.5; margin-bottom: -4px; }
   .result-main .r-years { font-family: 'MS Sans Serif', sans-serif; font-weight: bold; font-size: 100px; color: #000080; line-height: 1; display: block; text-shadow: 3px 3px 0 #808080; }
   .result-main .r-unit { font-family: 'MS Sans Serif', sans-serif; font-weight: bold; font-size: 24px; color: #000080; letter-spacing: 3px; }
-  .result-main .r-copy { font-family: 'MS Sans Serif', sans-serif; font-size: 18px; color: #000; line-height: 1.5; margin-top: 10px; }
+  .result-main .r-copy { font-family: 'MS Sans Serif', sans-serif; font-size: 18px; color: #000; line-height: 1.5; margin-top: 2px; }
   .result-main .r-copy b { color: #800000; }
   .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: #404040; border: 2px solid #404040; }
   .stat-cell { background: #c0c0c0; padding: 10px 4px; text-align: center; border-top: 1px solid #fff; border-left: 1px solid #fff; }
@@ -228,7 +228,7 @@
   .clippy-btn:active { border-top-color:#404040; border-left-color:#404040; border-right-color:#fff; border-bottom-color:#fff; }
   .clippy-btn.primary { background:#000080; color:#fff; border-top-color:#4040c0; border-left-color:#4040c0; border-right-color:#000020; border-bottom-color:#000020; }
   @media (max-width:600px) {
-    .clippy-container { right:10px; left:10px; bottom:60px; flex-direction:column-reverse; align-items:center; }
+    .clippy-container { right:10px; left:10px; bottom:20px; flex-direction:column-reverse; align-items:center; }
     .clippy-bubble { max-width:100%; margin-right:0; margin-bottom:0; font-size:14px; }
     .clippy-bubble::after { bottom:-12px; right:50%; transform:translateX(50%); }
     .clippy-bubble::before { bottom:-15px; right:50%; transform:translateX(50%); }
@@ -369,10 +369,10 @@
     .win-btn.primary { font-size: 24px; padding: 16px 14px; }
     .result { gap: 8px; }
     .result-main { padding: 12px 12px; }
-    .result-main .r-intro { font-size: 16px; }
+    .result-main .r-intro { font-size: 17px; }
     .result-main .r-years { font-size: 80px; }
     .result-main .r-unit { font-size: 22px; }
-    .result-main .r-copy { font-size: 17px; margin-top: 8px; }
+    .result-main .r-copy { font-size: 17px; margin-top: 2px; }
     .stats-row { grid-template-columns: repeat(4,1fr); }
     .stat-cell { padding: 8px 3px; }
     .stat-cell .s-num { font-size: 22px; }
@@ -879,7 +879,7 @@
     <div class="result" id="result">
       <div class="sec-header">[ RESULTS — brace yourself ]</div>
       <div class="result-main">
-        <div class="r-intro">&gt; YOU'RE ON TRACK TO SPEND</div>
+        <div class="r-intro">You're on track to spend</div>
         <span class="r-years" id="resultYears">-</span>
         <div class="r-unit">YEARS</div>
         <div class="r-copy" id="resultCopy">-</div>
@@ -1448,7 +1448,7 @@
     // savedDaily removed — unused
 
     document.getElementById('resultYears').textContent = years;
-    document.getElementById('resultCopy').innerHTML = 'of your life looking down at your phone. That\'s <b>'+yearlyDays+' days</b> every year — <b>'+pct+'%</b> of your waking hours.';
+    document.getElementById('resultCopy').innerHTML = 'of your life looking down at your phone. That\'s <b>'+yearlyDays+' days</b> every year, <b>'+pct+'%</b> of your waking hours.';
     document.getElementById('statPct').textContent = pct+'%';
     document.getElementById('statDays').textContent = days.toLocaleString();
     document.getElementById('statMonths').textContent = months;
