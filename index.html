@@ -633,6 +633,7 @@
   </div>
 </div>
 
+<div id="vagrantOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:299" onclick="closeWin('vagrants');resetVagrantGame()"></div>
 <div class="desk-win w95" id="win-vagrants" style="max-width:360px">
   <div class="titlebar"><div class="titlebar-title">catch_the_vagrant.exe</div><div class="win-close" onclick="closeWin('vagrants');resetVagrantGame()">x</div></div>
   <div class="dw-body" style="padding:0">
@@ -1027,12 +1028,16 @@
     }
     var w = document.getElementById('win-'+id);
     if (w) w.style.display = 'block';
-    if (id === 'vagrants') startVagrantGame();
+    if (id === 'vagrants') {
+      document.getElementById('vagrantOverlay').style.display = 'block';
+      startVagrantGame();
+    }
   }
 
   function closeWin(id) {
     var w = document.getElementById('win-'+id);
     if (w) w.style.display = 'none';
+    if (id === 'vagrants') document.getElementById('vagrantOverlay').style.display = 'none';
     if (id === 'phone' && notifIv) clearInterval(notifIv);
   }
 
@@ -1655,7 +1660,7 @@
   setInterval(updateTaskbarClock, 10000);
 
   // ── WINDOW MANAGEMENT UPDATE (include new desktop windows) ──
-  var allWinIds = ['computer','trash','phone','years','ie','outlook','notepad','control','documents','minesweeper'];
+  var allWinIds = ['computer','trash','phone','vagrants','years','ie','outlook','notepad','control','documents','minesweeper'];
 
   // Override openWin to support new windows
   var _origOpenWin = openWin;
@@ -1664,6 +1669,8 @@
       var w = document.getElementById('win-'+wid);
       if (w) w.style.display = 'none';
     });
+    document.getElementById('vagrantOverlay').style.display = 'none';
+    resetVagrantGame();
     if (notifIv) clearInterval(notifIv);
     // Remove badge from the clicked icon (original 4 only)
     var iconMap = {computer:0, trash:1, vagrants:2, years:3};
@@ -1675,7 +1682,17 @@
     }
     var w = document.getElementById('win-'+id);
     if (w) w.style.display = 'block';
-    if (id === 'vagrants') startVagrantGame();
+    if (id === 'vagrants') {
+      document.getElementById('vagrantOverlay').style.display = 'block';
+      startVagrantGame();
+    }
+  };
+
+  // Override closeWin to support overlay
+  var _origCloseWin = closeWin;
+  closeWin = function(id) {
+    _origCloseWin(id);
+    if (id === 'vagrants') document.getElementById('vagrantOverlay').style.display = 'none';
   };
 
   // Show badges only after icon images have loaded
