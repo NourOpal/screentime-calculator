@@ -698,16 +698,16 @@
   <div class="titlebar"><div class="titlebar-title">Notepad — untitled.txt</div><div class="win-close" onclick="closeWin('notepad')">x</div></div>
   <div class="dw-body">
     <div style="background:#fff;border-top:2px solid #404040;border-left:2px solid #404040;border-right:2px solid #fff;border-bottom:2px solid #fff;padding:12px;font-size:15px;color:#000;line-height:1.8;min-height:160px;font-family:'VT323',monospace">
-      Dear future me,<br><br>
-      If you're reading this, you finally closed TikTok.<br>
-      I'm proud of you.<br><br>
-      Things I planned to do today:<br>
-      - Learn guitar (opened YouTube, watched 47 cat videos instead)<br>
-      - Read a book (read 200 tweets instead)<br>
-      - Go for a walk (walked to the fridge while scrolling)<br>
-      - Be productive (typed "how to be productive" into Google, scrolled for 2 hours)<br><br>
-      Time remaining today: not enough.<br>
-      — You (written at 3:47 AM)
+      untitled_thoughts_3am.txt<br><br>
+      i just mass-followed 12 accounts of people who wake up at 5am<br>
+      it is currently 3:47am<br>
+      i have not woken up before 10 since 2019<br><br>
+      my screen time report said 9 hours today<br>
+      2 of those were me googling "how to reduce screen time"<br><br>
+      anyway brb there's a new 45-part series on my fyp about<br>
+      a girl who organized her entire life and i need to watch<br>
+      all of it before doing absolutely none of it<br><br>
+      - sent from my phone (obviously)
     </div>
     <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="win-btn-sm" onclick="closeWin('notepad')">Close</button></div>
   </div>
@@ -1794,6 +1794,32 @@
     if (id === 'phone' && notifIv) clearInterval(notifIv);
     updateCloseAllBtn();
   };
+
+  // ── DRAGGABLE WINDOWS (desktop only) ──
+  (function() {
+    var dragEl = null, dragOffX = 0, dragOffY = 0;
+    document.addEventListener('mousedown', function(e) {
+      if (window.innerWidth < 768) return;
+      var tb = e.target.closest('.desk-win .titlebar');
+      if (!tb) return;
+      var win = tb.closest('.desk-win');
+      if (!win) return;
+      e.preventDefault();
+      dragEl = win;
+      var rect = win.getBoundingClientRect();
+      dragOffX = e.clientX - rect.left;
+      dragOffY = e.clientY - rect.top;
+      winZCounter++;
+      win.style.zIndex = winZCounter;
+    });
+    document.addEventListener('mousemove', function(e) {
+      if (!dragEl) return;
+      dragEl.style.left = (e.clientX - dragOffX) + 'px';
+      dragEl.style.top = (e.clientY - dragOffY) + 'px';
+      dragEl.style.transform = 'none';
+    });
+    document.addEventListener('mouseup', function() { dragEl = null; });
+  })();
 
   // Show badges only after icon images have loaded
   (function() {
