@@ -15,8 +15,8 @@
 <title>Opal Screen Time Calculator</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-  @font-face { font-family: 'MS Sans Serif'; src: url('assets/ms-sans-serif.ttf') format('truetype'); font-weight: normal; font-style: normal; }
-  @font-face { font-family: 'MS Sans Serif'; src: url('assets/ms-sans-serif-bold.ttf') format('truetype'); font-weight: bold; font-style: normal; }
+  @font-face { font-family: 'MS Sans Serif'; src: url('assets/ms-sans-serif.ttf') format('truetype'); font-weight: normal; font-style: normal; font-display: block; }
+  @font-face { font-family: 'MS Sans Serif'; src: url('assets/ms-sans-serif-bold.ttf') format('truetype'); font-weight: bold; font-style: normal; font-display: block; }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
   html {
@@ -185,10 +185,10 @@
   .result { display: none; flex-direction: column; gap: 10px; }
   .result.visible { display: flex; }
   .result-main { background: #fff; border-top: 2px solid #404040; border-left: 2px solid #404040; border-right: 2px solid #fff; border-bottom: 2px solid #fff; padding: 16px 14px; text-align: center; }
-  .result-main .r-intro { font-family: 'MS Sans Serif', sans-serif; font-size: 18px; color: #000; line-height: 1.5; margin-bottom: -4px; }
+  .result-main .r-intro { font-family: 'MS Sans Serif', sans-serif; font-size: 18px; color: #000; line-height: 1.5; margin-bottom: 6px; }
   .result-main .r-years { font-family: 'MS Sans Serif', sans-serif; font-weight: bold; font-size: 100px; color: #000080; line-height: 1; display: block; text-shadow: 3px 3px 0 #808080; }
   .result-main .r-unit { font-family: 'MS Sans Serif', sans-serif; font-weight: bold; font-size: 24px; color: #000080; letter-spacing: 3px; }
-  .result-main .r-copy { font-family: 'MS Sans Serif', sans-serif; font-size: 18px; color: #000; line-height: 1.5; margin-top: 2px; }
+  .result-main .r-copy { font-family: 'MS Sans Serif', sans-serif; font-size: 18px; color: #000; line-height: 1.5; margin-top: 6px; }
   .result-main .r-copy b { color: #800000; }
   .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: #404040; border: 2px solid #404040; }
   .stat-cell { background: #c0c0c0; padding: 10px 4px; text-align: center; border-top: 1px solid #fff; border-left: 1px solid #fff; }
@@ -233,7 +233,7 @@
     .clippy-bubble::after { bottom:-12px; right:50%; transform:translateX(50%); }
     .clippy-bubble::before { bottom:-15px; right:50%; transform:translateX(50%); }
     .clippy-character { margin-top:-6px; }
-    .clippy-character img { width:60px !important; }
+    .clippy-character img { width:45px !important; }
   }
 
   /* ── CARDS OVERLAY ── */
@@ -374,9 +374,9 @@
     .result-main .r-unit { font-size: 22px; }
     .result-main .r-copy { font-size: 17px; margin-top: 2px; }
     .stats-row { grid-template-columns: repeat(4,1fr); }
-    .stat-cell { padding: 8px 3px; }
-    .stat-cell .s-num { font-size: 22px; }
-    .stat-cell .s-lbl { font-size: 13px; }
+    .stat-cell { padding: 6px 3px; }
+    .stat-cell .s-num { font-size: 18px; }
+    .stat-cell .s-lbl { font-size: 11px; }
     .fun-fact { padding: 8px 10px; font-size: 15px; }
     .cta-panel { padding: 10px; gap: 8px; }
     .cta-panel .cta-title { font-size: 22px; }
@@ -1448,7 +1448,7 @@
     // savedDaily removed — unused
 
     document.getElementById('resultYears').textContent = years;
-    document.getElementById('resultCopy').innerHTML = 'of your life looking down at your phone. That\'s <b>'+yearlyDays+' days</b> every year, <b>'+pct+'%</b> of your waking hours.';
+    document.getElementById('resultCopy').innerHTML = 'of your life looking down at your phone.<br>That\'s <b>'+yearlyDays+' days</b> every year, <b>'+pct+'%</b> of your waking hours.';
     document.getElementById('statPct').textContent = pct+'%';
     document.getElementById('statDays').textContent = days.toLocaleString();
     document.getElementById('statMonths').textContent = months;
