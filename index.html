@@ -931,6 +931,9 @@
 
 <!-- ── SHARE CARD (hidden, rendered at 3x by html2canvas) ── -->
 
+<!-- ── ANALYTICS (Vercel Web Analytics) ── -->
+<script defer src="/_vercel/insights/script.js"></script>
+
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js" defer></script>
 <script>
   // ── REAL VIEWPORT HEIGHT (fixes Chrome iOS toolbar issue) ──
@@ -1278,6 +1281,7 @@
     chosenActivity = cardData.title;
     chosenCardData = cardData;
 
+
     var allCardEls = document.querySelectorAll('.carousel-card');
     for (var i = 0; i < allCardEls.length; i++) {
       allCardEls[i].classList.remove('selected');
@@ -1550,6 +1554,7 @@
     dismissWarning();
     var age = parseInt(document.getElementById('age').value);
     var screen = parseFloat(document.getElementById('screen').value);
+
     document.getElementById('formSection').classList.add('hidden');
     document.getElementById('crtScreen').style.display = 'none';
     document.getElementById('loading').classList.add('visible');
@@ -1626,6 +1631,7 @@
       document.querySelector('.desktop-icons').style.display = 'none';
       document.querySelector('.win-window').style.marginTop = '10px';
     }
+
     showCertToast(years, pct, hours);
   }
 
@@ -1658,6 +1664,7 @@
     var btn = document.getElementById('cardsShareBtn');
     if (btn.classList.contains('done')) { closeCards(); return; }
     if (!chosenCardData) return;
+
 
     // If image not pre-generated yet, generate now
     if (!_shareDataUrl) {
