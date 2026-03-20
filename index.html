@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
 <script defer src="/_vercel/insights/script.js"></script>
+<script async src="https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz"></script>
+<script>
+  window.amplitudeReady = new Promise(function(resolve) {
+    function check() { if (window.amplitude && amplitude.init) { amplitude.init('lw7oTdHPKGnkncY90b8IaHJR8R0rHg-k', { autocapture: true }); resolve(); } else { setTimeout(check, 100); } }
+    check();
+  });
+</script>
 <meta name="theme-color" content="#2563a8">
 <meta name="description" content="How many years of your life have you spent on your phone? Find out with this chronically online calculator by Opal x Your Attention Please.">
 <meta property="og:title" content="Opal Screen Time Calculator">
@@ -1279,7 +1286,7 @@
   function selectCard(cardData, cardEl) {
     chosenActivity = cardData.title;
     chosenCardData = cardData;
-
+    if (window.amplitude) amplitude.track('Hobby Selected', { hobby: cardData.title });
 
     var allCardEls = document.querySelectorAll('.carousel-card');
     for (var i = 0; i < allCardEls.length; i++) {
@@ -1553,6 +1560,7 @@
     dismissWarning();
     var age = parseInt(document.getElementById('age').value);
     var screen = parseFloat(document.getElementById('screen').value);
+    if (window.amplitude) amplitude.track('Calculate', { age: age, screen_hours: screen });
 
     document.getElementById('formSection').classList.add('hidden');
     document.getElementById('crtScreen').style.display = 'none';
@@ -1631,6 +1639,7 @@
       document.querySelector('.win-window').style.marginTop = '10px';
     }
 
+    if (window.amplitude) amplitude.track('Result Viewed', { years: years, pct: parseInt(pct), screen_hours: screen, age: age });
     showCertToast(years, pct, hours);
   }
 
@@ -1663,6 +1672,7 @@
     var btn = document.getElementById('cardsShareBtn');
     if (btn.classList.contains('done')) { closeCards(); return; }
     if (!chosenCardData) return;
+    if (window.amplitude) amplitude.track('Share Clicked', { hobby: chosenActivity });
 
 
     // If image not pre-generated yet, generate now
